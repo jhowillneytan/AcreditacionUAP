@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html class="loading" lang="es" data-textdirection="ltr" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="layout/layout :: head">
+
+</head>
+
+<body class="vertical-layout vertical-menu-modern content-left-sidebar navbar-floating footer-static" data-open="click"
+	data-menu="vertical-menu-modern" data-col="content-left-sidebar">
+
+	<nav th:replace="layout/layout :: cabecera"></nav>
+
+	<div th:replace="layout/layout :: ladera"></div>
+
+
+	<div class="app-content content file-manager-application">
+		<div class="content-overlay"></div>
+		<div class="header-navbar-shadow"></div>
+		<div class="content-area-wrapper container-xxl p-0">
+			<!-- sub menus  -->
+			<div class="sidebar-left">
+				<div class="sidebar">
+					<div class="sidebar-file-manager">
+						<div class="sidebar-inner">
+							<!-- sidebar menu links starts -->
+							<!-- add file button -->
+							<div class="dropdown dropdown-actions">
+								<!--style="background: linear-gradient(#28c76f, #28c76f);"-->
+								<button class="btn btn-primary add-file-btn text-center w-100" type="button"
+									id="addNewFile" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+									<span class="align-middle">Nuevo</span>
+								</button>
+								<div class="dropdown-menu" aria-labelledby="addNewFile">
+									<div class="dropdown-item" data-bs-toggle="modal"
+										data-bs-target="#new-folder-modal">
+										<div class="mb-0">
+											<i data-feather="folder" class="me-25"></i> <span
+												class="align-middle">Carpeta</span>
+										</div>
+									</div>
+									<div class="dropdown-item" data-bs-toggle="modal" th:if="${editMode}"
+										data-bs-target="#new-archivo-modal">
+										<div class="mb-0">
+											<i data-feather="file" class="me-25"></i> <span
+												class="align-middle">Archivo</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<script>
+								var fileInput;
+								var nombreArchivo;
+								// Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
+								document.getElementById("PDFArchivo").addEventListener("change", function () {
+
+									fileInput = document.getElementById("PDFformulario");
+									nombreArchivo = fileInput.files[0].name;
+									// Verificamos si se seleccionó un archivo
+									if (fileInput.files.length > 0) {
+										// Obtenemos el nombre del archivo
+										var fileName = fileInput.files[0].name;
+										// Verificamos si la extensión del archivo es PDF
+										if (!isValidPDF(fileName)) {
+											// Reseteamos el valor del input file para borrar la selección inválida
+											fileInput.value = "";
+											$('#alertasFormArchivo').html('<div class="alert alert-danger alert-dismissible">' +
+												'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+												'<h6><i class="icon fas fa-ban"></i> El archivo seleccionado no es Válido!</h6>' +
+												'Solo se Admite Archivos tipo PDF' +
+												'</div>');
+										} else {
+
+											$('#alertasFormArchivo').html('<div class="alert alert-success alert-dismissible">' +
+												'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+												'<h6><i class="icon fas fa-check"></i> El archivo ' + nombreArchivo + ' es Válido!</h6>' +
+												'</div>');
+										}
+									}
+								});
+
+								// Función para validar si el nombre del archivo tiene extensión PDF
+								function isValidPDF(fileName) {
+									var validExtensions = ["pdf"];
+									var fileExtension = fileName.split(".").pop().toLowerCase();
+									return validExtensions.indexOf(fileExtension) !== -1;
+								}
+
+								$(function () {
+
+									$('#PDFformulario').bs_dropzone({
+										maxFiles: 1,
+										acceptedFiles: '.pdf',
+										boxClass: 'alert p-5 text-center font-weight-bold',
+										noneColorClass: 'alert alert-success alert-dismissible',
+										dragColorClass: 'alert alert-warning alert-dismissible',
+										doneColorClass: 'alert alert-success alert-dismissible',
+										failColorClass: 'alert alert-danger alert-dismissible',
+										language: {
+											emptyText: 'Introdusca o arrastre un archivo PDF',
+											dragText: '[Soltar aquí]',
+											dropText: 'El archivo se subió correctamente'
+										}
+									});
+
+								});
+							</script>
+
+							<div class="sidebar-list">
+
+								<div class="my-drivee"></div>
+
+								<div class="list-group" th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
+									<h6 class="section-label px-2 mb-1">DIMENSIONES</h6>
+									<div>
+										<a th:href="@{'/home/' + ${c.id_carpeta}}"
+											class="list-group-item list-group-item-action" th:each="c: ${menus}"
+											th:if="${c.estado != 'Xusoc2' && c.estado!='X'}"> <i data-feather="folder"
+												class="me-50 font-medium-3"></i> <span class="align-middle"
+												th:text="${c.nom_carpeta}">Documents</span>
+										</a>
+									</div>
+								</div>
+								<div class="list-group" th:if="${tipoPersonasession.nom_tipo_persona=='Personal'}">
+									<h6 class="section-label px-2 mb-1">DIMENSIONES</h6>
+									<div>
+										<a th:href="@{'/home/' + ${c.id_carpeta}}+'/'"
+											class="list-group-item list-group-item-action" th:each="c: ${menus}"
+											th:if="${c.estado != 'Xusoc2' && c.estado!='X'}"> <i data-feather="folder"
+												class="me-50 font-medium-3"></i> <span class="align-middle"
+												th:text="${c.nom_carpeta}">Documents</span>
+										</a>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+
+			<div class="content-right">
+				<div class="content-wrapper container-xxl p-0">
+					<div class="content-header row"></div>
+					<div class="content-body">
+						<!-- overlay container -->
+						<div th:class="'alert alert-' + (${clase != null} ? ${clase} : info)" role="alert"
+							th:if="${mensaje != null}">
+							<h4 class="alert-heading" th:text="${mensaje}"></h4>
+						</div>
+						<div class="body-content-overlay"></div>
+
+						<!-- file manager app content starts -->
+						<div class="file-manager-main-content">
+							<!-- search area start -->
+							<div class="file-manager-content-header d-flex justify-content-between align-items-center">
+								<div class="d-flex align-items-center">
+									<div class="sidebar-toggle d-block d-xl-none float-start align-middle ms-1">
+										<i data-feather="menu" class="font-medium-5"></i>
+									</div>
+									<div class="input-group input-group-merge shadow-none m-0 flex-grow-1">
+										<span class="input-group-text border-0"> <i data-feather="search"></i>
+										</span> <input type="text"
+											class="form-control files-filter border-0 bg-transparent"
+											placeholder="Search" />
+									</div>
+								</div>
+								<div class="d-flex align-items-center">
+									<div class="file-actions">
+										<i data-feather="arrow-down-circle"
+											class="font-medium-2 cursor-pointer d-sm-inline-block d-none me-50"></i>
+										<i data-feather="trash"
+											class="font-medium-2 cursor-pointer d-sm-inline-block d-none me-50"></i>
+										<i data-feather="alert-circle"
+											class="font-medium-2 cursor-pointer d-sm-inline-block d-none"
+											data-bs-toggle="modal" data-bs-target="#app-file-manager-info-sidebar"></i>
+										<div class="dropdown d-inline-block">
+											<i class="font-medium-2 cursor-pointer" data-feather="more-vertical"
+												role="button" id="fileActions" data-bs-toggle="dropdown"
+												aria-haspopup="true" aria-expanded="false"> </i>
+											<div class="dropdown-menu dropdown-menu-end" aria-labelledby="fileActions">
+												<a class="dropdown-item" href="#"> <i data-feather="move"
+														class="cursor-pointer me-50"></i> <span
+														class="align-middle">Open with</span>
+												</a> <a class="dropdown-item d-sm-none d-block" href="#"
+													data-bs-toggle="modal"
+													data-bs-target="#app-file-manager-info-sidebar"> <i
+														data-feather="alert-circle" class="cursor-pointer me-50"></i>
+													<span class="align-middle">More Options</span>
+												</a> <a class="dropdown-item d-sm-none d-block" href="#"> <i
+														data-feather="trash" class="cursor-pointer me-50"></i> <span
+														class="align-middle">Delete</span>
+												</a>
+												<div class="dropdown-divider"></div>
+												<a class="dropdown-item" href="#"> <i data-feather="plus"
+														class="cursor-pointer me-50"></i> <span class="align-middle">Add
+														shortcut</span>
+												</a> <a class="dropdown-item" href="#"> <i data-feather="folder-plus"
+														class="cursor-pointer me-50"></i>
+													<span class="align-middle">Move to</span>
+												</a> <a class="dropdown-item" href="#"> <i data-feather="star"
+														class="cursor-pointer me-50"></i> <span class="align-middle">Add
+														to starred</span>
+												</a> <a class="dropdown-item" href="#"> <i data-feather="droplet"
+														class="cursor-pointer me-50"></i> <span
+														class="align-middle">Change color</span>
+												</a>
+												<div class="dropdown-divider"></div>
+												<a class="dropdown-item" href="#"> <i data-feather="download"
+														class="cursor-pointer me-50"></i> <span
+														class="align-middle">Download</span>
+												</a>
+											</div>
+										</div>
+									</div>
+									<div class="btn-group view-toggle ms-50" role="group">
+										<input type="radio" class="btn-check" name="view-btn-radio" data-view="grid"
+											id="gridView" checked autocomplete="off" />
+										<label class="btn btn-outline-primary p-50 btn-sm" for="gridView"> <i
+												data-feather="grid"></i>
+										</label> <input type="radio" class="btn-check" name="view-btn-radio"
+											data-view="list" id="listView" autocomplete="off" /> <label
+											class="btn btn-outline-primary p-50 btn-sm" for="listView">
+											<i data-feather="list"></i>
+										</label>
+									</div>
+								</div>
+							</div>
+							<!-- search area ends here -->
+							<script> //Funcion para Buscar categorias
+								function buscarDescripcionArchivo() {
+									//call function when page is loaded
+									//alert($('#texto').val());
+									getContent();
+									//set on change listener
+									$('#texto').change(getContent);
+									function getContent() {
+										//create url to request fragment
+										var url = "/home/archivo/" + $('#texto').val();
+										//load fragment and replace content
+										$('#replace_div').load(url);
+									}
+								}
+							</script>
+
+
+							<div class="file-manager-content-body">
+								<div class="breadcrumb-wrapper"
+									th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
+									<ol class="breadcrumb">
+										<li class="breadcrumb-item"><a th:href="@{/home}">HOME</a>
+										</li>
+										<li class="breadcrumb-item" th:each="li : ${list}"><a
+												th:href="@{'/home/'+${li.id_carpeta}}" th:text="${li.nom_carpeta}"></a>
+										</li>
+									</ol>
+
+								</div>
+								<div class="breadcrumb-wrapper"
+									th:if="${tipoPersonasession.nom_tipo_persona=='Personal'}">
+									<ol class="breadcrumb">
+										<li class="breadcrumb-item"><a th:href="@{/home}">HOME</a>
+										</li>
+										<li class="breadcrumb-item" th:each="li : ${list}"><a
+												th:href="@{'/home/'+${li.id_carpeta}}" th:text="${li.nom_carpeta}"></a>
+										</li>
+									</ol>
+
+								</div>
+
+
+
+								<div id="replace_div">
+
+									<div class="view-container">
+										<h6 class="files-section-title mt-25 mb-75" th:if="!${ExisteCarpeta}">Carpetas
+										</h6>
+										<div class="files-header">
+											<h6 class="fw-bold mb-0">Nombre</h6>
+											<div>
+												<h6 class="fw-bold file-item-size d-inline-block mb-0">tamanio</h6>
+												<h6 class="fw-bold file-last-modified d-inline-block mb-0">fecha
+													creada</h6>
+												<h6 class="fw-bold d-inline-block me-1 mb-0">Acciones</h6>
+											</div>
+										</div>
+										<div class="card file-manager-item folder level-up">
+											<div class="card-img-top file-logo-wrapper">
+												<div class="d-flex align-items-center justify-content-center w-100">
+													<i data-feather="arrow-up"></i>
+												</div>
+											</div>
+											<div class="card-body ps-2 pt-0 pb-1">
+												<div class="content-wrapper">
+													<p class="card-text file-name mb-0">...</p>
+												</div>
+											</div>
+										</div>
+										<div class="card file-manager-item folder" th:each="c, cont: ${carpetas}"
+											th:if="${c.estado != 'X'}">
+											<div class="form-check">
+												<input type="checkbox" class="form-check-input" id="customCheck8" />
+												<label class="form-check-label" for="customCheck1"></label>
+											</div>
+											<!--th:style="background-image: url('/uploads/"+${c.ruta_icono}+"'); width: 100%; height: 100px;"-->
+											<div class="card-img-top file-logo-wrapper"
+												th:style="'background-image:url(/uploads/' + ${c.ruta_icono} + '); background-repeat: no-repeat; background-size: 100% 100%;'">
+												<!-- file-logo-wrapper-->
+
+												<div class="dropdown float-end">
+													<div class="btn-group">
+														<a class=" toggle-dropdown" id="dropdownMenuButton701"
+															data-bs-toggle="dropdown">
+															<i class='fas fa-ellipsis-v'></i>
+														</a>
+														<div class="dropdown-menu"
+															aria-labelledby="dropdownMenuButton701">
+															<a class="dropdown-item" href="#"
+																th:onclick="renombrarCarpeta([[${c.id_carpeta}]],[[${c.nom_carpeta}]],[[${c.descripcion}]])"
+																data-bs-toggle="modal"
+																data-bs-target="#ModalRsnombrarArchiv">Renombrar
+																Carpeta</a>
+															<a class="dropdown-item"
+																th:onclick="eliminarCarpeta([[${c.id_carpeta}]])">Eliminar
+																Carpeta</a>
+															<a class="dropdown-item"
+																th:onclick="carpetaSeleccionada([[${c.id_carpeta}]])"
+																type="button" data-bs-toggle="modal"
+																data-bs-target="#Asignar-Usuario-modal">Asignar
+																Usuarios</a>
+														</div>
+													</div>
+												</div>
+												<div class="d-flex align-items-center justify-content-center">
+													<!-- <i data-feather="folder" style="font-size: 65px;"></i> -->
+													<a th:href="@{'/home/' + ${c.id_carpeta}}" style="color: #f8d775">
+
+														<!--<i class="fas fa-folder-open" style="font-size: 80px;"> </i>-->
+													</a>
+												</div>
+											</div>
+
+											<div class="card-body">
+												<div class="content-wrapper">
+													<a class="card-text file-name mb-0" th:text="${c.nom_carpeta}"
+														th:href="@{'/home/' + ${c.id_carpeta}}"></a>
+													<p class="card-text file-size mb-0">2gb</p>
+													<p class="card-text file-date" th:text="${c.fecha_registro}"></p>
+												</div>
+												<div class="row">
+													<a th:href="@{'/home/' + ${c.id_carpeta}}" style="color: black;"><b
+															class="card-text" th:text="${c.descripcion}"></b></a><br>
+												</div>
+												<!--<small class="file-accessed text-muted"
+													th:text="${c.usuario}? 'Propietario: '+${c.usuario.persona.nombre}+' '+${c.usuario.persona.ap_paterno} : 'Sin Propietario Asignado'" 
+													th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}"></small>-->
+												<small class="file-accessed text-muted"
+													th:if="${tipoPersonasession.nom_tipo_persona == 'Administrador'}">
+													Propietario:
+													<span th:if="${c.usuarios.size() > 0}">
+														<span th:each="usuario : ${c.usuarios}"
+															th:text="${usuario.persona.nombre + ' ' + usuario.persona.ap_paterno}"></span>
+													</span>
+													<span th:unless="${c.usuarios.size() > 0}">
+														Sin Propietario Asignado
+													</span>
+												</small>
+
+												<small class="file-accessed text-muted"
+													th:text="'Creacion: '+${c.fecha_registro}"></small>
+
+											</div>
+										</div>
+										<div class="d-none flex-grow-1 align-items-center no-result mb-3">
+											<i data-feather="alert-circle" class="me-50"></i> No Results
+										</div>
+									</div>
+									<!-- /Folders Container Ends -->
+
+									<!-- Files Container Starts -->
+									<div class="view-container">
+										<h6 class="files-section-title mt-2 mb-75" th:if="!${ExisteArchivo}">Archivos
+										</h6>
+
+										<th:block th:if="${anterior!=null}" th:each="a: ${anterior.archivos}">
+
+
+											<!-- th:onclick="click([[${a.id_archivo}]])" -->
+											<div th:if="${a.estado != 'X'}" class="card file-manager-item file">
+												<div class="form-check">
+													<input type="checkbox" class="form-check-input" id="customCheck8" />
+													<label class="form-check-label" for="customCheck8"></label>
+												</div>
+												<div class="card-img-top file-logo-wrapper">
+													<div class="dropdow float-end">
+														<div class="btn-group">
+															<a class="btn toggle-dropdown" id="dropdownMenuButton700"
+																type="button" data-bs-toggle="dropdown">
+																<i class='fas fa-ellipsis-v'></i>
+															</a>
+															<div class="dropdown-menu"
+																aria-labelledby="dropdownMenuButton700">
+																<a class="dropdown-item" href="#"
+																	th:onclick="renombrar([[${a.id_archivo}]],[[${a.nom_archivo}]],[[${a.descripcion}]])"
+																	data-bs-toggle="modal"
+																	data-bs-target="#ModalRsnombrarArchiv">Renombrar
+																	Archivo</a>
+																<a class="dropdown-item"
+																	th:onclick="eliminarArchivo([[${a.id_archivo}]])">Eliminar
+																	Archivo</a>
+
+															</div>
+														</div>
+
+													</div>
+
+													<div class="d-flex align-items-center justify-content-center">
+														<!--  w-100 -->
+														<a type="button" data-bs-toggle="modal"
+															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+															th:href="@{'/uploads/' + ${a.file}}">
+															<!--<img th:src="${'/uploads/' + a.tipoArchivo.icono}"
+														alt="file-icon" height="85"/></a>-->
+															<img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}"
+																alt="file-icon" height="85"
+																style="object-fit: cover; width: 110%; height: 110%;" /></a>
+													</div>
+												</div>
+												<div class="card-body bg-white">
+													<div class="content-wrapper">
+														<a class="card-text file-name mb-0" th:text="${a.nom_archivo}"
+															data-bs-toggle="modal"
+															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+															th:href="@{'/uploads/' + ${a.file}}"></a>
+
+														<p class="card-text file-size mb-0">2gb</p>
+														<p class="card-text file-date"></p>
+													</div>
+													<div class="row">
+														<a th:href="@{'/uploads/' + ${a.file}}" data-bs-toggle="modal"
+															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+															style="color: black;"><b class="card-text"
+																th:text="${a.descripcion}"></b></a><br>
+														<!-- th:onclick="visualizar([[${a.file}]])" -->
+													</div>
+													<small class="file-accessed text-muted"
+														th:text="'Fecha creada '+${a.fecha_registro}"></small>
+
+												</div>
+											</div>
+										</th:block>
+										<div class="d-none flex-grow-1 align-items-center no-result mb-3">
+											<i data-feather="alert-circle" class="me-50"></i> No Results
+										</div>
+
+									</div>
+								</div>
+								<!-- /Files Container Ends -->
+							</div>
+						</div>
+						<!-------------- ARCHIVO MODAL -------------->
+						<div class="modal fade" id="ArchivoModal2" tabindex="-1" aria-labelledby="ArchivoModal2"
+							aria-hidden="true" data-bs-backdrop="static">
+							<div class="modal-dialog modal-xl">
+								<div class="modal-content" id="ContenidoArchivo">
+								</div>
+								<!-- /.modal-content -->
+							</div>
+							<!-- /.modal-dialog -->
+						</div>
+						<script>
+							function ContenidoArchivo(id) {
+								$.ajax({
+									type: 'GET',
+									url: '/ContenidoArchivo/' + id,  // Ruta del metodo del controlador en Spring Boot
+									success: function (response) {
+										$("#ContenidoArchivo").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+										//$('#pdfContainer').html('<embed src="/verPdf/' + id + '" type="application/pdf" width="100%" height="800px" />');
+										$('#botonCerrarArchivoC').html('<a type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></a>');
+									}
+								});
+							}
+						</script>
+						<!-- /.modal -->
+						<!-- file manager app content ends -->
+						<script type="text/javascript" th:inline="javascript">
+							function sacarId(id_carpeta) {
+								var id = id_carpeta;
+								//alert(id()
+								document.getElementById("modal_modificar_carpeta").innerHTML =
+									"<div class='modal fade' id='mod_carpeta'>" +
+									"<div class='modal-dialog modal-dialog-centered'>" +
+									"<div class='modal-content'>" +
+									"<a class='dropdown-item' href='#' onclick='modCarpeta(" + id + ")'" +
+									"data-bs-toggle='modal' data-bs-target='#formRenombrarCarpeta'>" +
+									"<i data-feather='edit' class='align-middle me-50'></i>" +
+									"<span class='align-middle'>Renombrar Carpeta</span>" +
+									"</a>" +
+									"<div class='dropdown-divider'></div>" +
+									"<a class='dropdown-item' href='#'> <i data-feather='trash'" +
+									"class='align-middle me-50'></i> <span class='align-middle'>Eliminar Carpeta</span>" +
+									"</a>" +
+									"</div>" +
+									"</div></div>"
+							}
+
+
+
+							function modCarpeta(id_carpeta) {
+								//var contador = [[${contadori}]];
+								var sal = id_carpeta;
+
+								var n = "carp";
+								var d = "des";
+								//alert(sal);
+								let div = document.getElementById("modal_form_modificar_carpeta");
+
+								div.innerHTML =
+									"<div class='modal fade' id='formRenombrarCarpeta'>" +
+									"<div class='modal-dialog modal-dialog-centered'>" +
+									"<div class='modal-content'>" +
+									"<form method='post' action='/renombrar-carpeta'>" +
+									"<div class='modal-header'>" +
+									"<h5 class='modal-title'>Renombrar Carpeta</h5>" +
+									"<button type='button' class='btn-close'" +
+									"data-bs-dismiss='modal' aria-label='Close'></button>" +
+									"</div>" +
+									"<div class='modal-body'>" +
+									"<label class='form-label' for='basic-addon-name'>Referencia</label>" +
+									"<input type='number' class='form-control' name='id_carpeta'" +
+									"value='" + id_carpeta + "' placeholder='id_carpeta'" +
+									"style='text-transform: uppercase;'/>" +
+									"</div>" +
+									"<div class='modal-body'>" +
+									"<label class='form-label' for='basic-addon-name'>Referencia</label>" +
+									"<input type='text' class='form-control' name='nom_carpeta'" +
+									"value='" + n + "' placeholder='referencia'" +
+									"style='text-transform: uppercase;'/>" +
+									"</div>" +
+									"<div class='modal-body'>" +
+									"<label class='form-label' for='basic-addon-name'>Nombre</label>" +
+									"<input type='text' class='form-control' name='descripcion'" +
+									"value='" + d + "' placeholder='nombre'" +
+									"style='text-transform: uppercase;'/>" +
+									"</div>" +
+									"<div class='modal-footer'>" +
+									"<button type='submit' class='btn btn-primary me-1'" +
+									"data-bs-dismiss='modal'>Crear</button>" +
+									"<button type='button' class='btn btn-outline-secondary'" +
+									"data-bs-dismiss='modal'>Cancelar</button>" +
+									"</div>" +
+									"</form>" +
+									"</div>" +
+									"</div>" +
+									"</div>"
+
+							}
+
+
+
+							function visualizar(file) {
+								var archivo = file;
+								let vista = document.getElementById("salida");
+								vista.innerHTML =
+									"<div class='modal fade' id='vista'>" +
+									"<div class='modal-dialog modal-dialog-centered'>" +
+									"<div class='modal-content'>" +
+									"<iframe frameborder='1' scrolling='auto' height='1100' width='850' src='http://localhost:8181/uploads/b4514754-4849-4687-b639-3fd92dbb6a10_UNIVERSIDAD%20AMAZONICA%20DE%20PANDO%20PLAN%20ESTRATEGICO%20DE%20DESARROLLO.pdf'>" +
+									"</iframe>" +
+									"</div>" +
+									"</div>" +
+									"</div>"
+							}
+							function mod_archivo(nom_archivo, descripcion) {
+								var nombre = nom_archivo;
+								var descrip = descripcion;
+								//alert(nombre+' '+descrip);
+
+
+
+
+							}
+						</script>
+						<div id="salida"></div>
+
+						<!-- File Info Sidebar Starts-->
+						<div class="modal modal-slide-in fade show" id="app-file-manager-info-sidebar">
+							<div class="modal-dialog sidebar-lg">
+								<div class="modal-content p-0">
+									<div
+										class="modal-header d-flex align-items-center justify-content-between mb-1 p-2">
+										<h5 class="modal-title">menu.js</h5>
+										<div>
+											<i data-feather="trash" class="cursor-pointer me-50"
+												data-bs-dismiss="modal"></i> <i data-feather="x" class="cursor-pointer"
+												data-bs-dismiss="modal"></i>
+										</div>
+									</div>
+									<div class="modal-body flex-grow-1 pb-sm-0 pb-1">
+										<ul class="nav nav-tabs tabs-line" role="tablist">
+											<li class="nav-item"><a class="nav-link active" data-bs-toggle="tab"
+													href="#details-tab" role="tab" aria-controls="details-tab"
+													aria-selected="true"> <i data-feather="file"></i> <span
+														class="align-middle ms-25">Details</span>
+												</a></li>
+											<li class="nav-item"><a class="nav-link" data-bs-toggle="tab"
+													href="#activity-tab" role="tab" aria-controls="activity-tab"
+													aria-selected="true"> <i data-feather="activity"></i> <span
+														class="align-middle ms-25">Activity</span>
+												</a></li>
+										</ul>
+										<div class="tab-content" id="myTabContent">
+											<div class="tab-pane fade show active" id="details-tab" role="tabpanel"
+												aria-labelledby="details-tab">
+												<div
+													class="d-flex flex-column justify-content-center align-items-center py-5">
+													<img src="../../../app-assets/images/js.png" alt="file-icon"
+														height="64" />
+													<p class="mb-0 mt-1">54kb</p>
+												</div>
+												<h6 class="file-manager-title my-2">Settings</h6>
+												<ul class="list-unstyled">
+													<li class="d-flex justify-content-between align-items-center mb-1">
+														<span>File Sharing</span>
+														<div class="form-check form-switch">
+															<input type="checkbox" class="form-check-input"
+																id="sharing" /> <label class="form-check-label"
+																for="sharing"></label>
+														</div>
+													</li>
+													<li class="d-flex justify-content-between align-items-center mb-1">
+														<span>Synchronization</span>
+														<div class="form-check form-switch">
+															<input type="checkbox" class="form-check-input" checked
+																id="sync" /> <label class="form-check-label"
+																for="sync"></label>
+														</div>
+													</li>
+													<li class="d-flex justify-content-between align-items-center mb-1">
+														<span>Backup</span>
+														<div class="form-check form-switch">
+															<input type="checkbox" class="form-check-input"
+																id="backup" /> <label class="form-check-label"
+																for="backup"></label>
+														</div>
+													</li>
+												</ul>
+												<hr class="my-2" />
+												<h6 class="file-manager-title my-2">Info</h6>
+												<ul class="list-unstyled">
+													<li class="d-flex justify-content-between align-items-center">
+														<p>Type</p>
+														<p class="fw-bold">JS</p>
+													</li>
+													<li class="d-flex justify-content-between align-items-center">
+														<p>Size</p>
+														<p class="fw-bold">54kb</p>
+													</li>
+													<li class="d-flex justify-content-between align-items-center">
+														<p>Location</p>
+														<p class="fw-bold">Files > Documents</p>
+													</li>
+													<li class="d-flex justify-content-between align-items-center">
+														<p>Owner</p>
+														<p class="fw-bold">Sheldon Cooper</p>
+													</li>
+													<li class="d-flex justify-content-between align-items-center">
+														<p>Modified</p>
+														<p class="fw-bold">12th Aug, 2020</p>
+													</li>
+
+													<li class="d-flex justify-content-between align-items-center">
+														<p>Created</p>
+														<p class="fw-bold">01 Oct, 2019</p>
+													</li>
+												</ul>
+											</div>
+											<div class="tab-pane fade" id="activity-tab" role="tabpanel"
+												aria-labelledby="activity-tab">
+												<h6 class="file-manager-title my-2">Today</h6>
+												<div class="d-flex align-items-center mb-2">
+													<div class="avatar avatar-sm me-50">
+														<img src="../../../app-assets/images/5-small.png" alt="avatar"
+															width="28" />
+													</div>
+													<div class="more-info">
+														<p class="mb-0">
+															<span class="fw-bold">Mae</span> shared the file with <span
+																class="fw-bold">Howard</span>
+														</p>
+													</div>
+												</div>
+												<div class="d-flex align-items-center">
+													<div class="avatar avatar-sm bg-light-primary me-50">
+														<span class="avatar-content">SC</span>
+													</div>
+													<div class="more-info">
+														<p class="mb-0">
+															<span class="fw-bold">Sheldon</span> updated the file
+														</p>
+													</div>
+												</div>
+												<h6 class="file-manager-title mt-3 mb-2">Yesterday</h6>
+												<div class="d-flex align-items-center mb-2">
+													<div class="avatar avatar-sm bg-light-success me-50">
+														<span class="avatar-content">LH</span>
+													</div>
+													<div class="more-info">
+														<p class="mb-0">
+															<span class="fw-bold">Leonard</span> renamed this file to
+															<span class="fw-bold">menu.js</span>
+														</p>
+													</div>
+												</div>
+												<div class="d-flex align-items-center">
+													<div class="avatar avatar-sm me-50">
+														<img src="../../../app-assets/images/avatar-s-1.jpg"
+															alt="Avatar" width="28" />
+													</div>
+													<div class="more-info">
+														<p class="mb-0">
+															<span class="fw-bold">You</span> shared this file with
+															Leonard
+														</p>
+													</div>
+												</div>
+												<h6 class="file-manager-title mt-3 mb-2">3 days ago</h6>
+												<div class="d-flex align-items-start">
+													<div class="avatar avatar-sm me-50">
+														<img src="../../../app-assets/images/avatar-s-1.jpg"
+															alt="Avatar" width="28" />
+													</div>
+													<div class="more-info">
+														<p class="mb-50">
+															<span class="fw-bold">You</span> uploaded this file
+														</p>
+														<img src="../../../app-assets/images/js.png" alt="Avatar"
+															class="me-50" height="24" /> <span
+															class="fw-bold">app.js</span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<!-- File Info Sidebar Ends -->
+
+						<!--opciones de carpetas-->
+
+
+						<!-- opciones de archivos -->
+
+						<!-- /File Dropdown Ends -->
+						<div th:if="${anterior!=null}" th:each="a: ${anterior.archivos}">
+							<div class="modal fade" th:id="${'visualizar_archivo'+a.id_archivo}">
+								<div class="modal-dialog modal-xl modal-dialog-centered">
+
+									<div class="modal-content">
+										<div class="modal-header">
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+
+										<div class=" modal-body">
+											<embed style="width: 100%; " height="800" frameborder="1" scrolling="auto"
+												th:src="@{'/uploads/' + ${a.file}}" type="application/pdf" />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+
+
+						<!-- Create New Folder Modal Starts-->
+						<div class="modal fade" id="new-folder-modal">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content">
+									<form th:action="${editModee} ?@{/renombrar-carpeta} :@{/guardar-carpeta}"
+										th:object="${carpeta}" method="post" enctype="multipart/form-data">
+										<input type="hidden" class="form-control" th:name="auxiliar" th:if="${editMode}"
+											th:value="${anterior.id_carpeta}" placeholder="Untitled folder" />
+										<!--<input type="hidden" th:each="usuario: ${personasession.usuario}" th:value="${usuario}" th:field="${carpeta.usuarios}">-->
+										<div class="modal-header">
+											<h5 class="modal-title">Nueva Carpeta</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Referencia</label>
+											<input type="text" class="form-control" required
+												th:field="${carpeta.nom_carpeta}" placeholder="referencia"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Nombre</label>
+											<input type="text" class="form-control" required
+												th:field="${carpeta.descripcion}" placeholder="nombre"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Icono de carpeta</label>
+											<input type="file" class="form-control" name="ruta_icon"
+												placeholder="imagen.png" />
+										</div>
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-primary me-1"
+												data-bs-dismiss="modal">Crear</button>
+											<button type="button" class="btn btn-outline-secondary"
+												data-bs-dismiss="modal">Cancelar</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						<!--  asignar usuarios   -->
+						<div class="modal fade" id="Asignar-Usuario-modal" aria-labelledby="Asignar-Usuario-modal">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content">
+									<form th:action="@{/AsignarUsuarios}" method="post" enctype="multipart/form-data">
+										<input type="hidden" name="id_carpeta" id="id_carpeta">
+										<div class="modal-header">
+											<h5 class="modal-title">Asignar Usuarios</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Usuarios</label>
+											<select name="usuarios" class="form-control select2" id="SelectUsuarios" multiple data-live-search="true">
+												<option th:each="usuario: ${usuarios}" th:value="${usuario.id_usuario}"
+													th:text="${usuario.username}" ></option>
+											</select>
+										</div>
+
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-primary me-1"
+												data-bs-dismiss="modal">Asignar</button>
+											<button type="button" class="btn btn-outline-secondary"
+												data-bs-dismiss="modal">Cancelar</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						<script>
+							function carpetaSeleccionada(id) {
+								$("#id_carpeta").val(id);
+							}
+
+					
+						</script>
+						<!-- modal renombrar carpeta -->
+						<div id=modal_modificar_carpeta></div>
+						<div id=modal_form_modificar_carpeta></div>
+						<!-- modal renombrar carpeta -->
+						<div class="modal fade" tabindex="-1" id="ModalRenombrarCarpeta" role="dialog"
+							aria-labelledby="myLargeModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-lg">
+								<div class="modal-content">
+
+									<form action="/renombrar-carpeta" method="post" enctype="multipart/form-data">
+										<input type="hidden" class="form-control" id="id_carpeta" name="id_carpeta"
+											placeholder="Untitled folder" />
+										<div class="modal-header">
+											<h5 class="modal-title">Renombrar Carpeta</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Referencia</label>
+											<input type="text" class="form-control" id="nom_carpetaa" name="nom_carpeta"
+												placeholder="Nombre archivo"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Nombre</label>
+											<input type="text" class="form-control" id="descripcio" name="descripcion"
+												placeholder="Descripcion"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Icono de carpeta</label>
+											<input type="file" class="form-control" name="ruta_icorenombrar"
+												placeholder="imagen.png" />
+										</div>
+
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-primary me-1"
+												data-bs-dismiss="modal">Actualizar</button>
+											<button type="button" class="btn btn-outline-secondary"
+												data-bs-dismiss="modal">Cancelar</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						<!-- modal renombrar archivo -->
+						<div class="modal fade" tabindex="-1" id="ModalRsnombrarArchivo" role="dialog"
+							aria-labelledby="myLargeModalLabel" aria-hidden="true">
+							<div class="modal-dialog modal-lg">
+								<div class="modal-content">
+
+									<form action="/renombrar-archivo" method="post">
+										<input type="hidden" class="form-control" id="id_archivo" name="id_archivo"
+											placeholder="Untitled folder" />
+										<div class="modal-header">
+											<h5 class="modal-title">Renombrar Archivo</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Nombre
+												archivo</label> <input type="text" class="form-control" id="nom_archivo"
+												name="nom_archivo" placeholder="Nombre archivo"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Descripcion</label>
+											<input type="text" class="form-control" id="descripci" name="descripcion"
+												placeholder="Descripcion"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-primary me-1"
+												data-bs-dismiss="modal">Actualizar</button>
+											<button type="button" class="btn btn-outline-secondary"
+												data-bs-dismiss="modal">Cancelar</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+
+
+
+						<div id="renombrar_archivo"></div>
+
+						<!-- cargar archivos -->
+						<div class="modal fade" id="new-archivo-modal">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content">
+									<form th:action="@{/guardar-archivo}" th:object="${archivo}" method="post"
+										enctype="multipart/form-data">
+										<input type="hidden" class="form-control" th:name="auxiliar" th:if="${editMode}"
+											th:value="${anterior.id_carpeta}" placeholder="Untitled folder" />
+										<div class="modal-header">
+											<h5 class="modal-title">Nuevo Archivo</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Nombre
+												archivo</label> <input type="text" class="form-control"
+												th:field="${archivo.nom_archivo}" placeholder="Nombre archivo"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Descripcion</label>
+											<input type="text" class="form-control" th:field="${archivo.descripcion}"
+												placeholder="Descripcion"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+										<!--<div class="modal-body">
+											<div class="mb-1 col-md-6">
+												<label class="form-label" for="basic-addon-name">Tipo de Archivo</label>
+
+												<select class="form-control" th:field="${archivo.tipoArchivo}">
+													<option th:each="c : ${TiposArchivos2}"
+														th:value="${c.id_tipo_archivo}" th:text="${c.nom_tipo_archivo}"
+														th:if="${c.estado != 'X'}"></option>
+												</select>
+
+												<div class="valid-feedback">Datos Validos en el Campo!</div>
+												<div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
+											</div>
+										</div>-->
+
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Archivo</label>
+											<input type="file" name="archivo" id="PDFarchivo" accept=".pdf"
+												data-validation="required" placeholder="Introdusca Archivo" />
+											<div id="alertasFormArchivo"></div>
+										</div>
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-primary me-1"
+												data-bs-dismiss="modal">Crear</button>
+											<button type="button" class="btn btn-outline-secondary"
+												data-bs-dismiss="modal">Cancelar</button>
+										</div>
+									</form>
+									<script>
+										var fileInput;
+										var nombreArchivo;
+										// Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
+										document.getElementById("PDFarchivo").addEventListener("change", function () {
+
+											fileInput = document.getElementById("PDFarchivo");
+											nombreArchivo = fileInput.files[0].name;
+											// Verificamos si se seleccionó un archivo
+											if (fileInput.files.length > 0) {
+												// Obtenemos el nombre del archivo
+												var fileName = fileInput.files[0].name;
+												// Verificamos si la extensión del archivo es PDF
+												if (!isValidPDF(fileName)) {
+													// Reseteamos el valor del input file para borrar la selección inválida
+													fileInput.value = "";
+													$('#alertasFormArchivo').html('<div class="alert alert-danger alert-dismissible fade show" role="alert">' +
+														'<h6><i class="icon fas fa-ban"></i> El archivo seleccionado no es Válido!</h6>' +
+														'Solo se Admite Archivos tipo PDF' +
+														'</div>');
+												} else {
+
+													$('#alertasFormArchivo').html('<div class="alert alert-success alert-dismissible fade show">' +
+														'<h6><i class="icon fas fa-check"></i> El archivo ' + nombreArchivo + ' es Válido!</h6>' +
+														'</div>');
+												}
+											}
+										});
+
+										// Función para validar si el nombre del archivo tiene extensión PDF
+										function isValidPDF(fileName) {
+											var validExtensions = ["pdf"];
+											var fileExtension = fileName.split(".").pop().toLowerCase();
+											return validExtensions.indexOf(fileExtension) !== -1;
+										}
+
+										$(function () {
+
+											$('#PDFarchivo').bs_dropzone({
+												maxFiles: 1,
+												acceptedFiles: '.pdf',
+												boxClass: 'alert p-5 text-center font-weight-bold',
+												noneColorClass: 'alert alert-success alert-dismissible',
+												dragColorClass: 'alert alert-warning alert-dismissible',
+												doneColorClass: 'alert alert-success alert-dismissible',
+												failColorClass: 'alert alert-danger alert-dismissible',
+												language: {
+													emptyText: 'Introdusca o arrastre un archivo PDF',
+													dragText: '[Soltar aquí]',
+													dropText: 'El archivo se subió correctamente'
+												}
+											});
+
+										});
+									</script>
+								</div>
+							</div>
+						</div>
+
+						<!-- /Create New Folder Modal Ends -->
+
+					</div>
+				</div>
+			</div>
+		</div>
+
+
+	</div>
+
+	<footer th:replace="layout/layout :: pie"></footer>
+	<script type="text/javascript">
+		function renombrarCarpeta(id_c, nom_c, desc) {
+			var id_carpeta = id_c;
+			var nom_carpeta = nom_c;
+			var descripcion = desc;
+			//alert(id_archivo);
+			//alert(nom_archivo);
+			//alert(descripcion);
+			$("#ModalRenombrarCarpeta").modal("show");
+
+			$("#id_carpeta").val(id_carpeta);
+			$("#nom_carpetaa").val(nom_carpeta);
+			$("#descripcio").val(descripcion);
+
+		}
+		function eliminarCarpeta(id_car) {
+			var id_carpeta = id_car;
+			if (confirm('Esta seguro de eliminar esta carpeta!')) {
+				window.location.href = '/eliminar-carpeta/' + id_carpeta;
+			}
+		}
+		function renombrar(id_a, nom, des) {
+			var id_archivo = id_a;
+			var nom_archivo = nom;
+			var descripcion = des;
+			//alert(id_archivo);
+			//alert(nom_archivo);
+			//alert(descripcion);
+			$("#ModalRsnombrarArchivo").modal("show");
+
+			$("#id_archivo").val(id_archivo);
+			$("#nom_archivo").val(nom_archivo);
+			$("#descripci").val(descripcion);
+
+		}
+		function eliminarArchivo(id_arch) {
+			var id_archivo = id_arch;
+			if (confirm('Esta seguro de eliminar este archivo!')) {
+				window.location.href = '/eliminar-archivo/' + id_archivo;
+			}
+		}
+
+
+
+	</script>
+
+</body>
+
+</html>

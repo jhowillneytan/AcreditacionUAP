@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="layout/layout :: head">
+</head>
+<body class="vertical-layout vertical-menu-modern content-left-sidebar navbar-floating footer-static" data-open="click" data-menu="vertical-menu-modern" data-col="content-left-sidebar">
+
+<nav th:replace="layout/layout :: cabecera"></nav>
+
+<div th:replace="layout/layout :: ladera"></div>
+
+
+<div class="app-content content file-manager-application">
+    <div class="content-wrapper container-xxl p-0">
+        
+        <div class="content-body">
+            <!-- Validation -->
+            <section class="bs-validation">
+                <div class="row">
+                    <!-- Bootstrap Validation -->
+                    <div class="col-md-12 col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">FORMULARIO TIPO ARCHIVO</h4>
+                            </div>
+                            <div class="card-body">                                
+                                    <form  action="../../../../facultad/formulario" method="post" novalidate>
+                                        <input type="hidden" th:field="${facultad.id_facultad}">                                        
+                                        <div class="row">                                        
+                                            <div class="mb-1 col-md-6">
+                                                <label class="form-label" for="basic-addon-name">FACULTAD</label>
+                                                <input type="text" class="form-control" placeholder="Introdusca Facultad" th:field="${facultad.nom_facultad}" required />
+                                                <div class="valid-feedback">Datos Validos en el Campo!</div>
+                                                <div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
+                                            </div>
+                                            <div class="mb-1 col-md-6">
+                                                <label class="form-label" for="basic-addon-name">DESCRIPCION</label>
+
+                                                <input type="text" class="form-control" placeholder="Introdusca Descripcion" th:field="${facultad.descripcion}" required />
+                                                <div class="valid-feedback">Datos Validos en el Campo!</div>
+                                                <div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
+                                            </div>
+                                            <div class="mb-1 col-md-6">
+                                                <button type="submit" class="btn btn-primary">ENVIAR</button>
+                                            </div>                                            
+                                        </div>
+                                </form>                                
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /Bootstrap Validation -->
+
+                </div>
+            </section>
+            <!-- /Validation -->
+
+            <section id="basic-datatable">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table id="example" class="table" style="width:100%">
+                                        <thead>
+                                            <tr>
+                                                <th>NRO</th>
+                                                <th>FACULTAD</th>
+                                                <th>DESCRIPCION</th>
+                                                <th>FECHA REGISTRO</th>
+                                                <th>OPERACIONES</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="f,cont : ${facultads}" th:if="${f.estado != 'X'}">
+                                                <td th:text="${cont.index + 1}"></td>
+                                                <td th:text="${f.nom_facultad}"></td>
+                                                <td th:text="${f.descripcion}"></td>
+                                                <td th:text="${f.fecha_registro}"></td>
+                                                <td>
+                                                    <a th:href="@{'/tipo-archivo/editar-facultad/' + ${f.id_facultad}}"><button class="btn btn-outline-primary"><i class="fas fa-edit"></i></button></a>
+                                        			<a th:href="@{'/tipo-archivo/eliminar-facultad/' + ${f.id_facultad}}"><button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button></a>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </section>
+        </div>
+        
+    </div>
+</div>
+
+    <div class="sidenav-overlay"></div>
+    <div class="drag-target"></div>
+    
+    <footer th:replace="layout/layout :: pie"></footer>
+    
+<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.bootstrap4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script>
+
+
+<script>
+$(document).ready(function() {
+    var table = $('#example').DataTable( {
+        lengthChange: false,
+        buttons: [ 'copy', 'excel', 'pdf', 'print'  ]
+    } );
+ 
+    table.buttons().container()
+        .appendTo( '#example_wrapper .col-md-6:eq(0)' );
+} );
+ </script>
+</body>
+</html>

@@ -356,6 +356,11 @@
 																type="button" data-bs-toggle="modal"
 																data-bs-target="#Asignar-Usuario-modal">Asignar
 																Usuarios</a>
+															<a class="dropdown-item"
+																th:onclick="carpetaSeleccionada2([[${c.id_carpeta}]])"
+																type="button" data-bs-toggle="modal"
+																data-bs-target="#Quitar-Usuario-modal">Quitar Usuarios
+																Usuarios</a>
 														</div>
 													</div>
 												</div>
@@ -383,17 +388,19 @@
 													th:text="${c.usuario}? 'Propietario: '+${c.usuario.persona.nombre}+' '+${c.usuario.persona.ap_paterno} : 'Sin Propietario Asignado'" 
 													th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}"></small>-->
 												<small>
-													<div class="dropdown" style="height: 300px;">
+													<div class="dropdown">
 														<div class="btn-group">
 															<a class=" toggle-dropdown" id="dropdownMenuButton701"
 																data-bs-toggle="dropdown">
 																<i class='fas fa-users'></i> Ver Propietarios...
 															</a>
-															<div class="dropdown-menu"
+															<div class="dropdown-menu" style="width: 200px;"
 																aria-labelledby="dropdownMenuButton701">
 																<ul>
-																	<li th:each="usuario : ${c.usuarios}"
-																		th:text="${usuario.persona.nombre + ' ' + usuario.persona.ap_paterno+ ' ' + usuario.persona.ap_materno}">
+																	<li th:each="usuario : ${c.usuarios}">
+																		<a type="button" onclick="prueba()"><small
+																				th:text="${usuario.persona.nombre + ' ' + usuario.persona.ap_paterno+ ' ' + usuario.persona.ap_materno}"></small></a>
+
 																	</li>
 																	<li th:unless="${c.usuarios.size() > 0}">Sin
 																		Propietario Asignado</li>
@@ -413,7 +420,12 @@
 										</div>
 									</div>
 									<!-- /Folders Container Ends -->
+									<script>
+										function prueba() {
+											alert("ASDASDASD");
+										}
 
+									</script>
 									<!-- Files Container Starts -->
 									<div class="view-container">
 										<h6 class="files-section-title mt-2 mb-75" th:if="!${ExisteArchivo}">Archivos
@@ -872,11 +884,11 @@
 												<option th:each="usuario: ${usuarios}" th:value="${usuario.id_usuario}"
 													th:text="${usuario.username}"></option>
 											</select>-->
-											<select class="form-select select2" multiple
+											<select class="form-select select2" multiple id="UsuariosSelect"
 												aria-label="Select múltiple ejemplo" name="usuarios">
-												<option selected>Selecciona una opción</option>
-												<option th:each="usuario: ${usuarios}" th:value="${usuario.id_usuario}"
-													th:text="${usuario.username}"></option>
+
+												<!--<option th:each="usuario: ${usuarios}" th:value="${usuario.id_usuario}"
+													th:text="${usuario.username}"></option>-->
 											</select>
 										</div>
 
@@ -894,33 +906,77 @@
 						<script>
 							function carpetaSeleccionada(id) {
 								$("#id_carpeta").val(id);
+								$.ajax({
+									url: "/usuariosCarpeta/" + id,
+									type: "POST",
+									dataType: "json",
+									success: function (data) {
+										var select = document.getElementById("UsuariosSelect");
+										select.innerHTML = "";
+										cargarMatrizEnSelect(data);
+									},
+									error: function () {
+										console.log("Error al obtener la lista de usuarios");
+									}
+								});
+							}
+
+							function cargarMatrizEnSelect(matriz) {
+								var select = document.getElementById("UsuariosSelect");
+
+								// Limpiar el select antes de agregar nuevas opciones
+								select.innerHTML = "";
+								/*var option1 = document.createElement("option");
+								option1.value = "";
+								option1.text = "Seleccionar";
+								select.appendChild(option);*/
+								var cont = 0;
+								matriz.forEach(function (fila) {
+									var option = document.createElement("option");
+									if (cont == 0) {
+										option.value = "";
+										option.text = "Seleccionar";
+										cont++;
+										select.appendChild(option);
+										option = document.createElement("option");
+									}
+									option.value = fila[1];
+									option.text = fila[0];
+									select.appendChild(option);
+								});
 							}
 						</script>
-						<!--  asignar usuarios   -->
-						<div class="modal fade" id="Asignar-permiso-modal" aria-labelledby="Asignar-permiso-modal">
+						<!--  Quitar usuarios   -->
+						<div class="modal fade" id="Quitar-Usuario-modal" aria-labelledby="Quitar-Usuario-modal">
 							<div class="modal-dialog modal-dialog-centered">
 								<div class="modal-content">
-									<form th:action="@{/AsignarPermisoUsuario}" method="post"
-										enctype="multipart/form-data">
-										<input type="hidden" name="id_usuario" id="id_usuario">
+									<form th:action="@{/QuitarUsuariosCarpeta}" method="post" enctype="multipart/form-data">
+										<input type="hidden" name="id_carpeta2" id="id_carpeta2">
 										<div class="modal-header">
-											<h5 class="modal-title">Asignar Permisos a Usuario</h5>
+											<h5 class="modal-title">Quitar Usuarios</h5>
 											<button type="button" class="btn-close" data-bs-dismiss="modal"
 												aria-label="Close"></button>
 										</div>
 										<div class="modal-body">
-											<label class="form-label" for="basic-addon-name">Permisos</label>
-											<select name="usuarios" class="form-control select2" id="SelectUsuarios"
-												multiple data-live-search="true">
-												<option value="">Selccionar</option>
-												<option value="Lectura-Escritura">Lectura-Escritura</option>
-												<option value="Lectura-Escritura">Lectura</option>
+
+											<label class="form-label" for="basic-addon-name">Usuarios</label>
+											<!--<select name="usuarios" class="form-select select2" id="SelectUsuarios"
+												multiple>
+												<option th:each="usuario: ${usuarios}" th:value="${usuario.id_usuario}"
+													th:text="${usuario.username}"></option>
+											</select>-->
+											<select class="form-select select2" multiple id="UsuariosSelect2"
+												aria-label="Select múltiple ejemplo" name="usuarios">
+
+												<!--<option th:each="usuario: ${usuarios}" th:value="${usuario.id_usuario}"
+													th:text="${usuario.username}"></option>-->
 											</select>
 										</div>
 
+
 										<div class="modal-footer">
 											<button type="submit" class="btn btn-primary me-1"
-												data-bs-dismiss="modal">Asignar</button>
+												data-bs-dismiss="modal">Quitar</button>
 											<button type="button" class="btn btn-outline-secondary"
 												data-bs-dismiss="modal">Cancelar</button>
 										</div>
@@ -929,8 +985,46 @@
 							</div>
 						</div>
 						<script>
-							function usuarioSeleccionado(id) {
-								$("#id_usuario").val(id);
+							function carpetaSeleccionada2(id) {
+								$("#id_carpeta2").val(id);
+								$.ajax({
+									url: "/usuariosCarpetaActuales/" + id,
+									type: "POST",
+									dataType: "json",
+									success: function (data) {
+										var select = document.getElementById("UsuariosSelect2");
+										select.innerHTML = "";
+										cargarMatrizEnSelect2(data);
+									},
+									error: function () {
+										console.log("Error al obtener la lista de usuarios");
+									}
+								});
+							}
+
+							function cargarMatrizEnSelect2(matriz) {
+								var select = document.getElementById("UsuariosSelect2");
+
+								// Limpiar el select antes de agregar nuevas opciones
+								select.innerHTML = "";
+								/*var option1 = document.createElement("option");
+								option1.value = "";
+								option1.text = "Seleccionar";
+								select.appendChild(option);*/
+								var cont = 0;
+								matriz.forEach(function (fila) {
+									var option = document.createElement("option");
+									if (cont == 0) {
+										option.value = "";
+										option.text = "Seleccionar";
+										cont++;
+										select.appendChild(option);
+										option = document.createElement("option");
+									}
+									option.value = fila[1];
+									option.text = fila[0];
+									select.appendChild(option);
+								});
 							}
 						</script>
 						<!-- modal renombrar carpeta -->

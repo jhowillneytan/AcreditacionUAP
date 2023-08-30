@@ -132,7 +132,7 @@ public class HomeController {
 				model.addAttribute("carpeta", new Carpeta());
 				model.addAttribute("anterior", new Carpeta());
 				model.addAttribute("ExisteArchivo", "true");
-				//model.addAttribute("usuarios", usuarioService.findAll());
+				// model.addAttribute("usuarios", usuarioService.findAll());
 			}
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Docente")) {
 
@@ -499,15 +499,17 @@ public class HomeController {
 	}
 
 	// ------------ASIGNAR PERMISO A USUARIOS A CARPETAS
-	@PostMapping("/AsignarPermisoUsuario")
-	public String AsignarPermisoUsuario(ModelMap model, RedirectAttributes redirectAttrs,
-			@RequestParam(value = "permiso") String permiso,
-			@RequestParam(value = "id_usuario") Long id_usuario) {
-		Usuario usuario = usuarioService.findOne(id_usuario);
+	@PostMapping("/QuitarUsuariosCarpeta")
+	public String QuitarUsuariosCarpeta(ModelMap model, RedirectAttributes redirectAttrs,
+			@RequestParam(value = "usuarios") Long[] id_usuarios,
+			@RequestParam(value = "id_carpeta2") Long id_carpeta) {
+		Carpeta carpeta = carpetaService.findOne(id_carpeta);
 
-		usuario.setPermisosCarpeta(permiso);
+		for (int i = 0; i < id_usuarios.length; i++) {
+			carpeta.getUsuarios().remove(usuarioService.findOne(id_usuarios[i]));
+		}
 
-		usuarioService.save(usuario);
+		carpetaService.save(carpeta);
 		return "redirect:/home/";
 	}
 
@@ -557,38 +559,6 @@ public class HomeController {
 		return "redirect:/home/" + id_carpeta_anterior;
 	}
 
-	// * --------- VER PDF -------- */
-	/*
-	 * @GetMapping("/verPdf/{id}")
-	 * public ResponseEntity<ByteArrayResource> verPdf(@PathVariable Long id) {
-	 * Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
-	 * 
-	 * if (archivoOptional.isPresent()) {
-	 * Archivo archivo = archivoOptional.get();
-	 * 
-	 * ByteArrayResource resource = new ByteArrayResource(archivo.getContenido());
-	 * 
-	 * return ResponseEntity.ok()
-	 * .header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" +
-	 * archivo.getNom_archivo()+".pdf")
-	 * .contentType(MediaType.APPLICATION_PDF)
-	 * .contentLength(archivo.getContenido().length)
-	 * .body(resource);
-	 * } else {
-	 * return ResponseEntity.notFound().build();
-	 * }
-	 * }
-	 * 
-	 * @GetMapping(value = "/ContenidoArchivo/{id_archivo}")
-	 * public String ContenidoArchivo(HttpServletRequest request, Model model,
-	 * 
-	 * @PathVariable("id_archivo") Long id_archivo) {
-	 * System.out.println("EDITAR ARCHIVOS");
-	 * model.addAttribute("archivo", archivoService.findOne(id_archivo));
-	 * model.addAttribute("edit", "true");
-	 * return "/Archivo/archivo";
-	 * }
-	 */
 	@GetMapping("/verIcoPdf/{id}")
 	public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
 		Path projectPath = Paths.get("").toAbsolutePath();
@@ -710,5 +680,71 @@ public class HomeController {
 	@GetMapping("/vista")
 	public String vista() {
 		return "vista";
+	}
+
+	@PostMapping("/usuariosCarpeta/{id_carpeta}")
+	public ResponseEntity<String[][]> obtenerUsuariosDeCarpeta(@PathVariable Long id_carpeta,
+			HttpServletRequest request) {
+		Carpeta carpeta = carpetaService.findOne(id_carpeta);
+		if (carpeta == null) {
+			return ResponseEntity.notFound().build();
+		}
+
+		Persona p2 = (Persona) request.getSession().getAttribute("persona");
+		Persona p = personaService.findOne(p2.getId_persona());
+
+		List<Persona> listpers = new ArrayList<>();
+		if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+			listpers = personaService.findAll();
+		}
+		if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
+			listpers = p.getCarrera().getPersonas();
+		} else {
+			listpers = p.getCarrera().getPersonas();
+		}
+		List<Usuario> listUse = new ArrayList<>();
+		for (Persona persona : listpers) {
+			listUse.add(persona.getUsuario());
+		}
+
+		Set<Usuario> listaUsuarios = carpeta.getUsuarios();
+
+		for (int i = 0; i < listUse.size(); i++) {
+			for (Usuario usuario : listaUsuarios) {
+				if (listUse.get(i) == usuario) {
+					listUse.remove(i);
+				}
+			}
+		}
+
+		String[][] usuariosArray = new String[listUse.size()][2];
+
+		int index = 0;
+		for (Usuario usuario : listUse) {
+			usuariosArray[index][0] = usuario.getUsername();
+			usuariosArray[index][1] = String.valueOf(usuario.getId_usuario());
+			index++;
+		}
+
+		return ResponseEntity.ok(usuariosArray);
+	}
+
+	@PostMapping("/usuariosCarpetaActuales/{id_carpeta}")
+	public ResponseEntity<String[][]> usuariosCarpetaActuales(@PathVariable Long id_carpeta,
+			HttpServletRequest request) {
+		Carpeta carpeta = carpetaService.findOne(id_carpeta);
+
+		Set<Usuario> listaUsuarios = carpeta.getUsuarios();
+
+		String[][] usuariosArray = new String[listaUsuarios.size()][2];
+
+		int index = 0;
+		for (Usuario usuario : listaUsuarios) {
+			usuariosArray[index][0] = usuario.getUsername();
+			usuariosArray[index][1] = String.valueOf(usuario.getId_usuario());
+			index++;
+		}
+
+		return ResponseEntity.ok(usuariosArray);
 	}
 }

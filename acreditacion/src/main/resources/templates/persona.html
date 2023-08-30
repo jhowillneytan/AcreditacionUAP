@@ -88,6 +88,8 @@
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="select-country1">Tipo Persona</label>
 											<select class="form-select" th:field="${persona.tipoPersona}" required>
+												<option th:value="${editMode}? ${persona.tipoPersona}: ''"
+												th:text=""></option>
 												<option th:each="tp: ${listaTipoPersonas}"
 													th:value="${tp.id_tipo_persona}" th:text="${tp.nom_tipo_persona}">
 												</option>

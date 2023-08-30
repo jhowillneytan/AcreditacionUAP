@@ -89,8 +89,10 @@ public class UsuarioController {
 			usuario.setEstado("A");
 
 			iUsuarioService.save(usuario);
-			String mensaje = "Tu Usuario es: " + usuario.getUsername() + " y tu contrasena es: " + usuario.getPassword();
-			emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(), "Confirmacion",
+			String mensaje = "\n" + 
+					"Tu Usuario es: " + usuario.getUsername() + "\n Contrasena es: " + usuario.getPassword()+"\n " + 
+					"Link: http://virtual.uap.edu.bo:8383/login";
+			emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(), "Bienvenido al Sistema de Acreditacion Señor: "+usuario.getPersona().getNombre()+" "+usuario.getPersona().getAp_paterno(),
 					mensaje);
 
 			return "redirect:/form-usuario";

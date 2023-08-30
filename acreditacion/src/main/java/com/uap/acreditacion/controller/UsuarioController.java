@@ -89,9 +89,9 @@ public class UsuarioController {
 			usuario.setEstado("A");
 
 			iUsuarioService.save(usuario);
-
+			String mensaje = "Tu Usuario es: " + usuario.getUsername() + " y tu contrasena es: " + usuario.getPassword();
 			emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(), "Confirmacion",
-					"Tu Usuario es: " + usuario.getUsername() + " y tu contrasena es: " + usuario.getPassword());
+					mensaje);
 
 			return "redirect:/form-usuario";
 		} else {

@@ -24,7 +24,7 @@
 						<div class="sidebar-inner">
 							<!-- sidebar menu links starts -->
 							<!-- add file button -->
-							<div th:if="${tipoPersonasession.nom_tipo_persona != 'Evaluador'}">
+							<div th:if="${tipoPersonasession.nom_tipo_persona != 'Evaluador' or tipoPersonasession.nom_tipo_persona == 'Director'}">
 								<div class="dropdown dropdown-actions"
 									th:if="${tipoPersonasession.nom_tipo_persona == 'Administrador'}">
 									<!--style="background: linear-gradient(#28c76f, #28c76f);"-->
@@ -51,7 +51,7 @@
 									</div>
 								</div>
 								<div class="dropdown dropdown-actions"
-									th:if="${tipoPersonasession.nom_tipo_persona == 'Director' or tipoPersonasession.nom_tipo_persona == 'Docente' or tipoPersonasession.nom_tipo_persona == 'Secretaria' && editMode == 'true'}">
+									th:if="${(tipoPersonasession.nom_tipo_persona == 'Docente' or tipoPersonasession.nom_tipo_persona == 'Secretaria') && editMode == 'true'}">
 									<!--style="background: linear-gradient(#28c76f, #28c76f);"-->
 									<button class="btn btn-primary add-file-btn text-center w-100" type="button"
 										id="addNewFile" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -324,7 +324,7 @@
 											</div>
 										</div>
 										<div class="card file-manager-item folder" th:each="c, cont: ${carpetas}"
-											th:if="${c.estado != 'X'}">
+											th:if="${c.estado != 'X'}" >
 											<div class="form-check">
 												<input type="checkbox" class="form-check-input" id="customCheck8" />
 												<label class="form-check-label" for="customCheck1"></label>

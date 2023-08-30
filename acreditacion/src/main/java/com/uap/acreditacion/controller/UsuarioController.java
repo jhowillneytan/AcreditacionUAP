@@ -1,5 +1,6 @@
 package com.uap.acreditacion.controller;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.uap.acreditacion.dao.IUsuarioDao;
 import com.uap.acreditacion.entity.Archivo;
 import com.uap.acreditacion.entity.Carpeta;
-import com.uap.acreditacion.entity.Evaluador;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.entity.Usuario;
@@ -56,15 +56,25 @@ public class UsuarioController {
 			Persona p = personaService.findOne(p2.getId_persona());
     	Calendar cal= Calendar.getInstance();
     	int year= cal.get(Calendar.YEAR);
-
+		List<Usuario> listUsuarios = new ArrayList<>();
+		for (Persona persona :  p.getCarrera().getPersonas()) {
+			listUsuarios.add(persona.getUsuario());
+		}
 		TipoPersona tipoPersona = tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona());
 		model.addAttribute("personasession", p);
 		model.addAttribute("tipoPersonasession", tipoPersona);
     	model.addAttribute("usuario", new Usuario());
-		model.addAttribute("usuarios", iUsuarioService.findAll());
-		model.addAttribute("carpetas", carpetaService.findAll());
+		if (tipoPersona.getNom_tipo_persona().equals("Administrador")) {
+			model.addAttribute("usuarios", iUsuarioService.findAll());
+			model.addAttribute("personasUser", iPersonaService.findAll());
+		} else {
+			model.addAttribute("usuarios", listUsuarios);
+			model.addAttribute("personasUser",p.getCarrera().getPersonas());
+		}
+		
+		//model.addAttribute("carpetas", carpetaService.findAll());
     	model.addAttribute("ExisteArchivo", "true");
-		model.addAttribute("personasUser", iPersonaService.findAll());
+		model.addAttribute("personasUser",p.getCarrera().getPersonas());
     	return "/Usuarios/formulario";
 		} else {
 			return "redirect:/login";
@@ -74,31 +84,13 @@ public class UsuarioController {
 	@PostMapping("/RegistrarUsuario")
 	public String RegistrarUsuario(ModelMap model, HttpServletRequest request,@Validated Usuario usuario) throws MessagingException{
 		if (request.getSession().getAttribute("persona") != null) {
-			Persona p = (Persona) request.getSession().getAttribute("persona");
-    	Calendar cal= Calendar.getInstance();
-    	int year= cal.get(Calendar.YEAR);
-		//Carpeta carpeta = carpetaService.findOne(id_carpeta);
-		//System.out.println("la carpeta es: "+carpeta.getNom_carpeta());
-		TipoPersona tipoPersona = tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona());
-		model.addAttribute("personasession", p);
-		model.addAttribute("tipoPersonasession", tipoPersona);
-    	model.addAttribute("usuario", new Usuario());
-		model.addAttribute("usuarios", iUsuarioService.findAll());
-    	model.addAttribute("ExisteArchivo", "true");
-		model.addAttribute("personasUser", iPersonaService.findAll());
-		usuario.setEstado("A");
-		Set<Carpeta> carpetas = usuario.getCarpetas();
 		
-		//carpeta.getUsuarios().add(usuario);
-		//carpetaService.save(carpeta);
+		usuario.setEstado("A");
 
-		//Set<Usuario> usuarios = carpetas.
-		//usuario.setCarpetas(carpetas);
-		//usuario.getCarpetas().add(carpeta);
 		iUsuarioService.save(usuario);
-		//p.setEmail("destinatario@example.com"); // Establecer la dirección de correo de la persona
+		
         emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(), "Confirmacion", "Tu Usuario es: "+usuario.getUsername()+" y tu contrasena es: "+usuario.getPassword());
-		//System.out.println("el email destino es: "+usuario.getPersona().getEmail());
+		
     	return "redirect:/form-usuario";
 		} else {
 			return "redirect:/login";
@@ -118,10 +110,20 @@ public class UsuarioController {
 		model.addAttribute("personasession", p);
 		model.addAttribute("tipoPersonasession", tipoPersona);
     	model.addAttribute("usuario", iUsuarioService.findOne(id_usuario));
-		model.addAttribute("usuarios", iUsuarioService.findAll());
-		model.addAttribute("carpetas", carpetaService.findAll());
+		//model.addAttribute("carpetas", carpetaService.findAll());
     	model.addAttribute("ExisteArchivo", "true");
-		model.addAttribute("personasUser", iPersonaService.findAll());
+		if (tipoPersona.getNom_tipo_persona().equals("Administrador")) {
+			model.addAttribute("usuarios", iUsuarioService.findAll());
+			model.addAttribute("personasUser", iPersonaService.findAll());
+		} else {
+			List<Usuario> listUsuarios = new ArrayList<>();
+		for (Persona persona :  p.getCarrera().getPersonas()) {
+			listUsuarios.add(persona.getUsuario());
+		}
+			model.addAttribute("usuarios", listUsuarios);
+			model.addAttribute("personasUser",p.getCarrera().getPersonas());
+		}
+		model.addAttribute("editMode", "true");
     	return "/Usuarios/formulario";
 		} else {
 			return "redirect:/login";
@@ -132,23 +134,9 @@ public class UsuarioController {
 	public String ModificarUsuario(ModelMap model, HttpServletRequest request,@Validated Usuario usuario,
 	@RequestParam(value = "carpeta")Long id_carpeta) throws MessagingException{
 		if (request.getSession().getAttribute("persona") != null) {
-			Persona p = (Persona) request.getSession().getAttribute("persona");
-    	Calendar cal= Calendar.getInstance();
-    	int year= cal.get(Calendar.YEAR);
-		Carpeta carpeta = carpetaService.findOne(id_carpeta);
-		TipoPersona tipoPersona = tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona());
-		model.addAttribute("personasession", p);
-		model.addAttribute("tipoPersonasession", tipoPersona);
-    	model.addAttribute("usuario", new Usuario());
-		model.addAttribute("usuarios", iUsuarioService.findAll());
-    	model.addAttribute("ExisteArchivo", "true");
-		model.addAttribute("personasUser", iPersonaService.findAll());
-		//carpeta.setUsuario(usuario);
+		
 		iUsuarioService.save(usuario);
 
-		//p.setEmail("destinatario@example.com"); // Establecer la dirección de correo de la persona
-        //emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(), "Confirmacion", "Tu Usuario es: "+usuario.getUsername()+" y tu contrasena es: "+usuario.getPassword());
-		//System.out.println("el email destino es: "+usuario.getPersona().getEmail());
     	return "redirect:/form-usuario";
 		} else {
 			return "redirect:/login";
@@ -159,23 +147,10 @@ public class UsuarioController {
 	public String EliminarUsuario(ModelMap model, HttpServletRequest request,
 	@PathVariable("id_usuario")Long id_usuario){
 		if (request.getSession().getAttribute("persona") != null) {
-			Persona p2 = (Persona) request.getSession().getAttribute("persona");
-			Persona p = personaService.findOne(p2.getId_persona());
-    	Calendar cal= Calendar.getInstance();
-    	int year= cal.get(Calendar.YEAR);
-		Usuario usuarioE =  iUsuarioService.findOne(id_usuario);
-		TipoPersona tipoPersona = tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona());
-		model.addAttribute("personasession", p);
-		model.addAttribute("tipoPersonasession", tipoPersona);
-    	model.addAttribute("usuario", new Usuario());
-		model.addAttribute("usuarios", iUsuarioService.findAll());
-		model.addAttribute("carpetas", carpetaService.findAll());
-    	model.addAttribute("ExisteArchivo", "true");
-		model.addAttribute("personasUser", iPersonaService.findAll());
-
-		/*carpeta.setUsuario(usuario);
-		iUsuarioService.save(usuario);*/
-    	return "/Usuarios/formulario";
+			Usuario usuario = iUsuarioService.findOne(id_usuario);
+			usuario.setEstado("X");
+			iUsuarioService.save(usuario);
+    	return "redirect:/form-usuario";
 		} else {
 			return "redirect:/login";
 		}

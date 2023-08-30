@@ -76,8 +76,8 @@ public class Carpeta implements Serializable{
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="usuario_carpeta",
-    joinColumns=@JoinColumn(name = "id_usuario"),
-    inverseJoinColumns = @JoinColumn(name = "id_carpeta"))
+    joinColumns=@JoinColumn(name = "id_carpeta"),
+    inverseJoinColumns = @JoinColumn(name = "id_usuario"))
     private Set<Usuario> usuarios;
 
 }

@@ -31,7 +31,7 @@
 							</div>
 							<div class="card-body">
 								<form
-									th:action="${editMode} ?@{/tipo-persona/guardar-editado-tipo-persona} :@{/RegistrarUsuario}"
+									th:action="${editMode} ?@{/ModificarUsuario} :@{/RegistrarUsuario}"
 									method="post">
 									<input class="form-control" type="hidden" th:field="${usuario.id_usuario}"
 										th:if="${editMode}">
@@ -57,8 +57,9 @@
 									</div>
 									<div class="col-md-4 col-12 mb-1">
 										<label class="form-label" for="select-country1">Persona</label>
-										<select class="form-control form-select" th:field="${usuario.persona}" required>
-											<option value="">Seleccionar</option>
+										<select class="form-control form-select" th:field="${usuario.persona}">
+											<option th:value="${editMode}? ${usuario.persona} : ''" th:text="${editMode}? ${usuario.persona.nombre}+' '+${usuario.persona.ap_paterno} : 'Seleccionar'" selected>
+											</option>
 											<option th:each="pu: ${personasUser}" th:value="${pu.id_persona}"
 												th:text="${pu.nombre}+' '+${pu.ap_paterno}"
 												th:if="${pu.usuario == null}"></option>
@@ -76,7 +77,7 @@
 										</select>
 									</div>-->
 									<a th:class="${editMode}?'btn btn-secondary'"
-										th:href="@{'/tipo-persona/cancelar-editar-tipo-persona'}"
+										th:href="@{/form-usuario}"
 										th:text="${editMode}?'Cancelar'"></a>
 									<input type="submit" class="btn btn-primary"
 										th:value="${editMode}?'Actualizar':'Agregar'" />
@@ -100,7 +101,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="users: ${usuarios}">
+											<tr th:each="users: ${usuarios}" th:if="${users.estado != 'X'}">
 												<td></td>
 												<td th:text="${users.id_usuario}"></td>
 												<td th:text="${users.username}"></td>
@@ -110,11 +111,11 @@
 												</td>
 												<td>
 													<a
-														th:href="@{'/tipo-persona/editar-tipo-persona/' + ${users.id_usuario}}"><button
+														th:href="@{'/ModUsuario/' + ${users.id_usuario}}"><button
 															class="btn btn-outline-primary"><i
 																class="fas fa-edit"></i></button></a>
 													<a
-														th:href="@{'/tipo-persona/eliminar-tipo-persona/' + ${users.id_usuario}}"><button
+														th:href="@{'/EliminarUsuario/' + ${users.id_usuario}}"><button
 															class="btn btn-outline-danger"><i
 																class="fa fa-trash"></i></button></a>
 												</td>

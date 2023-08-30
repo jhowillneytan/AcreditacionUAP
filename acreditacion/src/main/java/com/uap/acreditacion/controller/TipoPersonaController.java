@@ -74,7 +74,8 @@ public class TipoPersonaController {
 	public String getIdTipoPersona(@PathVariable (value="id_tipo_persona") Long id_tipo_persona, ModelMap model, HttpServletRequest request){
 		if (request.getSession().getAttribute("persona") != null) {
     	
-			Persona p = (Persona) request.getSession().getAttribute("persona");
+			Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 		TipoPersona tipoPersona = tipoPersonaService.findOne(id_tipo_persona);

@@ -17,10 +17,10 @@ public class MvcConfig implements WebMvcConfigurer {
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		WebMvcConfigurer.super.addResourceHandlers(registry);
 
-		String resourcePath = Paths.get("uploads").toAbsolutePath().toUri().toString();
+		String resourcePath = Paths.get("acreditacion/uploads").toAbsolutePath().toUri().toString();
 		log.info(resourcePath);
-		
-		registry.addResourceHandler("/uploads/**")
+		System.out.println("LA DIRECCION ES: "+resourcePath);
+		registry.addResourceHandler("/acreditacion/uploads/**")
 		.addResourceLocations(resourcePath);
 	}
 }

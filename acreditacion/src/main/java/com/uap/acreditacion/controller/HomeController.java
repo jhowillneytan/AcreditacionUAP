@@ -43,16 +43,16 @@ import com.uap.acreditacion.Config;
 import com.uap.acreditacion.entity.Archivo;
 import com.uap.acreditacion.entity.Carpeta;
 import com.uap.acreditacion.entity.Carrera;
-import com.uap.acreditacion.entity.Evaluador;
+
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.entity.Usuario;
 import com.uap.acreditacion.service.IArchivoService;
 import com.uap.acreditacion.service.ICarpetaService;
 import com.uap.acreditacion.service.ICarreraService;
-import com.uap.acreditacion.service.IEvaluadorService;
+
 import com.uap.acreditacion.service.IPersonaService;
-import com.uap.acreditacion.service.ITipoArchivoService;
+
 import com.uap.acreditacion.service.ITipoPersonaService;
 import com.uap.acreditacion.service.IUsuarioService;
 import java.awt.image.BufferedImage;
@@ -69,12 +69,13 @@ public class HomeController {
 	@Autowired
 	private IArchivoService archivoService;
 
-	@Autowired
-	private ITipoArchivoService tipoArchivoService;
-
-	@Autowired
-	private IEvaluadorService evaluadorService;
-
+	/*
+	 * @Autowired
+	 * private ITipoArchivoService tipoArchivoService;
+	 * 
+	 * @Autowired
+	 * private IEvaluadorService evaluadorService;
+	 */
 	@Autowired
 	private ICarreraService carreraService;
 
@@ -97,28 +98,6 @@ public class HomeController {
 			Calendar cal = Calendar.getInstance();
 			int year = cal.get(Calendar.YEAR);
 
-			/*
-			 * if (personalAdministrativoService.getPersonalAdministrativoPersona(p.
-			 * getId_persona(), year)!=null) {
-			 * PersonalAdministrativo personalAdministrativo =
-			 * personalAdministrativoService.getPersonalAdministrativoPersona(p.
-			 * getId_persona(), year);
-			 * model.addAttribute("carpetas", p.getUsuario().getCarpetas());
-			 * model.addAttribute("menus",
-			 * carpetaService.getAllCarpetasCarrera(personalAdministrativo.getCarrera().
-			 * getId_carrera()));
-			 * }
-			 * if (evaluadorService.getEvaluadorPersonaGestion(p.getId_persona(),
-			 * year)!=null) {
-			 * Evaluador evaluador =
-			 * evaluadorService.getEvaluadorPersonaGestion(p.getId_persona(), year);
-			 * model.addAttribute("carpetas", p.getUsuario().getCarpetas());
-			 * model.addAttribute("menus",
-			 * carpetaService.getAllCarpetasCarrera(evaluador.getCarrera().getId_carrera()))
-			 * ;
-			 * }
-			 */
-
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
 				List<Carpeta> Listcarpetas = new ArrayList<>();
 				List<Carpeta> listFill = carpetaService.findAll();
@@ -135,44 +114,59 @@ public class HomeController {
 				model.addAttribute("carpeta", new Carpeta());
 				model.addAttribute("anterior", new Carpeta());
 				model.addAttribute("ExisteArchivo", "true");
+				model.addAttribute("usuarios", usuarioService.findAll());
 			}
-			if (p.getTipoPersona().getNom_tipo_persona().equals("Personal")) {
-
-				// Carpeta carpeta =
-				// carpetaService.findOne(p.getUsuario().getCarpetas().get(0).getId_carpeta());
-				// System.out.println("el nro de carpetas es:
-				// "+carpeta.getCarpetasHijos().size());
-				// model.addAttribute("carpetas", carpeta.getCarpetasHijos());
-				// Carpeta carpetaPrinc = p.getUsuario().getCarpetas().get(0);
-				// List<Carpeta> Listcarpetas = carpetaPrinc.getCarpetasHijos();Usuario usuario
-				// = p.getUsuario();
-				/*Usuario usuario = p.getUsuario();
-				Carpeta carpetaPrinc = null;
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Evaluador")) {
 				List<Carpeta> Listcarpetas = new ArrayList<>();
-				Set<Carpeta> carpetasUsuario = usuario.getCarpetas();
-
-				if (!carpetasUsuario.isEmpty()) {
-					carpetaPrinc = carpetasUsuario.iterator().next();
-					// Ahora puedes usar 'carpetaPrinc' de manera segura
-					// model.addAttribute("anterior", carpetaPrinc);
-					Listcarpetas = carpetaPrinc.getCarpetasHijos();
-					model.addAttribute("ExisteArchivo", carpetaPrinc.getArchivos().isEmpty());
-				} else {
-					model.addAttribute("ExisteArchivo", null);
+				List<Carpeta> listFill = carpetaService.findAll();
+				for (int i = 0; i < listFill.size(); i++) {
+					if (listFill.get(i).getCarpetaPadre() == null) {
+						Listcarpetas.add(listFill.get(i));
+					}
 				}
-
-				// List<Carpeta> Listcarpetas = carpetaService.findAll();
 				model.addAttribute("carpetas", Listcarpetas);
 				model.addAttribute("menus", Listcarpetas);
-				Archivo archivo = new Archivo();
+				System.out.println("***********METODOD HOME");
+
+				model.addAttribute("archivo", new Archivo());
 				model.addAttribute("carpeta", new Carpeta());
-				model.addAttribute("archivo", archivo);
-				model.addAttribute("editMode", "true");
-				model.addAttribute("anterior", carpetaPrinc);
+				model.addAttribute("anterior", new Carpeta());
+				model.addAttribute("ExisteArchivo", "true");
+				//model.addAttribute("usuarios", usuarioService.findAll());
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Docente")) {
+
+				List<Carpeta> Listcarpetas = carpetaService.getAllCarpetasUsuario(p.getUsuario().getId_usuario());
 				model.addAttribute("carpetas", Listcarpetas);
-				model.addAttribute("ExisteCarpeta", Listcarpetas.isEmpty());
-				// model.addAttribute("ExisteArchivo", carpetaPrinc.getArchivos().isEmpty());
-				model.addAttribute("TiposArchivos2", tipoArchivoService.findAll());*/
+				model.addAttribute("menus", Listcarpetas);
+				System.out.println("***********METODOD HOME");
+
+				model.addAttribute("archivo", new Archivo());
+				model.addAttribute("carpeta", new Carpeta());
+				model.addAttribute("anterior", new Carpeta());
+				model.addAttribute("ExisteArchivo", "true");
+				List<Usuario> listUsuarios = new ArrayList<>();
+				for (Persona persona : p.getCarrera().getPersonas()) {
+					listUsuarios.add(persona.getUsuario());
+				}
+				model.addAttribute("usuarios", listUsuarios);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
+
+				List<Carpeta> Listcarpetas = carpetaService.getAllCarpetasUsuario(p.getUsuario().getId_usuario());
+				model.addAttribute("carpetas", Listcarpetas);
+				model.addAttribute("menus", Listcarpetas);
+				System.out.println("***********METODOD HOME");
+
+				model.addAttribute("archivo", new Archivo());
+				model.addAttribute("carpeta", new Carpeta());
+				model.addAttribute("anterior", new Carpeta());
+				model.addAttribute("ExisteArchivo", "true");
+				List<Usuario> listUsuarios = new ArrayList<>();
+				for (Persona persona : p.getCarrera().getPersonas()) {
+					listUsuarios.add(persona.getUsuario());
+				}
+				model.addAttribute("usuarios", listUsuarios);
 			}
 
 			TipoPersona tipoPersona = tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona());
@@ -180,7 +174,7 @@ public class HomeController {
 			System.out.println("***********TIPO PERSONA: " + tipoPersona.getId_tipo_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersona);
-			model.addAttribute("usuarios", usuarioService.findAll());
+
 			return "home";
 		} else {
 			return "redirect:/login";
@@ -202,29 +196,6 @@ public class HomeController {
 					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
 
-			/**
-			 * if
-			 * (personalAdministrativoService.getPersonalAdministrativoPersona(p.getId_persona(),
-			 * year)!=null) {
-			 * 
-			 * PersonalAdministrativo personalAdministrativo =
-			 * personalAdministrativoService.getPersonalAdministrativoPersona(p.getId_persona(),
-			 * year);
-			 * List<Carpeta> menus =
-			 * carpetaService.getAllCarpetasCarrera(personalAdministrativo.getCarrera().getId_carrera());
-			 * model.addAttribute("carpetas", carpetas);
-			 * model.addAttribute("menus", menus);
-			 * 
-			 * }
-			 * if (evaluadorService.getEvaluadorPersonaGestion(p.getId_persona(),
-			 * year)!=null) {
-			 * Evaluador evaluador =
-			 * evaluadorService.getEvaluadorPersonaGestion(p.getId_persona(), year);
-			 * model.addAttribute("carpetas", carpetas);
-			 * model.addAttribute("menus",
-			 * carpetaService.getAllCarpetasCarrera(evaluador.getCarrera().getId_carrera()));
-			 * }
-			 */
 			model.addAttribute("carpetas", carpetaService.findOne(id_carpeta).getCarpetasHijos());
 			model.addAttribute("menus", carpetaService.findOne(id_carpeta).getCarpetasHijos());
 
@@ -236,11 +207,20 @@ public class HomeController {
 			// model.addAttribute("carpetas", carpetas);
 			model.addAttribute("ExisteCarpeta", carpetas.isEmpty());
 			model.addAttribute("ExisteArchivo", carpeta.getArchivos().isEmpty());
-			model.addAttribute("TiposArchivos2", tipoArchivoService.findAll());
+			// model.addAttribute("TiposArchivos2", tipoArchivoService.findAll());
 			// model.addAttribute("menus", menus);
 			List<Carpeta> list = new ArrayList<Carpeta>();
 
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Evaluador")) {
 
 				list.add(carpeta);
 				while (carpeta.getCarpetaPadre() != null) {
@@ -518,6 +498,19 @@ public class HomeController {
 		return "redirect:/home/";
 	}
 
+	// ------------ASIGNAR PERMISO A USUARIOS A CARPETAS
+	@PostMapping("/AsignarPermisoUsuario")
+	public String AsignarPermisoUsuario(ModelMap model, RedirectAttributes redirectAttrs,
+			@RequestParam(value = "permiso") String permiso,
+			@RequestParam(value = "id_usuario") Long id_usuario) {
+		Usuario usuario = usuarioService.findOne(id_usuario);
+
+		usuario.setPermisosCarpeta(permiso);
+
+		usuarioService.save(usuario);
+		return "redirect:/home/";
+	}
+
 	// ----------- FIN DEL METODO
 
 	@PostMapping("/guardar-archivo")
@@ -542,7 +535,7 @@ public class HomeController {
 			archivo.setFile(arch);
 			// archivo.setContenido(file.getBytes());
 			String[] ta = arch.split("\\.");
-			archivo.setTipoArchivo(tipoArchivoService.getTipoArchivo(ta[ta.length - 1]));
+			// archivo.setTipoArchivo(tipoArchivoService.getTipoArchivo(ta[ta.length - 1]));
 			if (!ta[ta.length - 1].equals("pdf")) {
 				redirectAttrs
 						.addFlashAttribute("mensaje", "El archivo tiene que ser en formato pdf")
@@ -602,7 +595,7 @@ public class HomeController {
 
 		// Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
 		Archivo archivo = archivoService.findOne(id);
-		String rutaArchivo = projectPath + "\\uploads\\" + archivo.getFile();
+		String rutaArchivo = projectPath + "\\acreditacion\\\\uploads\\" + archivo.getFile();
 		// System.out.println("Ruta absoluta de uploads es: " + rutaArchivo);
 
 		// File file = new File(rutaArchivo);

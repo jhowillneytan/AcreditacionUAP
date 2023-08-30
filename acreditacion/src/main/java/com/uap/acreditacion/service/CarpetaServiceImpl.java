@@ -42,11 +42,9 @@ public class CarpetaServiceImpl implements ICarpetaService{
 		return carpetaDao.getAllCarpetasCarrera(id_carrera);
 	}
 
-
-
-   /*  @Override
+    @Override
     public List<Carpeta> getAllCarpetasUsuario(Long id_usuario) {
         return carpetaDao.getAllCarpetasUsuario(id_usuario);
-    }*/
+    }
 
 }

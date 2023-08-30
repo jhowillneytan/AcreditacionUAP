@@ -73,8 +73,4 @@ public class Persona implements Serializable{
     @JoinColumn(name = "id_carrera")
     private Carrera carrera;
 
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "persona")
-    private List<Evaluador> evaluadors;
-
 }

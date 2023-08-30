@@ -40,6 +40,8 @@ public class Usuario implements Serializable{
 
     private String username;
     private String password;
+
+    private String permisosCarpeta;
     private String estado;
 
     @OneToOne(fetch = FetchType.LAZY)

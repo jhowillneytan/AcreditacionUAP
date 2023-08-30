@@ -39,6 +39,8 @@ public class Carrera implements Serializable{
     private String nom_carrera;
 
     private String descripcion;
+    
+    private String file;
 
     private String estado;
     @Temporal(TemporalType.DATE)
@@ -50,9 +52,6 @@ public class Carrera implements Serializable{
     
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "carrera")
     private List<Carpeta> carpetas;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "carrera")
-    private List<Evaluador> evaluadors;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "carrera")
     private List<Persona> personas;

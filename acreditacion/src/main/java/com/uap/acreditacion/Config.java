@@ -17,16 +17,16 @@ public class Config {
     public String guardarArchivo(MultipartFile archivo) {
 		String uniqueFilename = UUID.randomUUID().toString() + "_" + archivo.getOriginalFilename();
 
-		Path rootPath = Paths.get("uploads/").resolve(uniqueFilename);
+		Path rootPath = Paths.get("acreditacion/uploads/").resolve(uniqueFilename);
 		Path rootAbsolutPath = rootPath.toAbsolutePath();
-
+		System.out.println("LA DIRECCION ES: "+rootAbsolutPath);
 		log.info("rootPath: " + rootPath);
 		log.info("rootAbsolutPath: " + rootAbsolutPath);
 
 		try {
-
+			System.out.println("CUARDAR EN EL DIRECCTORIO");
 			Files.copy(archivo.getInputStream(), rootAbsolutPath);
-
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

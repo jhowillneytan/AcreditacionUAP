@@ -75,7 +75,8 @@ public class PuestoContrller {
 	public String getIdPuesto(@PathVariable(value="id_puesto")Long id_puesto, ModelMap model, HttpServletRequest request){
 		if (request.getSession().getAttribute("persona") != null) {
     	
-			Persona p = (Persona) request.getSession().getAttribute("persona");
+			Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 		Puesto puesto = puestoService.findOne(id_puesto);

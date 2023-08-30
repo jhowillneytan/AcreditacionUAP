@@ -16,6 +16,6 @@ public interface ICarpetaService {
 	
 	public List<Carpeta> getAllCarpetasCarrera(Long id_carrera);
 	
-	//public List<Carpeta> getAllCarpetasUsuario(Long id_usuario);
+	public List<Carpeta> getAllCarpetasUsuario(Long id_usuario);
 	
 }

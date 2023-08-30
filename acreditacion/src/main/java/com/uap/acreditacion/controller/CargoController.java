@@ -75,7 +75,8 @@ public class CargoController {
 	@GetMapping("/editar-cargo/{id_cargo}")
 	public String getIdCargo(@PathVariable(value="id_cargo")Long id_cargo, ModelMap model, HttpServletRequest request){
 		if (request.getSession().getAttribute("persona") != null) {
-			Persona p = (Persona) request.getSession().getAttribute("persona");
+			Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 		Cargo cargo = cargoService.findOne(id_cargo);

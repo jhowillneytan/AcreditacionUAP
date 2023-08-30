@@ -30,7 +30,7 @@
                                 <h4 class="card-title">FORMULARIO CARRERA</h4>
                             </div>
                             <div class="card-body">
-                                    <form th:action="@{/carrera/RegistrarCarrera}" method="post" enctype="multipart/form-data">
+                                    <form th:action="${editMode}? @{/carrera/GuardarCambiosCarrera} : @{/carrera/RegistrarCarrera}" method="post" enctype="multipart/form-data">
                                         <input type="hidden" th:field="${carrera.id_carrera}">                                        
                                         <div class="row">
                                             

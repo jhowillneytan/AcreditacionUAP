@@ -14,8 +14,8 @@ public interface ICarpetaDao extends JpaRepository<Carpeta, Long> {
 
 	@Query(value = "SELECT c.* " +
 			"FROM acre_carpeta c " +
-			"JOIN usuario_carpeta uc ON c.id_carpeta = uc.id_usuario " + 
-			"JOIN usuario u ON uc.id_carpeta = u.id_usuario " +
+			"JOIN usuario_carpeta uc ON c.id_carpeta = uc.id_carpeta " +
+			"JOIN usuario u ON uc.id_usuario = u.id_usuario " +
 			"WHERE u.id_usuario = ?1", nativeQuery = true)
 	public List<Carpeta> getAllCarpetasUsuario(Long id_usuario);
 	/*@Query(value = "SELECT c"+

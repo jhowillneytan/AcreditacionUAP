@@ -699,8 +699,6 @@ public class HomeController {
 		}
 		if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
 			listpers = p.getCarrera().getPersonas();
-		} else {
-			listpers = p.getCarrera().getPersonas();
 		}
 		List<Usuario> listUse = new ArrayList<>();
 		for (Persona persona : listpers) {

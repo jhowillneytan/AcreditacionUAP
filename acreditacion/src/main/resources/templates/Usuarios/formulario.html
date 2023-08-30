@@ -55,27 +55,16 @@
 										<div class="invalid-feedback" th:if="${#fields.hasErrors('usuario.password')}"
 											th:errors="${usuario.password}">Favor ingresar datos Correctos.</div>
 									</div>
-									<div class="col-md-4 col-12 mb-1">
+									<div class="col-md-6 ">
 										<label class="form-label" for="select-country1">Persona</label>
-										<select class="form-control form-select" th:field="${usuario.persona}">
-											<option th:value="${editMode}? ${usuario.persona} : ''" th:text="${editMode}? ${usuario.persona.nombre}+' '+${usuario.persona.ap_paterno} : 'Seleccionar'" selected>
+										<select class="form-control form-select" th:field="${usuario.persona}" required>
+											<option th:value="${editMode}? ${usuario.persona.id_persona} : ''" th:text="${editMode}? ${usuario.persona.nombre}+' '+${usuario.persona.ap_paterno} : 'Seleccionar'" selected>
 											</option>
-											<option th:each="pu: ${personasUser}" th:value="${pu.id_persona}"
-												th:text="${pu.nombre}+' '+${pu.ap_paterno}"
-												th:if="${pu.usuario == null}"></option>
+											<option th:each="userp: ${personasUser}" th:value="${userp.id_persona}"
+												th:text="${userp.nombre}+' '+${userp.ap_paterno}"
+												th:if="${userp.usuario == null}"></option>
 										</select>
 									</div>
-									<!--<div class="col-md-4 col-12 mb-1">
-										<label class="form-label" for="select-country1">Carpetas</label>
-										<select class="form-control form-select" name="carpeta" th:field="${usuario.carpetas}" required>
-											<option value="">Seleccionar</option>
-
-												<option th:each="carpH: ${carpetas}"
-													th:value="${carpH.id_carpeta}"
-													th:text="${carpH.nom_carpeta}"></option>
-
-										</select>
-									</div>-->
 									<a th:class="${editMode}?'btn btn-secondary'"
 										th:href="@{/form-usuario}"
 										th:text="${editMode}?'Cancelar'"></a>
@@ -93,22 +82,22 @@
 										<thead>
 											<tr>
 												<th></th>
-												<th>Id</th>
 												<th>Nombre de usuario</th>
 												<th>Contrasena</th>
 												<th>Persona</th>
+												<th>Estado</th>
 												<th>Acciones</th>
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="users: ${usuarios}" th:if="${users.estado != 'X'}">
-												<td></td>
-												<td th:text="${users.id_usuario}"></td>
+											<tr th:each="users, rowStat: ${usuarios}" th:if="${users.estado != 'X'}">
+												<td th:text="${rowStat.count}"></td>
 												<td th:text="${users.username}"></td>
 												<td th:text="${users.password}"></td>
 												<td
 													th:text="${users.persona.nombre}+' '+${users.persona.ap_paterno}+' Rol:'+${users.persona.tipoPersona.nom_tipo_persona}">
 												</td>
+												<td th:text="${users.estado = 'A'}? 'Activo': 'Inactivo'"></td>
 												<td>
 													<a
 														th:href="@{'/ModUsuario/' + ${users.id_usuario}}"><button
@@ -124,12 +113,11 @@
 										<tfoot>
 											<tr>
 												<th></th>
-												<th>Id</th>
-												<th>Nombre</th>
-												<th>Fecha registro</th>
-												<th>Descripcion</th>
+												<th>Nombre de usuario</th>
+												<th>Contrasena</th>
+												<th>Persona</th>
 												<th>Estado</th>
-												<th>Otros</th>
+												<th>Acciones</th>
 											</tr>
 										</tfoot>
 									</table>

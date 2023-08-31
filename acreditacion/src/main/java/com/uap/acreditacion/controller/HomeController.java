@@ -563,15 +563,9 @@ public class HomeController {
 	public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
 		Path projectPath = Paths.get("").toAbsolutePath();
 
-		// Optional<Archivo> archivoOptional = archivoService.findOneOptional(id);
 		Archivo archivo = archivoService.findOne(id);
-		String rutaArchivo = projectPath + "\\acreditacion\\\\uploads\\" + archivo.getFile();
-		// System.out.println("Ruta absoluta de uploads es: " + rutaArchivo);
-
-		// File file = new File(rutaArchivo);
-
-		// Archivo archivo = archivoOptional.get();
-
+		//String rutaArchivo = projectPath + "\\acreditacion\\\\uploads\\" + archivo.getFile();
+		String rutaArchivo = projectPath + "/acreditacion/uploads/" + archivo.getFile();
 		try {
 
 			byte[] fileBytes;

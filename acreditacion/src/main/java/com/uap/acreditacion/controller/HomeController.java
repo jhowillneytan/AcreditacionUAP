@@ -544,7 +544,6 @@ public class HomeController {
 		 */
 		for (MultipartFile multipartFile : file) {
 			Archivo archivo2 = new Archivo();
-
 			if (id_carpeta_anterior != null) {
 				archivo2.setCarpeta(carpetaService.findOne(id_carpeta_anterior));
 			}

@@ -49,5 +49,4 @@ public class Archivo implements Serializable{
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_carpeta")
     private Carpeta carpeta;
-
 }

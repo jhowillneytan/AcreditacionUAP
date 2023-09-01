@@ -418,10 +418,16 @@
 															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
 															th:href="@{'/acreditacion/uploads/' + ${a.file}}">
 															<!--<img th:src="${'/uploads/' + a.tipoArchivo.icono}"
-														alt="file-icon" height="85"/></a>-->
-															<img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}"
-																alt="file-icon" height="85"
-																style="object-fit: cover; width: 110%; height: 110%;" /></a>
+														alt="file-icon" height="85"/>-->
+														
+														<img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}" th:if="${a.tipoArchivo == 'pdf'}"
+															alt="file-icon" height="85"
+															style="object-fit: cover; width: 110%; height: 110%;" />
+														<img th:src="@{'/acreditacion/uploads/' + ${a.file}}" th:if="${a.tipoArchivo != 'pdf'}"
+															alt="file-icon" height="85"
+															style="object-fit: cover; width: 110%; height: 110%;" />
+														</a>
+
 													</div>
 												</div>
 												<div class="card-body bg-white">
@@ -1128,7 +1134,7 @@
 
 										<div class="modal-body">
 											<label class="form-label" for="basic-addon-name">Archivo</label>
-											<input type="file" name="archivo" id="PDFarchivo" accept=".pdf"
+											<input type="file" name="archivo" id="PDFarchivo" accept=".pdf, image/*"
 												data-validation="required" placeholder="Introdusca Archivo" multiple
 												required />
 											<div id="alertasFormArchivo"></div>
@@ -1202,7 +1208,8 @@
 		$(function () {
 
 			$('#PDFarchivo').bs_dropzone({
-				accepted: ['pdf'],
+				//accepted: ['pdf'],
+				preview: true,
 				boxClass: 'alert p-5 text-center font-weight-bold',
 				dropzoneTemplate: '<div class="bs-dropzone"><div class="bs-dropzone-area"></div><div class="bs-dropzone-message"></div><div class="bs-dropzone-preview mt-0"></div></div>',
 				parentTemplate: '<div class="row ml-0 justify-content-center align-items-center"></div>',
@@ -1228,13 +1235,13 @@
 				for (var i = 0; i < fileInput.files.length; i++) {
 					var fileName = fileInput.files[i].name;
 
-					// Verificamos si la extensión del archivo es PDF
-					if (!isValidPDF(fileName)) {
+					// Verificamos si la extensión del archivo es PDF, una imagen o ".webp"
+					if (!isValidFile(fileName)) {
 						// Reseteamos el valor del input file para borrar la selección inválida
 						fileInput.value = "";
 						$('#alertasFormArchivo').html('<div class="alert alert-danger alert-dismissible">' +
 							'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-							'Solo se Admite Archivos tipo PDF' +
+							'Solo se Admiten Archivos tipo PDF, imágenes y .webp' +
 							'</div>');
 						return;
 					} else {
@@ -1248,9 +1255,9 @@
 			}
 		});
 
-		// Función para validar si el nombre del archivo tiene extensión PDF
-		function isValidPDF(fileName) {
-			var validExtensions = ["pdf"];
+		// Función para validar si el nombre del archivo tiene extensión PDF, es una imagen o ".webp"
+		function isValidFile(fileName) {
+			var validExtensions = ["pdf", "jpg", "jpeg", "png", "gif", "webp"];
 			var fileExtension = fileName.split(".").pop().toLowerCase();
 			return validExtensions.indexOf(fileExtension) !== -1;
 		}

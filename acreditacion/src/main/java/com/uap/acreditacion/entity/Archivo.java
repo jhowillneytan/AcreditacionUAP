@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -38,6 +39,8 @@ public class Archivo implements Serializable{
     private String file;
 
 	private byte[] contenido;
+
+    private String tipoArchivo;
 
     private String estado;
     @Temporal(TemporalType.DATE)

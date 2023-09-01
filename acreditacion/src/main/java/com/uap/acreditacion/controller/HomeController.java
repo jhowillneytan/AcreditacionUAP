@@ -106,6 +106,7 @@ public class HomeController {
 						Listcarpetas.add(listFill.get(i));
 					}
 				}
+
 				model.addAttribute("carpetas", Listcarpetas);
 				model.addAttribute("menus", Listcarpetas);
 				System.out.println("***********METODOD HOME");
@@ -213,9 +214,17 @@ public class HomeController {
 			model.addAttribute("tipoPersonasession",
 					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
+				/*for (int i = 0; i < carpetas.size(); i++) {
+					for (int j = 0; j < carpetas.get(i).getArchivos().size(); j++) {
+						String nombA = carpetas.get(i).getArchivos().get(j).getFile();
+						String[] ta2 = nombA.split("\\.");
+						System.out.println("el NOMBRE DE ES: "+ta2[1]);
+						carpetas.get(i).getArchivos().get(j).setTipoArchivo(ta2[1]);
+					}
+				}*/
 
-			model.addAttribute("carpetas", carpetaService.findOne(id_carpeta).getCarpetasHijos());
-			model.addAttribute("menus", carpetaService.findOne(id_carpeta).getCarpetasHijos());
+			model.addAttribute("carpetas", carpetas);
+			model.addAttribute("menus", carpetas);
 
 			Archivo archivo = new Archivo();
 			model.addAttribute("carpeta", new Carpeta());
@@ -391,27 +400,29 @@ public class HomeController {
 				String arch = config.guardarArchivo(ruta_ico);
 				carpeta.setRuta_icono(arch);
 				String[] ta = arch.split("\\.");
-				/*if (!ta[ta.length - 1].equals("png")) {
-					redirectAttrs
-							.addFlashAttribute("mensaje", "El archivo tiene que ser imagen png")
-							.addFlashAttribute("clase", "danger");
-					return "redirect:/home/" + carpeta.getCarpetaPadre().getId_carpeta();
-				} else {
-					carpeta.setNom_carpeta(nom_carpeta);
-					carpeta.setDescripcion(descripcion);
-					carpetaService.save(carpeta);
-					redirectAttrs
-							.addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
-							.addFlashAttribute("clase", "success");
-					return "redirect:/home/" + carpeta.getCarpetaPadre().getId_carpeta();
-				}*/
+				/*
+				 * if (!ta[ta.length - 1].equals("png")) {
+				 * redirectAttrs
+				 * .addFlashAttribute("mensaje", "El archivo tiene que ser imagen png")
+				 * .addFlashAttribute("clase", "danger");
+				 * return "redirect:/home/" + carpeta.getCarpetaPadre().getId_carpeta();
+				 * } else {
+				 * carpeta.setNom_carpeta(nom_carpeta);
+				 * carpeta.setDescripcion(descripcion);
+				 * carpetaService.save(carpeta);
+				 * redirectAttrs
+				 * .addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
+				 * .addFlashAttribute("clase", "success");
+				 * return "redirect:/home/" + carpeta.getCarpetaPadre().getId_carpeta();
+				 * }
+				 */
 				carpeta.setNom_carpeta(nom_carpeta);
-					carpeta.setDescripcion(descripcion);
-					carpetaService.save(carpeta);
-					redirectAttrs
-							.addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
-							.addFlashAttribute("clase", "success");
-					return "redirect:/home/" + carpeta.getCarpetaPadre().getId_carpeta();
+				carpeta.setDescripcion(descripcion);
+				carpetaService.save(carpeta);
+				redirectAttrs
+						.addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
+						.addFlashAttribute("clase", "success");
+				return "redirect:/home/" + carpeta.getCarpetaPadre().getId_carpeta();
 			}
 
 		} else {
@@ -428,29 +439,31 @@ public class HomeController {
 				String arch = config.guardarArchivo(ruta_ico);
 				carpeta.setRuta_icono(arch);
 				String[] ta = arch.split("\\.");
-				/*if (!ta[ta.length - 1].equals("png")) {
-					redirectAttrs
-							.addFlashAttribute("mensaje", "El archivo tiene que ser imagen png")
-							.addFlashAttribute("clase", "danger");
-					return "redirect:/home/";
-				} else {
-					carpeta.setNom_carpeta(nom_carpeta);
-					carpeta.setDescripcion(descripcion);
-					carpetaService.save(carpeta);
-					redirectAttrs
-							.addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
-							.addFlashAttribute("clase", "success");
-					return "redirect:/home/";
-				}*/
+				/*
+				 * if (!ta[ta.length - 1].equals("png")) {
+				 * redirectAttrs
+				 * .addFlashAttribute("mensaje", "El archivo tiene que ser imagen png")
+				 * .addFlashAttribute("clase", "danger");
+				 * return "redirect:/home/";
+				 * } else {
+				 * carpeta.setNom_carpeta(nom_carpeta);
+				 * carpeta.setDescripcion(descripcion);
+				 * carpetaService.save(carpeta);
+				 * redirectAttrs
+				 * .addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
+				 * .addFlashAttribute("clase", "success");
+				 * return "redirect:/home/";
+				 * }
+				 */
 				carpeta.setNom_carpeta(nom_carpeta);
-					carpeta.setDescripcion(descripcion);
-					carpetaService.save(carpeta);
-					redirectAttrs
-							.addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
-							.addFlashAttribute("clase", "success");
-					return "redirect:/home/";
+				carpeta.setDescripcion(descripcion);
+				carpetaService.save(carpeta);
+				redirectAttrs
+						.addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
+						.addFlashAttribute("clase", "success");
+				return "redirect:/home/";
 			}
-			
+
 		}
 
 	}
@@ -512,35 +525,62 @@ public class HomeController {
 	public String guardarArchivo(@Validated Archivo archivo, RedirectAttributes redirectAttrs,
 			@RequestParam(name = "archivo", required = false) List<MultipartFile> file,
 			@RequestParam(value = "auxiliar") Long id_carpeta_anterior) throws IOException {
-		/*if (archivo.getNom_archivo() == null || archivo.getNom_archivo() == "" || archivo.getDescripcion() == null
-				|| archivo.getDescripcion() == "") {
-			redirectAttrs
-					.addFlashAttribute("mensaje", "Se requiere llenar los campos")
-					.addFlashAttribute("clase", "danger");
-			return "redirect:/home/" + id_carpeta_anterior;
-		}*/
+		/*
+		 * if (archivo.getNom_archivo() == null || archivo.getNom_archivo() == "" ||
+		 * archivo.getDescripcion() == null
+		 * || archivo.getDescripcion() == "") {
+		 * redirectAttrs
+		 * .addFlashAttribute("mensaje", "Se requiere llenar los campos")
+		 * .addFlashAttribute("clase", "danger");
+		 * return "redirect:/home/" + id_carpeta_anterior;
+		 * }
+		 */
+		/*
+		 * String NombValidos[] = { "FOTOCOPIA DE TITULO DE BACHILLER",
+		 * "FOTOCOPIA DE C.I.",
+		 * "FOTOCOPIA DE CERTIFICADO DE NACIMIENTO",
+		 * "MODALIDAD DE INGRESO", "MATRICULA 1", "MATRICULA 2", "PROGRAMACIÓN", "FOTO"
+		 * };
+		 */
 		for (MultipartFile multipartFile : file) {
 			Archivo archivo2 = new Archivo();
 
 			if (id_carpeta_anterior != null) {
 				archivo2.setCarpeta(carpetaService.findOne(id_carpeta_anterior));
 			}
-			archivo2.setNom_archivo(multipartFile.getOriginalFilename());
-			archivo2.setEstado("A");
-			archivo2.setFecha_registro(new Date());
+			String nombA = multipartFile.getOriginalFilename();
+			String[] ta2 = nombA.split("\\.");
 			System.out.println("anterior " + id_carpeta_anterior);
 			if (!multipartFile.isEmpty()) {
 				String arch = config.guardarArchivo(multipartFile);
-				archivo2.setFile(arch);
 				// archivo.setContenido(file.getBytes());
 				String[] ta = arch.split("\\.");
-				// archivo.setTipoArchivo(tipoArchivoService.getTipoArchivo(ta[ta.length - 1]));
-				if (!ta[ta.length - 1].equals("pdf")) {
-					redirectAttrs
-							.addFlashAttribute("mensaje", "El archivo tiene que ser en formato pdf")
-							.addFlashAttribute("clase", "danger");
-					return "redirect:/home/" + id_carpeta_anterior;
-				}
+				archivo2.setFile(arch);
+				archivo2.setNom_archivo(ta2[0]);
+				archivo2.setTipoArchivo(ta2[ta2.length-1]);
+				archivo2.setDescripcion(archivo.getDescripcion());
+				archivo2.setEstado("A");
+				archivo2.setFecha_registro(new Date());
+				archivoService.save(archivo2);
+				System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" + ta[0]);
+
+				/*
+				 * for (int i = 0; i < NombValidos.length; i++) {
+				 * if (ta[0].equals(NombValidos[i])) {
+				 * archivo2.setFile(arch);
+				 * archivo2.setNom_archivo(ta[0]);
+				 * archivo2.setDescripcion(archivo.getDescripcion());
+				 * archivo2.setEstado("A");
+				 * archivo2.setFecha_registro(new Date());
+				 * archivoService.save(archivo2);
+				 * } else{
+				 * redirectAttrs
+				 * .addFlashAttribute("mensaje", "HAY ARCHIVOS CON NOMBRE NO VALIDOS")
+				 * .addFlashAttribute("clase", "danger");
+				 * return "redirect:/home/" + id_carpeta_anterior;
+				 * }
+				 * }
+				 */
 			} else {
 				redirectAttrs
 						.addFlashAttribute("mensaje", "Es necesario cargar un archivo")
@@ -548,7 +588,6 @@ public class HomeController {
 				return "redirect:/home/" + id_carpeta_anterior;
 			}
 
-			archivoService.save(archivo2);
 		}
 
 		redirectAttrs

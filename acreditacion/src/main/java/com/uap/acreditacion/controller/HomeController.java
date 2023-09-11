@@ -574,7 +574,7 @@ public class HomeController {
 					}
 				}
 				//archivoService.save(archivo2);
-				System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" + ta[0]);
+				System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" + archivo2.getNom_archivo());
 
 				/*
 				 * for (int i = 0; i < NombValidos.length; i++) {

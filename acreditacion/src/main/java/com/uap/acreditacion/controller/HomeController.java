@@ -542,6 +542,11 @@ public class HomeController {
 		 * "MODALIDAD DE INGRESO", "MATRICULA 1", "MATRICULA 2", "PROGRAMACIÓN", "FOTO"
 		 * };
 		 */
+		String NombValidos[] = { "FOTOCOPIA DE TITULO DE BACHILLER",
+		  "FOTOCOPIA DE C.I.",
+		  "FOTOCOPIA DE CERTIFICADO DE NACIMIENTO",
+		  "MODALIDAD DE INGRESO", "MATRICULA 1", "MATRICULA 2", "PROGRAMACIÓN", "FOTO"
+		  };
 		for (MultipartFile multipartFile : file) {
 			Archivo archivo2 = new Archivo();
 			if (id_carpeta_anterior != null) {
@@ -549,18 +554,26 @@ public class HomeController {
 			}
 			String nombA = multipartFile.getOriginalFilename();
 			String[] ta2 = nombA.split("\\.");
+			String nombreSinExtension = obtenerNombreSinExtension(nombA);
+			
 			System.out.println("anterior " + id_carpeta_anterior);
 			if (!multipartFile.isEmpty()) {
 				String arch = config.guardarArchivo(multipartFile);
 				// archivo.setContenido(file.getBytes());
 				String[] ta = arch.split("\\.");
 				archivo2.setFile(arch);
-				archivo2.setNom_archivo(ta2[0]);
+				archivo2.setNom_archivo(nombreSinExtension);
 				archivo2.setTipoArchivo(ta2[ta2.length-1]);
 				archivo2.setDescripcion(archivo.getDescripcion());
 				archivo2.setEstado("A");
 				archivo2.setFecha_registro(new Date());
-				archivoService.save(archivo2);
+				for (String nombres : NombValidos) {
+					//System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" +(archivo2.getNom_archivo()));
+					if (archivo2.getNom_archivo().equals(nombres)) {
+						archivoService.save(archivo2);
+					}
+				}
+				//archivoService.save(archivo2);
 				System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" + ta[0]);
 
 				/*
@@ -594,6 +607,17 @@ public class HomeController {
 				.addFlashAttribute("clase", "success");
 		return "redirect:/home/" + id_carpeta_anterior;
 	}
+
+	private String obtenerNombreSinExtension(String nombreArchivo) {
+        // Utilizar una expresión regular para dividir el nombre del archivo en función del último punto
+        int ultimoPuntoIndex = nombreArchivo.lastIndexOf(".");
+        if (ultimoPuntoIndex != -1) {
+            return nombreArchivo.substring(0, ultimoPuntoIndex);
+        } else {
+            // Si no se encuentra ningún punto, devolver el nombre completo
+            return nombreArchivo;
+        }
+    }
 
 	@GetMapping("/verIcoPdf/{id}")
 	public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {

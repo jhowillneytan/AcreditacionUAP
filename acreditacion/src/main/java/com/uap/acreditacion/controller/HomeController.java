@@ -141,8 +141,9 @@ public class HomeController {
 				List<Carpeta> Listcarpetas2 = carpetaService.getAllCarpetasUsuario(p.getUsuario().getId_usuario());
 				for (int i = 0; i < Listcarpetas.size(); i++) {
 					for (int j = 0; j < Listcarpetas2.size(); j++) {
-						if (Listcarpetas2.get(j).getCarpetaPadre() == Listcarpetas.get(i)) {
+						if (Listcarpetas2.get(j).getCarpetaPadre().equals(Listcarpetas.get(i))) {
 							Listcarpetas2.remove(j);
+							j--;
 						}
 					}
 				}
@@ -167,8 +168,9 @@ public class HomeController {
 				List<Carpeta> Listcarpetas2 = carpetaService.getAllCarpetasUsuario(p.getUsuario().getId_usuario());
 				for (int i = 0; i < Listcarpetas.size(); i++) {
 					for (int j = 0; j < Listcarpetas2.size(); j++) {
-						if (Listcarpetas2.get(j).getCarpetaPadre() == Listcarpetas.get(i)) {
+						if (Listcarpetas2.get(j).getCarpetaPadre().equals(Listcarpetas.get(i))) {
 							Listcarpetas2.remove(j);
+							j--;
 						}
 					}
 				}
@@ -199,6 +201,15 @@ public class HomeController {
 			return "redirect:/login";
 		}
 	}
+
+	public void eliminarHijosDeCarpeta(Carpeta carpeta) {
+        if (carpeta.getCarpetasHijos() != null && !carpeta.getCarpetasHijos().isEmpty()) {
+            for (Carpeta hijo : carpeta.getCarpetasHijos()) {
+                eliminarHijosDeCarpeta(hijo); // Llamada recursiva para eliminar los hijos del hijo
+            }
+        }
+        //carpetaService.delete(carpeta); // Eliminar la carpeta actual
+    }
 
 	@GetMapping("/home/{id_carpeta}")
 	public String entrarCarpetas(@PathVariable(value = "id_carpeta") Long id_carpeta, ModelMap model,
@@ -545,7 +556,7 @@ public class HomeController {
 		String NombValidos[] = { "FOTOCOPIA DE TITULO DE BACHILLER",
 		  "FOTOCOPIA DE C.I.",
 		  "FOTOCOPIA DE CERTIFICADO DE NACIMIENTO",
-		  "MODALIDAD DE INGRESO", "MATRICULA 1", "MATRICULA 2", "PROGRAMACIÓN", "FOTO"
+		  "MODALIDAD DE INGRESO", "MATRICULA", "PROGRAMACIÓN", "FOTO"
 		  };
 		for (MultipartFile multipartFile : file) {
 			Archivo archivo2 = new Archivo();

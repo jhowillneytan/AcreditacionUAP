@@ -46,7 +46,7 @@ public class PuestoContrller {
 		model.addAttribute("puesto", new Puesto());
 		return "puesto";
 		} else {
-			return "redirect:/login";
+			return "redirect:/login"; 
 		}
 	}
 	

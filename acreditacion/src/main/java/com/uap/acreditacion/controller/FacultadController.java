@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
+ 
 import com.uap.acreditacion.entity.Facultad;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.service.IFacultadService;

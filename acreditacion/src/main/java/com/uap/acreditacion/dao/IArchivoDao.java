@@ -8,7 +8,7 @@ import org.springframework.data.repository.CrudRepository;
 import com.uap.acreditacion.entity.Archivo;
 
 public interface IArchivoDao extends CrudRepository<Archivo,Long>{
-	
+
 	@Query("select a from Archivo a where a.descripcion like %?1%")
 	public List<Archivo> listaArchivosPorDescripcionAdmin(String descripcion);
 

@@ -10,7 +10,7 @@ import com.uap.acreditacion.entity.Puesto;
 
 @Service
 public class PuestoServiceImpl implements IPuestoService{
-
+    
     @Autowired
     private IPuestoDao puestoDao;
 

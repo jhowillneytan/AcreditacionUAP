@@ -10,7 +10,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class MvcConfig implements WebMvcConfigurer {
-	
+
 	private final Logger log = LoggerFactory.getLogger(getClass());
 
 	@Override

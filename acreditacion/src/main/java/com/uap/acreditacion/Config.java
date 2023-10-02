@@ -26,7 +26,7 @@ public class Config {
 		try {
 			System.out.println("CUARDAR EN EL DIRECCTORIO");
 			Files.copy(archivo.getInputStream(), rootAbsolutPath);
-			
+		
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

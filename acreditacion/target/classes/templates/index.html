@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<title>UNIVERSIDAD AMAZONICA DE PANDO</title>
+<link rel="shortcut icon" type="image/x-icon"
+	href="../static/logos/logoUAP-removebg-preview.png">
+<link rel="stylesheet" href="../../../login/scss/main.css">
+
+<!--FontAwesome-->
+<script src="https://kit.fontawesome.com/494ff48399.js"
+	crossorigin="anonymous"></script>
+<!--JQuery CDN by Google-->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<style type="text/css">
+div h1 {
+	text-align: center;
+	font-size: 70px;
+	color: #ffffff;
+}
+</style>
+</head>
+
+<body>
+
+	<!--Time Display-->
+	<div class="time-display">
+		<div class="time-text">16:54</div>
+		<div class="date-text">Sunday, November 03</div>
+		<script src="../../../login/scripts/timedisplay.js"></script>
+	</div>
+	<div>
+		<h1>INGENIERIA INDUSTRIAL</h1>
+	</div>
+	<div style="text-align: center;" th:class="'alert alert-' + (${clase != null} ? ${clase} : info)" role="alert"
+		th:if="${mensaje != null}">
+		<h2 th:style="'color: '+${sty}+';  background-color: '+${col}+'; width: 38%; margin: 0 auto;'" class="alert-heading" th:text="${mensaje}"></h2>
+	</div>
+	<!--Form-->
+	<form th:action="@{/login}" method="post" class="login-form">
+		
+        <!--<div class="profile-pic"></div>-->
+		
+		<div class="text-body">
+			<i class="fa fa-user icon"></i> 
+			<input type="text" name="username"> <span data-placeholder="Nombre"></span>
+		</div>
+		<div class="text-body">
+			<i class="fas fa-key"></i> 
+			<input type="password" name="password"> <span data-placeholder="Password"></span>
+		</div>
+
+		<button class="login-btn" type="submit"> <i class="fas fa-sign-in-alt"></i>Login </button>
+
+		<div class="bottom-text" style="font-family:courier,arial,helvética;font-style: oblique; font-size: 12px; color: white">
+			Escribiendo una nueva historia con vos<!-- <a href="#">Sign Up</a> -->
+		</div>
+
+		<!-- Load in the script for the form -->
+		<script src="../../../login/scripts/form.js"></script>
+	</form>
+
+</body>
+
+</html>

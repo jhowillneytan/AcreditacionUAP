@@ -5,5 +5,5 @@ import org.springframework.data.repository.CrudRepository;
 import com.uap.acreditacion.entity.Puesto;
 
 public interface IPuestoDao extends CrudRepository<Puesto, Long>{
-    
+        
 }

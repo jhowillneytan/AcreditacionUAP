@@ -19,7 +19,7 @@ public class CargoServiceImpl implements ICargoService{
         // TODO Auto-generated method stub
         return (List<Cargo>) cargoDao.findAll();
     }
-
+ 
     @Override
     public void save(Cargo endidad) {
         // TODO Auto-generated method stub

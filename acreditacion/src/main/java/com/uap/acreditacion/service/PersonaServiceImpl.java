@@ -11,7 +11,7 @@ import com.uap.acreditacion.entity.Persona;
 
 @Service
 public class PersonaServiceImpl implements IPersonaService{
-
+    
     @Autowired
     private IPersonaDao personaDao;
 

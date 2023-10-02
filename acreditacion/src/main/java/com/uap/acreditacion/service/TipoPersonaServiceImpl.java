@@ -10,7 +10,7 @@ import com.uap.acreditacion.entity.TipoPersona;
 
 @Service
 public class TipoPersonaServiceImpl implements ITipoPersonaService{
-
+    
     @Autowired
     private ITipoPersonaDao tipoPersonaDao;
 

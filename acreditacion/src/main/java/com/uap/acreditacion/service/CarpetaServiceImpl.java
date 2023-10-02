@@ -18,7 +18,7 @@ public class CarpetaServiceImpl implements ICarpetaService{
         // TODO Auto-generated method stub
         return (List<Carpeta>) carpetaDao.findAll();
     }
-
+ 
     @Override
     public void save(Carpeta endidad) {
         // TODO Auto-generated method stub

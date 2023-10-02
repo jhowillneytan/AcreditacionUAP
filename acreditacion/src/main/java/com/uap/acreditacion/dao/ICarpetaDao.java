@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.uap.acreditacion.entity.Carpeta;
 
 public interface ICarpetaDao extends JpaRepository<Carpeta, Long> {
-
+ 
 	@Query("select c from Carpeta c left join c.carrera ca where ca.id_carrera=?1 order by c.id_carpeta asc")
 	public List<Carpeta> getAllCarpetasCarrera(Long id_carrera);
 

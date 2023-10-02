@@ -11,7 +11,7 @@ public interface IFacultadService {
 	public void save(Facultad endidad);
 
 	public Facultad findOne(Long id);
-
+	
 	public void delete(Long id);
 
 }

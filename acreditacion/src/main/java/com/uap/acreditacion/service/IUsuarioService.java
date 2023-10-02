@@ -12,6 +12,6 @@ public interface IUsuarioService {
 	public Usuario findOne(Long id);
 
 	public void delete(Long id);
-
+	
     public Usuario findByUsernamePassword(String username, String password);
 }

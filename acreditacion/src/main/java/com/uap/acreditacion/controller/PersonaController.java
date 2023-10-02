@@ -76,7 +76,7 @@ public class PersonaController {
 			model.addAttribute("listaTipoPersonas", listaTipoPersonas);
 			return "persona";
 		} else {
-			return "redirect:/login";
+			return "redirect:/login"; 
 		}
 	}
 

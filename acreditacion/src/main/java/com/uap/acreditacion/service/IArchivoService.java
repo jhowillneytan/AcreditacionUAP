@@ -19,5 +19,5 @@ public interface IArchivoService {
 	public List<Archivo> listaArchivosPorDescripcionAdmin(String descripcion);
 
 	public Optional<Archivo> findOneOptional(Long id);
-
+ 
 }

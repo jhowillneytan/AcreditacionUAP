@@ -13,5 +13,5 @@ public interface IPuestoService {
 	public Puesto findOne(Long id);
 
 	public void delete(Long id);
-
+	
 }

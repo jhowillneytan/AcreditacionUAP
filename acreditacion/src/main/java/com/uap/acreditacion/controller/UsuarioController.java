@@ -62,7 +62,7 @@ public class UsuarioController {
 				model.addAttribute("usuarios", listUsuarios);
 				model.addAttribute("personasUser", p.getCarrera().getPersonas());
 			}
-
+ 
 			// model.addAttribute("carpetas", carpetaService.findAll());
 			model.addAttribute("ExisteArchivo", "true");
 			// model.addAttribute("personasUser",p.getCarrera().getPersonas());

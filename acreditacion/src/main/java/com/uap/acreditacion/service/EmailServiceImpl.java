@@ -19,7 +19,7 @@ public class EmailServiceImpl {
     public void EmailService(JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
     }
-
+ 
     public void enviarEmail(String email, String asunto, String mensaje) throws MessagingException {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);

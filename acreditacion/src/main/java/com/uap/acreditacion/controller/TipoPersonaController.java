@@ -67,7 +67,7 @@ public class TipoPersonaController {
 		redirectAttrs
         .addFlashAttribute("mensaje", "Agregado correctamente")
         .addFlashAttribute("clase", "success");
-		return new ModelAndView("redirect:/tipo-persona/form-tipo-persona");
+		return new ModelAndView("redirect:/tipo-persona/form-tipo-persona"); 
 	}
 	
 	@GetMapping("/editar-tipo-persona/{id_tipo_persona}")

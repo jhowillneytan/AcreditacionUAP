@@ -22,7 +22,7 @@ public class UserDetailsServiceImpl /*implements UserDetailsService*/ {
 
 	@Autowired
     IPersonaDao userRepository;
-	
+
 	/*
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

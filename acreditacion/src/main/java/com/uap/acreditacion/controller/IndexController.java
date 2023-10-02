@@ -53,7 +53,7 @@ public class IndexController {
 			@RequestParam(value="logout", required = false) String logout,
 			Model model, Principal principal, RedirectAttributes flash
 			) {
-		
+		 
 		//String username=auth.getName();
 		
 		

@@ -19,7 +19,7 @@ public class FacultadServiceImpl implements IFacultadService{
         // TODO Auto-generated method stub
         return (List<Facultad>) facultadDao.findAll();
     }
-
+  
     @Override
     public void save(Facultad endidad) {
         // TODO Auto-generated method stub

@@ -10,7 +10,7 @@ import com.uap.acreditacion.entity.Usuario;
 
 @Service
 public class UsuarioServiceImlp implements IUsuarioService{
-
+    
     @Autowired
     private IUsuarioDao iUsuarioDao;
 

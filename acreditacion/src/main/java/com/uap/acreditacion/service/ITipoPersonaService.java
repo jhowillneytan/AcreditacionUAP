@@ -11,7 +11,7 @@ public interface ITipoPersonaService {
 	public void save(TipoPersona endidad);
 
 	public TipoPersona findOne(Long id);
-
+	
 	public void delete(Long id);
 
 }

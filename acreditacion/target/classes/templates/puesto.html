@@ -12,9 +12,9 @@
 	<nav th:replace="layout/layout :: cabecera"></nav>
 
 	<div th:replace="layout/layout :: ladera"></div>
-	
+
 	<div class="app-content content file-manager-application">
-	
+
 		<div class="content-body">
 			<!-- Validation -->
 			<div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"

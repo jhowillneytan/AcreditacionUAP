@@ -122,7 +122,7 @@
 							<h4 class="alert-heading" th:text="${mensaje}"></h4>
 						</div>
 						<div class="body-content-overlay"></div>
-
+						
 						<!-- file manager app content starts -->
 						<div class="file-manager-main-content">
 							<!-- search area start -->
@@ -414,11 +414,28 @@
 
 													<div class="d-flex align-items-center justify-content-center">
 														<!--  w-100 -->
-														<a type="button" data-bs-toggle="modal"
+														<div th:if="${a.tipoArchivo == 'pdf'}">
+															<a type="button" data-bs-toggle="modal"
+																th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+																th:href="@{'/acreditacion/uploads/' + ${a.file}}">
+
+																<img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}"
+																	alt="file-icon" height="85"
+																	style="object-fit: cover; width: 110%; height: 110%;" />
+															</a>
+														</div>
+														<div th:if="${a.tipoArchivo != 'pdf'}">
+															<a type="button" data-bs-toggle="modal"
+															th:attr="onclick='verArchivoImg(\'' + ${a.file} + '\', \'' + ${a.nom_archivo} + '\', \'' + ${a.descripcion} + '\')'"
+															>
+																<img th:src="@{'/acreditacion/uploads/' + ${a.file}}"
+																	alt="file-icon" height="85"
+																	style="object-fit: cover; width: 110%; height: 110%;" />
+															</a>
+														</div>
+														<!--<a type="button" data-bs-toggle="modal"
 															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
 															th:href="@{'/acreditacion/uploads/' + ${a.file}}">
-															<!--<img th:src="${'/uploads/' + a.tipoArchivo.icono}"
-														alt="file-icon" height="85"/>-->
 
 															<img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}"
 																th:if="${a.tipoArchivo == 'pdf'}" alt="file-icon"
@@ -428,7 +445,7 @@
 																th:if="${a.tipoArchivo != 'pdf'}" alt="file-icon"
 																height="85"
 																style="object-fit: cover; width: 110%; height: 110%;" />
-														</a>
+														</a>-->
 													</div>
 												</div>
 												<div class="card-body bg-white">
@@ -464,6 +481,7 @@
 								<!-- /Files Container Ends -->
 							</div>
 						</div>
+
 						<!-------------- ARCHIVO MODAL -------------->
 						<div class="modal fade" id="ArchivoModal2" tabindex="-1" aria-labelledby="ArchivoModal2"
 							aria-hidden="true" data-bs-backdrop="static">
@@ -1360,6 +1378,20 @@
 			return validExtensions.indexOf(fileExtension) !== -1;
 		}*/
 
+	</script>
+	<script>
+		function verArchivoImg(id, nombre, descripcion) {
+			Swal.fire({
+				title: nombre,
+				text: descripcion,
+				imageUrl: '/acreditacion/uploads/' + id,
+				imageWidth: 500,
+				imageHeight: 400,
+				imageAlt: 'Custom image',
+				showCloseButton: true,
+				showConfirmButton: false
+			})
+		}
 	</script>
 
 </body>

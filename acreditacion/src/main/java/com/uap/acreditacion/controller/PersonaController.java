@@ -6,6 +6,7 @@ import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.aspectj.weaver.patterns.PerObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -25,11 +26,13 @@ import com.uap.acreditacion.Config;
 import com.uap.acreditacion.entity.Carrera;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
+import com.uap.acreditacion.entity.Usuario;
 import com.uap.acreditacion.service.ICargoService;
 import com.uap.acreditacion.service.ICarreraService;
 import com.uap.acreditacion.service.IPersonaService;
 import com.uap.acreditacion.service.IPuestoService;
 import com.uap.acreditacion.service.ITipoPersonaService;
+import com.uap.acreditacion.service.IUsuarioService;
 
 @Controller
 @RequestMapping(value = "/persona")
@@ -41,6 +44,9 @@ public class PersonaController {
 	private ITipoPersonaService tipoPersonaService;
 	@Autowired
 	private IPersonaService personaService;
+
+	@Autowired
+	private IUsuarioService usuarioService;
 
 	@Autowired
 	private ICarreraService carreraService;
@@ -247,7 +253,15 @@ public class PersonaController {
 	@GetMapping("/eliminar-persona/{id_persona}")
 	public String eliminarPersona(@PathVariable(value = "id_persona") Long id_persona,
 			RedirectAttributes redirectAttrs) {
-		personaService.delete(id_persona);
+		//personaService.delete(id_persona);
+		Persona persona = personaService.findOne(id_persona);
+		if (persona.getUsuario() != null) {
+			Usuario usuario = persona.getUsuario();
+			usuario.setEstado("X");
+			usuarioService.save(usuario);
+		}
+		persona.setEstado("X");
+		personaService.save(persona);
 		redirectAttrs
 				.addFlashAttribute("mensaje", "Eliminado correctamente")
 				.addFlashAttribute("clase", "danger");

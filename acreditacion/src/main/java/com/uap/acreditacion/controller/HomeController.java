@@ -882,8 +882,6 @@ public class HomeController {
 			usuariosArray[index][2] = String.valueOf(usuario.getEstado());
 			index++;
 		}
-		
-
 		return ResponseEntity.ok(usuariosArray);
 	}
 }

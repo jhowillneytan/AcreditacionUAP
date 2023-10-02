@@ -84,7 +84,7 @@
 	                                                <th>Nombre</th>
 	                                                <th>Fecha registro</th>
 	                                                <th>Descripcion</th>
-	                                                <th>Estado</th>
+	                                                <!--<th>Estado</th>-->
 	                                                <th>Otros</th>
 	                                            </tr>
 	                                        </thead>
@@ -96,7 +96,7 @@
 	                                        		<td th:text="${p.nom_puesto}"></td>
 	                                        		<td th:text="${p.fecha_registro}"></td>
 	                                        		<td th:text="${p.descripcion}"></td>
-	                                        		<td th:text="${p.estado}"></td>
+	                                        		<!--<td th:text="${p.estado}"></td>-->
 	                                        		<td>
 	                                        			<a th:href="@{'/puesto/editar-puesto/' + ${p.id_puesto}}"><button class="btn btn-outline-primary"><i class="fas fa-edit"></i></button></a>
 	                                        			<a th:href="@{'/puesto/editar-puesto/' + ${p.id_puesto}}"><button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button></a>
@@ -110,7 +110,7 @@
 	                                                <th>Nombre</th>
 	                                                <th>Fecha registro</th>
 	                                                <th>Descripcion</th>
-	                                                <th>Estado</th>
+	                                                <!--<th>Estado</th>-->
 	                                                <th>Otros</th>
 	                                            </tr>
 	                                        </tfoot>

@@ -85,7 +85,7 @@
 												<th>Nombre de usuario</th>
 												<th>Contrasena</th>
 												<th>Persona</th>
-												<th>Estado</th>
+												<!--<th>Estado</th>-->
 												<th>Acciones</th>
 											</tr>
 										</thead>
@@ -97,7 +97,7 @@
 												<td
 													th:text="${users.persona.nombre}+' '+${users.persona.ap_paterno}+' Rol:'+${users.persona.tipoPersona.nom_tipo_persona}">
 												</td>
-												<td th:text="${users.estado = 'A'}? 'Activo': 'Inactivo'"></td>
+												<!--<td th:text="${users.estado = 'A'}? 'Activo': 'Inactivo'"></td>-->
 												<td>
 													<a
 														th:href="@{'/ModUsuario/' + ${users.id_usuario}}"><button
@@ -116,7 +116,7 @@
 												<th>Nombre de usuario</th>
 												<th>Contrasena</th>
 												<th>Persona</th>
-												<th>Estado</th>
+												<!--<th>Estado</th>-->
 												<th>Acciones</th>
 											</tr>
 										</tfoot>

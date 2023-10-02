@@ -17,11 +17,11 @@
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <style type="text/css">
-/*div h1 {
+div h1 {
 	text-align: center;
 	font-size: 70px;
-	color: #f7faf8;
-}*/
+	color: #ffffff;
+}
 </style>
 </head>
 
@@ -32,6 +32,9 @@
 		<div class="time-text">16:54</div>
 		<div class="date-text">Sunday, November 03</div>
 		<script src="../../../login/scripts/timedisplay.js"></script>
+	</div>
+	<div>
+		<h1>INGENIERIA INDUSTRIAL</h1>
 	</div>
 	<div style="text-align: center;" th:class="'alert alert-' + (${clase != null} ? ${clase} : info)" role="alert"
 		th:if="${mensaje != null}">

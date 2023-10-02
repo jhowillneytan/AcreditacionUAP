@@ -55,7 +55,8 @@ public class FacultadController {
     @GetMapping("/editar-facultad/{id}")
     public String editar(@PathVariable("id")Long id, Model model,@RequestParam(name = "success", required = false)String success, HttpServletRequest request){
 		if (request.getSession().getAttribute("persona") != null) {
-            Persona p = (Persona) request.getSession().getAttribute("persona");
+            Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
         model.addAttribute("facultad", facultadService.findOne(id));

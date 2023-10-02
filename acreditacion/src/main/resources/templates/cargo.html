@@ -83,7 +83,7 @@
 	                                                <th>Nombre</th>
 	                                                <th>Fecha registro</th>
 	                                                <th>Descripcion</th>
-	                                                <th>Estado</th>
+	                                                <!--<th>Estado</th>-->
 	                                                <th>Otros</th>
 	                                            </tr>
 	                                        </thead>
@@ -95,7 +95,7 @@
 	                                        		<td th:text="${c.nom_cargo}"></td>
 	                                        		<td th:text="${c.fecha_registro}"></td>
 	                                        		<td th:text="${c.descripcion}"></td>
-	                                        		<td th:text="${c.estado}"></td>
+	                                        		<!--<td th:text="${c.estado}"></td>-->
 	                                        		<td>
 	                                        			<a th:href="@{'/cargo/editar-cargo/' + ${c.id_cargo}}"><button class="btn btn-outline-primary"><i class="fas fa-edit"></i></button></a>
 	                                        			<a th:href="@{'/cargo/eliminar-cargo/' + ${c.id_cargo}}"><button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button></a>
@@ -109,7 +109,7 @@
 	                                                <th>Nombre</th>
 	                                                <th>Fecha registro</th>
 	                                                <th>Descripcion</th>
-	                                                <th>Estado</th>
+	                                                <!--<th>Estado</th>-->
 	                                                <th>Otros</th>
 	                                            </tr>
 	                                        </tfoot>

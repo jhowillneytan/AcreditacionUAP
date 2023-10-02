@@ -3,7 +3,6 @@ package com.uap.acreditacion.controller;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Set;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -15,16 +14,11 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import com.uap.acreditacion.dao.IUsuarioDao;
-import com.uap.acreditacion.entity.Archivo;
-import com.uap.acreditacion.entity.Carpeta;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.entity.Usuario;
 import com.uap.acreditacion.service.EmailServiceImpl;
-import com.uap.acreditacion.service.ICarpetaService;
 import com.uap.acreditacion.service.IPersonaService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 import com.uap.acreditacion.service.IUsuarioService;
@@ -42,9 +36,6 @@ public class UsuarioController {
 
 	@Autowired
 	private IPersonaService personaService;
-
-	@Autowired
-	private ICarpetaService carpetaService;
 
 	@Autowired
 	private EmailServiceImpl emailServiceImpl;

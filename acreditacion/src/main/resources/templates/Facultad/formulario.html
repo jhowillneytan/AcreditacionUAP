@@ -22,7 +22,7 @@
                     <div class="col-md-12 col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">FORMULARIO TIPO ARCHIVO</h4>
+                                <h4 class="card-title">FORMULARIO FACULTAD</h4>
                             </div>
                             <div class="card-body">                                
                                     <form  action="../../../../facultad/formulario" method="post" novalidate>
@@ -78,8 +78,8 @@
                                                 <td th:text="${f.descripcion}"></td>
                                                 <td th:text="${f.fecha_registro}"></td>
                                                 <td>
-                                                    <a th:href="@{'/tipo-archivo/editar-facultad/' + ${f.id_facultad}}"><button class="btn btn-outline-primary"><i class="fas fa-edit"></i></button></a>
-                                        			<a th:href="@{'/tipo-archivo/eliminar-facultad/' + ${f.id_facultad}}"><button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button></a>
+                                                    <a th:href="@{'/facultad/editar-facultad/' + ${f.id_facultad}}"><button class="btn btn-outline-primary"><i class="fas fa-edit"></i></button></a>
+                                        			<a th:href="@{'/facultad/eliminar-facultad/' + ${f.id_facultad}}"><button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button></a>
                                                 </td>
                                             </tr>
                                         </tbody>

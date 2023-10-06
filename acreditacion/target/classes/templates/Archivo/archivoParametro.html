@@ -1,0 +1,90 @@
+<div class="view-container">
+    <h6 class="files-section-title mt-2 mb-75" th:if="!${ExisteArchivo}">Archivos
+    </h6>
+
+    <th:block th:if="${anterior!=null}" th:each="a: ${anterior.archivos}">
+
+
+        <!-- th:onclick="click([[${a.id_archivo}]])" -->
+        <div th:if="${a.estado != 'X'}" class="card file-manager-item file">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="customCheck8" />
+                <label class="form-check-label" for="customCheck8"></label>
+            </div>
+            <div class="card-img-top file-logo-wrapper">
+                <div class="dropdow float-end">
+                    <div class="btn-group">
+                        <a class="btn toggle-dropdown" id="dropdownMenuButton700" type="button"
+                            data-bs-toggle="dropdown">
+                            <i class='fas fa-ellipsis-v'></i>
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton700">
+                            <a class="dropdown-item" href="#"
+                                th:onclick="renombrar([[${a.id_archivo}]],[[${a.nom_archivo}]],[[${a.descripcion}]])"
+                                data-bs-toggle="modal" data-bs-target="#ModalRsnombrarArchiv">Renombrar
+                                Archivo</a>
+                            <a class="dropdown-item" th:onclick="eliminarArchivo([[${a.id_archivo}]])">Eliminar
+                                Archivo</a>
+
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="d-flex align-items-center justify-content-center">
+                    <!--  w-100 -->
+                    <div th:if="${a.tipoArchivo == 'pdf'}">
+                        <a type="button" data-bs-toggle="modal"
+                            th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+                            th:href="@{'/acreditacion/uploads/' + ${a.file}}">
+
+                            <img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}" alt="file-icon" height="85"
+                                style="object-fit: cover; width: 110%; height: 110%;" />
+                        </a>
+                    </div>
+                    <div th:if="${a.tipoArchivo != 'pdf'}">
+                        <a type="button" data-bs-toggle="modal"
+                            th:attr="onclick='verArchivoImg(\'' + ${a.file} + '\', \'' + ${a.nom_archivo} + '\', \'' + ${a.descripcion} + '\')'">
+                            <img th:src="@{'/acreditacion/uploads/' + ${a.file}}" alt="file-icon" height="85"
+                                style="object-fit: cover; width: 110%; height: 110%;" />
+                        </a>
+                    </div>
+                    <!--<a type="button" data-bs-toggle="modal"
+                        th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+                        th:href="@{'/acreditacion/uploads/' + ${a.file}}">
+
+                        <img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}"
+                            th:if="${a.tipoArchivo == 'pdf'}" alt="file-icon"
+                            height="85"
+                            style="object-fit: cover; width: 110%; height: 110%;" />
+                        <img th:src="@{'/acreditacion/uploads/' + ${a.file}}"
+                            th:if="${a.tipoArchivo != 'pdf'}" alt="file-icon"
+                            height="85"
+                            style="object-fit: cover; width: 110%; height: 110%;" />
+                    </a>-->
+                </div>
+            </div>
+            <div class="card-body bg-white">
+                <div class="content-wrapper">
+                    <a class="card-text file-name mb-0" th:text="${a.nom_archivo}" data-bs-toggle="modal"
+                        th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+                        th:href="@{'/acreditacion/uploads/' + ${a.file}}"></a>
+
+                    <p class="card-text file-size mb-0">2gb</p>
+                    <p class="card-text file-date"></p>
+                </div>
+                <div class="row">
+                    <a th:href="@{'/acreditacion/uploads/' + ${a.file}}" data-bs-toggle="modal"
+                        th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}" style="color: black;"><b
+                            class="card-text" th:text="${a.descripcion}"></b></a><br>
+                    <!-- th:onclick="visualizar([[${a.file}]])" -->
+                </div>
+                <small class="file-accessed text-muted" th:text="'Fecha creada '+${a.fecha_registro}"></small>
+
+            </div>
+        </div>
+    </th:block>
+    <div class="d-none flex-grow-1 align-items-center no-result mb-3">
+        <i data-feather="alert-circle" class="me-50"></i> No Results
+    </div>
+</div>

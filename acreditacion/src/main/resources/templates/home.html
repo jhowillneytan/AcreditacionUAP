@@ -18,101 +18,9 @@
 		<div class="header-navbar-shadow"></div>
 		<div class="content-area-wrapper container-xxl p-0">
 			<!-- sub menus  -->
-			<div class="sidebar-left">
-				<div class="sidebar">
-					<div class="sidebar-file-manager">
-						<div class="sidebar-inner">
-							<!-- sidebar menu links starts -->
-							<!-- add file button -->
-							<div
-								th:if="${tipoPersonasession.nom_tipo_persona != 'Evaluador' or tipoPersonasession.nom_tipo_persona == 'Director'}">
-								<div class="dropdown dropdown-actions"
-									th:if="${tipoPersonasession.nom_tipo_persona == 'Administrador' or tipoPersonasession.nom_tipo_persona == 'Director'}">
-									<!--style="background: linear-gradient(#28c76f, #28c76f);"-->
-									<button class="btn btn-primary add-file-btn text-center w-100" type="button"
-										id="addNewFile" data-bs-toggle="dropdown" aria-haspopup="true"
-										aria-expanded="true">
-										<span class="align-middle">Nuevo</span>
-									</button>
-									<div class="dropdown-menu" aria-labelledby="addNewFile">
-										<div class="dropdown-item" data-bs-toggle="modal"
-											data-bs-target="#new-folder-modal">
-											<div class="mb-0">
-												<i data-feather="folder" class="me-25"></i> <span
-													class="align-middle">Carpeta</span>
-											</div>
-										</div>
-										<div class="dropdown-item" data-bs-toggle="modal" th:if="${editMode}"
-											data-bs-target="#new-archivo-modal">
-											<div class="mb-0">
-												<i data-feather="file" class="me-25"></i> <span
-													class="align-middle">Archivo</span>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="dropdown dropdown-actions"
-									th:if="${(tipoPersonasession.nom_tipo_persona == 'Docente' or tipoPersonasession.nom_tipo_persona == 'Secretaria') && editMode == 'true'}">
-									<!--style="background: linear-gradient(#28c76f, #28c76f);"-->
-									<button class="btn btn-primary add-file-btn text-center w-100" type="button"
-										id="addNewFile" data-bs-toggle="dropdown" aria-haspopup="true"
-										aria-expanded="true">
-										<span class="align-middle">Nuevo</span>
-									</button>
-									<div class="dropdown-menu" aria-labelledby="addNewFile">
-										<div class="dropdown-item" data-bs-toggle="modal"
-											data-bs-target="#new-folder-modal">
-											<div class="mb-0">
-												<i data-feather="folder" class="me-25"></i> <span
-													class="align-middle">Carpeta</span>
-											</div>
-										</div>
-										<div class="dropdown-item" data-bs-toggle="modal" th:if="${editMode}"
-											data-bs-target="#new-archivo-modal">
-											<div class="mb-0">
-												<i data-feather="file" class="me-25"></i> <span
-													class="align-middle">Archivo</span>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="sidebar-list">
 
-								<div class="my-drivee"></div>
 
-								<div class="list-group" th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
-									<h6 class="section-label px-2 mb-1">DIMENSIONES</h6>
-									<div>
-										<a th:href="@{'/home/' + ${c.id_carpeta}}"
-											class="list-group-item list-group-item-action" th:each="c: ${menus}"
-											th:if="${c.estado != 'Xusoc2' && c.estado!='X'}"> <i data-feather="folder"
-												class="me-50 font-medium-3"></i> <span class="align-middle"
-												th:text="${c.nom_carpeta}">Documents</span>
-										</a>
-									</div>
-								</div>
-								<div class="list-group"
-									th:if="${tipoPersonasession.nom_tipo_persona=='Director' or tipoPersonasession.nom_tipo_persona=='Docente' or tipoPersonasession.nom_tipo_persona=='Secretaria'}">
-									<h6 class="section-label px-2 mb-1">DIMENSIONES</h6>
-									<div>
-										<a th:href="@{'/home/' + ${c.id_carpeta}}+'/'"
-											class="list-group-item list-group-item-action" th:each="c: ${menus}"
-											th:if="${c.estado != 'Xusoc2' && c.estado!='X'}"> <i data-feather="folder"
-												class="me-50 font-medium-3"></i> <span class="align-middle"
-												th:text="${c.nom_carpeta}">Documents</span>
-										</a>
-									</div>
-								</div>
-
-							</div>
-						</div>
-					</div>
-
-				</div>
-			</div>
-
-			<div class="content-right">
+			<div class="content-right " style="width: calc(100% - 0px);">
 				<div class="content-wrapper container-xxl p-0">
 					<div class="content-header row"></div>
 					<div class="content-body">
@@ -122,12 +30,44 @@
 							<h4 class="alert-heading" th:text="${mensaje}"></h4>
 						</div>
 						<div class="body-content-overlay"></div>
-					
+
 						<!-- file manager app content starts -->
 						<div class="file-manager-main-content">
 							<!-- search area start -->
-							<div class="file-manager-content-header d-flex justify-content-between align-items-center">
+							<div class="file-manager-content-header d-flex justify-content-between align-items-center ">
 								<div class="d-flex align-items-center">
+									<div class="dropdown dropdown-actions"
+										th:if="${tipoPersonasession.nom_tipo_persona == 'Administrador' or tipoPersonasession.nom_tipo_persona == 'Director'}">
+										<!--style="background: linear-gradient(#28c76f, #28c76f);"-->
+										<button class="btn btn-primary add-file-btn text-center w-100" type="button"
+											id="addNewFile" data-bs-toggle="dropdown" aria-haspopup="true"
+											aria-expanded="true">
+											<span class="align-middle">Nuevo</span>
+										</button>
+										<div class="dropdown-menu" aria-labelledby="addNewFile">
+											<div class="dropdown-item" data-bs-toggle="modal"
+												data-bs-target="#new-folder-modal">
+												<div class="mb-0">
+													<i data-feather="folder" class="me-25"></i> <span
+														class="align-middle">Carpeta</span>
+												</div>
+											</div>
+											<div class="dropdown-item" data-bs-toggle="modal" th:if="${editMode}"
+												data-bs-target="#new-archivo-modal">
+												<div class="mb-0">
+													<i data-feather="file" class="me-25"></i> <span
+														class="align-middle">Archivo</span>
+												</div>
+											</div>
+											<div class="dropdown-item" data-bs-toggle="modal" th:if="${anterior.nom_carpeta=='MATERIAS'}" 
+												data-bs-target="#new-materia-modal">
+												<div class="mb-0">
+													<i data-feather="file" class="me-25"></i> <span
+														class="align-middle">Materia</span>
+												</div>
+											</div>
+										</div>
+									</div>
 									<div class="sidebar-toggle d-block d-xl-none float-start align-middle ms-1">
 										<i data-feather="menu" class="font-medium-5"></i>
 									</div>
@@ -217,7 +157,7 @@
 							</script>
 
 
-							<div class="file-manager-content-body">
+							<div class="file-manager-content-body ">
 								<div class="breadcrumb-wrapper"
 									th:if="${tipoPersonasession.nom_tipo_persona=='Administrador' or tipoPersonasession.nom_tipo_persona == 'Evaluador'}">
 									<ol class="breadcrumb">
@@ -246,9 +186,215 @@
 
 									</ol>
 								</div>
+								<div  th:if="${anterior!=null && anterior.nom_carpeta=='MATERIAS'}">
+									<ul class="nav nav-tabs">
+										<li class="nav-item" th:each="materia: ${materias}">
+											<a th:class="${opcionMSelect == materia.id_materia}? 'nav-link active': 'nav-link '"
+												aria-current="page"
+												th:href="@{'/RequisitosMateria/'+${anterior.id_carpeta}+'/'+${materia.id_materia}+'/'}"
+												th:text="${materia.nombre}"></a>
+										</li>
+									</ul>
+									<div class="view-container">
+										<section class="py-1 header"
+											style="background-color: #929492; width: calc(100% - 0px);">
+											<div class="container ">
+
+												<div class="row ">
+													<div class="col-md-3">
+														<!-- Tabs nav -->
+														<div class="nav flex-column nav-pills nav-pills-custom"
+															id="v-pills-tab" role="tablist" aria-orientation="vertical">
+															<a th:class="${opcionRselect == requisito.id_requisito}? 'nav-link mb-3 p-3 shadow active' : 'nav-link mb-3 p-3 shadow'"
+																id="v-pills-home-tab"
+																th:each="requisito, i: ${requisitosM}"
+																th:href="@{'/ParametroRequisitosMateria/'+${anterior.id_carpeta}+'/'+${opcionMSelect}+'/'+${requisito.id_requisito}}">
+																<i class="fa fa-user-circle-o mr-2"></i>
+																<span class="font-weight-bold small text-uppercase"
+																	th:text="${(i.index+1) +'. '+ requisito.nombre}"></span></a>
+														</div>
+													</div>
+
+													<div class="col-md-9">
+														<!-- Tabs content  -->
+														<div class="tab-content" id="v-pills-tabContent">
+															<div class="tab-pane fade shadow rounded bg-white show active p-1"
+																id="v-pills-home" role="tabpanel"
+																aria-labelledby="v-pills-home-tab">
+																<div class="table-responsive">
+																	<table style="width:100%">
+																		<thead>
+																			<tr>
+																				<th>Nombre</th>
+																				<th>Cant. Archivos</th>
+																				<th>Acciones</th>
+																			</tr>
+																		</thead>
+																		<tbody>
+																			<tr th:each="parametro : ${parametrosR}"
+																				class="py-1"
+																				style="border-top: 1px solid #858383; border-bottom: 1px solidrgb(128, 126, 126)0;">
+																				<td th:text="${parametro.nombre}"></td>
+																				<td
+																					th:text="${parametro.archivos.size}">
+																				</td>
+																				<td style="padding: auto;">
+																					<a href="#"
+																						class="btn btn-secondary"
+																						style="font-size: 11px; "
+																						data-bs-toggle="modal"
+																						th:if="${editMode}"
+																						data-bs-target="#new-archivo-modal"
+																						th:attr="onclick='NuevoArchivoParametro(\'' + ${parametro.id_parametro} + '\')'">
+																						<i
+																							class="fas fa-upload fa-xs"></i></a>
+																					<a type="button"
+																						class="btn btn-secondary"
+																						style="font-size: 11px; "
+																						th:data-target="'#modalArchivoParametro' + ${parametro.id_parametro}"
+																						data-toggle="modal">
+																						<i
+																							class="far fa-eye fa-xs"></i></a>
+																				</td>
+																				<!-------------- ARCHIVO MODAL PARAMETRO -------------->
+																				<div class="modal fade"
+																					th:id="'modalArchivoParametro'+${parametro.id_parametro}"
+																					tabindex="-1"
+																					aria-labelledby="exampleModalLabel"
+																					aria-hidden="true">
+																					<div class="modal-dialog modal-xl">
+																						<div class="modal-content">
+																							<div class="modal-header">
+																								<h5 class="modal-title"
+																									th:text="'Archivos del '+${parametro.nombre}">
+																								</h5>
+																								<button type="button"
+																									class="close"
+																									data-dismiss="modal"
+																									aria-label="Close">
+																									<span
+																										aria-hidden="true">&times;</span>
+																								</button>
+																							</div>
+																							<div class="modal-body"
+																								style="background-color: #929492;">
+																								<!--   ARCHIVOS   -->
+																								<section
+																									class="py-1 header"
+																									style=" width: calc(100% - 0px);">
+																									<div
+																										class="container ">
+
+																										<div
+																											class="row ">
+																											<div
+																												class="col-md-3">
+																												<!-- Tabs nav -->
+																												<div class="nav flex-column nav-pills nav-pills-custom"
+																													id="v-pills-tab"
+																													role="tablist"
+																													aria-orientation="vertical">
+																													<a class="nav-link mb-3 p-3 shadow boton-activoParametro"
+																														type="button"
+																														id="v-pills-home-tab"
+																														th:each="archivo, i: ${parametro.archivos}"
+																														th:attr="onclick='VerArchivoParametro(\'' + ${archivo.file} + '\')'">
+																														<i
+																															class="fa fa-user-circle-o mr-2"></i>
+																														<span
+																															class="font-weight-bold small text-uppercase"
+																															th:text="${(i.index+1) +'. '+ archivo.nom_archivo}"></span></a>
+																												</div>
+																											</div>
+
+																											<div
+																												class="col-md-9">
+																												<!-- Tabs content  -->
+																												<div class="tab-content"
+																													id="v-pills-tabContent">
+																													<div class="tab-pane fade shadow rounded bg-white show active p-1"
+																														id="v-pills-home"
+																														role="tabpanel"
+																														aria-labelledby="v-pills-home-tab">
+
+																														<embed
+																															id="ventanaVerArchivoParametro"
+																															type="application/pdf"
+																															width="100%"
+																															height="500px">
+																													</div>
+
+																												</div>
+																											</div>
+																										</div>
+																									</div>
+																								</section>
+
+																							</div>
+																							<div class="modal-footer">
+																								<button type="button"
+																									class="btn btn-secondary"
+																									data-dismiss="modal">Cerrar</button>
+																								<!--<button type="button"
+																									class="btn btn-primary">Guardar
+																									cambios</button>-->
+																							</div>
+																						</div>
+																					</div>
+																				</div>
+
+																				<!-- /.modal -->
+																			</tr>
+																		</tbody>
+
+																	</table>
+																</div>
+															</div>
+
+														</div>
+													</div>
+												</div>
+											</div>
+										</section>
+
+										<!--<div class="tab-content" id="myTabContent">
+											<div class="tab-pane fade show active" id="home" role="tabpanel"
+												aria-labelledby="home-tab">
+												<div class="sub-tabs">
+													<ul class="nav flex-column" id="myVerticalTab" role="tablist">
+														<li class="nav-item" th:each="requisito: ${requisitosM}">
+															<a id="sub-tab1" data-toggle="tab"
+																th:class="${opcionRselect == requisito.id_requisito}? 'nav-link active ': 'nav-link '"
+																th:href="@{'/ParametroRequisitosMateria/'+${anterior.id_carpeta}+'/'+${opcionMSelect}+'/'+${requisito.id_requisito}}"
+																role="tab" aria-controls="sub-content1" aria-selected="true"
+																th:text="${requisito.nombre}"></a>
+														</li>
+	
+													</ul>
+													<div class="tab-content" id="myVerticalTabContent">
+														<div class="tab-pane fade show active" id="sub-content1"
+															role="tabpanel" aria-labelledby="sub-tab1">
+															Contenido de Subtab 1
+														</div>
+														<div class="tab-pane fade" id="sub-content2" role="tabpanel"
+															aria-labelledby="sub-tab2">
+															Contenido de Subtab 2
+														</div>
+													</div>
+												</div>
+											</div>
+											<div class="tab-pane fade" id="profile" role="tabpanel"
+												aria-labelledby="profile-tab">Perfil</div>
+											<div class="tab-pane fade" id="contact" role="tabpanel"
+												aria-labelledby="contact-tab">Contacto</div>
+										</div>-->
+									</div>
+								</div>
+
+
 								<div id="replace_div">
 
-									<div class="view-container">
+									<div class="view-container" th:if="${anterior.nom_carpeta!='MATERIAS'}">
 										<h6 class="files-section-title mt-25 mb-75" th:if="!${ExisteCarpeta}">Carpetas
 										</h6>
 										<div class="files-header">
@@ -376,7 +522,7 @@
 
 									</script>
 									<!-- Files Container Starts -->
-									<div class="view-container">
+									<div class="view-container" th:if="${anterior.nom_carpeta!='MATERIAS'}">
 										<h6 class="files-section-title mt-2 mb-75" th:if="!${ExisteArchivo}">Archivos
 										</h6>
 
@@ -426,8 +572,7 @@
 														</div>
 														<div th:if="${a.tipoArchivo != 'pdf'}">
 															<a type="button" data-bs-toggle="modal"
-															th:attr="onclick='verArchivoImg(\'' + ${a.file} + '\', \'' + ${a.nom_archivo} + '\', \'' + ${a.descripcion} + '\')'"
-															>
+																th:attr="onclick='verArchivoImg(\'' + ${a.file} + '\', \'' + ${a.nom_archivo} + '\', \'' + ${a.descripcion} + '\')'">
 																<img th:src="@{'/acreditacion/uploads/' + ${a.file}}"
 																	alt="file-icon" height="85"
 																	style="object-fit: cover; width: 110%; height: 110%;" />
@@ -1003,10 +1148,7 @@
 
 								// Limpiar el select antes de agregar nuevas opciones
 								select.innerHTML = "";
-								/*var option1 = document.createElement("option");
-								option1.value = "";
-								option1.text = "Seleccionar";
-								select.appendChild(option);*/
+
 								var cont = 0;
 								matriz.forEach(function (fila) {
 									var option = document.createElement("option");
@@ -1022,6 +1164,45 @@
 									select.appendChild(option);
 								});
 							}
+
+							function cargarSelectMaterias() {
+
+								$.ajax({
+									url: "/ListMaterias",
+									type: "POST",
+									dataType: "json",
+									success: function (data) {
+										var select = document.getElementById("SelectMateria");
+										select.innerHTML = "";
+										cargarMatrizSelectMaterias(data);
+									},
+									error: function () {
+										console.log("Error al obtener la lista de usuarios");
+									}
+								});
+							}
+							function cargarMatrizSelectMaterias(matriz) {
+								var select = document.getElementById("SelectMateria");
+
+								// Limpiar el select antes de agregar nuevas opciones
+								select.innerHTML = "";
+
+								var cont = 0;
+								matriz.forEach(function (fila) {
+									var option = document.createElement("option");
+									if (cont == 0) {
+										option.value = "";
+										option.text = "Seleccionar";
+										cont++;
+										select.appendChild(option);
+										option = document.createElement("option");
+									}
+									option.value = fila[1];
+									option.text = fila[0];
+									select.appendChild(option);
+								});
+							}
+
 						</script>
 						<!-- modal renombrar carpeta -->
 						<div id=modal_modificar_carpeta></div>
@@ -1135,18 +1316,28 @@
 										enctype="multipart/form-data">
 										<input type="hidden" class="form-control" th:name="auxiliar" th:if="${editMode}"
 											th:value="${anterior.id_carpeta}" placeholder="Untitled folder" />
+										<input type="hidden" class="form-control" name="idParametro" id="idParametro"
+											value="0" placeholder="Untitled folder" />
 										<div class="modal-header">
 											<h5 class="modal-title">Nuevo Archivo</h5>
 											<button type="button" class="btn-close" data-bs-dismiss="modal"
 												aria-label="Close"></button>
 										</div>
-										<!--
-										<div class="modal-body">
-											<label class="form-label" for="basic-addon-name">Nombre
-												archivo</label> <input type="text" class="form-control"
-												th:field="${archivo.nom_archivo}" placeholder="Nombre archivo"
-												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+
+										<!--<div class="modal-body">
+											<label class="form-label" for="select-country1">Parametro</label>
+											<select class="form-control form-select" th:field="${archivo.parametro}"
+												required>
+												<optgroup th:each="requisito: ${requisitos}"
+													th:label="${requisito.nombre}">
+													<option th:each="parametro: ${requisito.parametros}"
+														th:value="${parametro.id_parametro}"
+														th:text="${parametro.nombre}">
+													</option>
+												</optgroup>
+											</select>
 										</div>-->
+
 										<div class="modal-body">
 											<label class="form-label" for="basic-addon-name">Descripcion</label>
 											<input type="text" class="form-control" th:field="${archivo.descripcion}"
@@ -1156,7 +1347,8 @@
 
 										<div class="modal-body">
 											<label class="form-label" for="basic-addon-name">Archivo</label>
-											<input type="file" name="archivo" id="PDFarchivo" accept=".pdf, image/*"
+											<input type="file" name="archivo" id="PDFarchivo" accept=".pdf, image/*" 
+
 												data-validation="required" placeholder="Introdusca Archivo" multiple
 												required />
 											<div id="alertasFormArchivo"></div>
@@ -1174,8 +1366,47 @@
 							</div>
 						</div>
 
-						<!-- /Create New Folder Modal Ends -->
+						<!-- cargar materia -->
+						<div class="modal fade" id="new-materia-modal">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content">
 
+									<form th:action="@{/GuardarMateria}" th:object="${materia}" method="post"
+										id="formMateria" enctype="multipart/form-data">
+										<input type="hidden" class="form-control" name="id_carpetaD" th:if="${editMode}"
+											th:value="${anterior.id_carpeta}" placeholder="Untitled folder" />
+										<div class="modal-header">
+											<h5 class="modal-title">Nueva Materia</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<!--<div id="alertasFormMateria"></div>-->
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Nombre Materia</label>
+											<input type="text" class="form-control" th:field="${materia.nombre}"
+												placeholder="Nombre Materia"
+												onkeyup="javascript:this.value=this.value.toUpperCase();" />
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Requisito</label>
+											<select name="usuarios" class="form-select select2"
+												th:field="${materia.requisitos}" multiple>
+												<option th:each="requisito: ${requisitos}"
+													th:value="${requisito.id_requisito}" th:text="${requisito.nombre}">
+												</option>
+											</select>
+										</div>
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-primary me-1"
+												data-bs-dismiss="modal">Crear</button>
+											<button type="button" class="btn btn-outline-secondary"
+												data-bs-dismiss="modal">Cancelar</button>
+										</div>
+									</form>
+								</div>
+							</div>
+						</div>
+						<!-- /Create New Folder Modal Ends -->
 					</div>
 				</div>
 			</div>
@@ -1340,44 +1571,6 @@
 			imageClass: 'img-fluid mt-3 rounded'
 		});
 
-
-		/*
-		var fileInput2;
-		var nombreImagen;
-		
-		// Agregamos un evento al input de tipo archivo para que se active cuando se seleccione un archivo
-		document.getElementById("Imagen").addEventListener("change", function () {
-			fileInput2 = document.getElementById("Imagen");
-			nombreImagen = fileInput2.files[0].name;
-		
-			// Verificamos si se seleccionó un archivo
-			if (fileInput2.files.length > 0) {
-				// Obtenemos el nombre del archivo
-				var fileName = fileInput2.files[0].name;
-		
-				// Verificamos si la extensión del archivo es una imagen válida
-				if (!isValidImg(fileName)) {
-					// Reseteamos el valor del input file para borrar la selección inválida
-					fileInput2.value = "";
-					$('#alertasFormArchivo').html('<div class="alert alert-danger alert-dismissible">' +
-						'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-						'Solo se Admiten Archivos de Imagen (jpg, jpeg, png)' +
-						'</div>');
-				} else {
-					$('#alertasFormArchivo').html('<div class="alert alert-success alert-dismissible">' +
-						'<h6><i class="icon fas fa-check"></i> El archivo ' + nombreImagen + ' es Válido!</h6>' +
-						'</div>');
-				}
-			}
-		});
-		
-		// Función para validar si el nombre del archivo tiene extensión de imagen válida
-		function isValidImg(fileName) {
-			var validExtensions =  ['jpg', 'jpeg', 'png'];
-			var fileExtension = fileName.split(".").pop().toLowerCase();
-			return validExtensions.indexOf(fileExtension) !== -1;
-		}*/
-
 	</script>
 	<script>
 		function verArchivoImg(id, nombre, descripcion) {
@@ -1392,6 +1585,134 @@
 				showConfirmButton: false
 			})
 		}
+
+
+		/*$(document).ready(function () {
+			cargarSelectMaterias();
+			$('#formMateria').submit(function (event) {
+				event.preventDefault();
+
+
+				var form = document.getElementById("formMateria");
+
+				var action = form.action;
+
+				//alert("la action es: "+action);
+				var formData = $(this).serialize();
+
+				$.ajax({
+					type: 'POST',
+					url: $(this).attr('action'),
+					data: formData,
+					contentType: 'application/x-www-form-urlencoded',
+					success: function (data) {
+
+						var select = document.getElementById("SelectMateria");
+						select.innerHTML = "";
+						cargarSelectMaterias();
+						
+						Swal.fire({
+							icon: 'success',
+							title: data,
+							showConfirmButton: false,
+							timer: 1500
+						})
+
+					},
+					error: function () {
+						console.log("Error al obtener la lista de usuarios");
+					}
+				});
+
+				//form.submit();
+			});
+		});*/
+	</script>
+	<style>
+		/* Estilos personalizados
+        .sub-tabs {
+            display: flex;
+            flex-direction: row;
+        }
+        .sub-tabs .nav-item {
+            flex: 1;
+            text-align: center;
+        }
+        .sub-tabs .nav-link {
+            white-space: nowrap;
+            border-right: 1px solid transparent;
+        }
+        .sub-tabs .nav-link.active {
+            border-right: 1px solid #007bff; 
+            border-left: none; 
+        }
+        */
+		.nav-pills-custom .nav-link {
+			color: #aaa;
+			background: #fff;
+			position: relative;
+		}
+
+		.nav-pills-custom .nav-link.active {
+			color: #45b649;
+			background: #fff;
+		}
+
+
+		/* Add indicator arrow for the active tab */
+		@media (min-width: 992px) {
+			.nav-pills-custom .nav-link::before {
+				content: '';
+				display: block;
+				border-top: 8px solid transparent;
+				border-left: 10px solid #fff;
+				border-bottom: 8px solid transparent;
+				position: absolute;
+				top: 50%;
+				right: -10px;
+				transform: translateY(-50%);
+				opacity: 0;
+			}
+		}
+
+		.nav-pills-custom .nav-link.active::before {
+			opacity: 1;
+		}
+	</style>
+	<script>
+		function NuevoArchivoParametro(id) {
+			//alert(id);
+			$("#idParametro").val(id);
+
+		}
+	</script>
+	<!-------------- ARCHIVO MODAL PARAMETRO -------------->
+	<div class="modal fade" id="modalArchivoParametro" tabindex="-1" aria-labelledby="modal-xl" aria-hidden="true"
+		data-mdb-backdrop="static">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content" id="RegistroArchivoParametro">
+
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+	<script>
+		function VerArchivoParametro(file) {
+			var embedElement = $("#ventanaVerArchivoParametro");
+			embedElement.attr("src", "/acreditacion/uploads/" + file);
+
+			// Elimina la clase 'active' de todos los elementos con la clase 'boton-activo'
+			$('.boton-activoParametro').removeClass('active');
+
+			// Agrega la clase 'active' al botón que se hizo clic
+			var botonClicado = $('.boton-activo').filter(function () {
+				return $(this).attr('onclick').indexOf(file) !== -1;
+			});
+
+			botonClicado.addClass('active');
+		}
+
 	</script>
 
 </body>

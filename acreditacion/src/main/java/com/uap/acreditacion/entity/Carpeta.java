@@ -69,8 +69,7 @@ public class Carpeta implements Serializable{
 
     /*@JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "carpetas", fetch = FetchType.LAZY)
-	private List<Usuario> usuarios;
-*/
+	private List<Usuario> usuarios;*/
     /*@ManyToMany(cascade = CascadeType.ALL, mappedBy = "carpetas", fetch = FetchType.LAZY)
     private Set<Usuario> usuarios = new HashSet<>();*/
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
@@ -80,4 +79,6 @@ public class Carpeta implements Serializable{
     inverseJoinColumns = @JoinColumn(name = "id_usuario"))
     private Set<Usuario> usuarios;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "carpeta")
+    private List<Materia> materias;
 }

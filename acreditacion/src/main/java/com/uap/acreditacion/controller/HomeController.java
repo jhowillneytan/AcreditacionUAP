@@ -18,7 +18,7 @@ import java.util.Set;
 
 import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
- 
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,19 +40,22 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uap.acreditacion.Config;
+import com.uap.acreditacion.dao.IRequisitoDao;
 import com.uap.acreditacion.entity.Archivo;
 import com.uap.acreditacion.entity.Carpeta;
 import com.uap.acreditacion.entity.Carrera;
-
+import com.uap.acreditacion.entity.Materia;
+import com.uap.acreditacion.entity.Parametro;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.entity.Usuario;
 import com.uap.acreditacion.service.IArchivoService;
 import com.uap.acreditacion.service.ICarpetaService;
 import com.uap.acreditacion.service.ICarreraService;
-
+import com.uap.acreditacion.service.IMateriaService;
+import com.uap.acreditacion.service.IParametroService;
 import com.uap.acreditacion.service.IPersonaService;
-
+import com.uap.acreditacion.service.IRequisitoService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 import com.uap.acreditacion.service.IUsuarioService;
 import java.awt.image.BufferedImage;
@@ -87,6 +90,18 @@ public class HomeController {
 
 	@Autowired
 	private IUsuarioService usuarioService;
+
+	@Autowired
+	private IMateriaService materiaService;
+
+	@Autowired
+	private IRequisitoService requisitoService;
+
+	@Autowired
+	private IParametroService parametroService;
+
+	@Autowired
+	private IRequisitoDao iRequisitoDao;
 
 	@GetMapping(value = "/home")
 	public String home(ModelMap model, HttpServletRequest request,
@@ -215,7 +230,8 @@ public class HomeController {
 			System.out.println("***********TIPO PERSONA: " + tipoPersona.getId_tipo_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersona);
-
+			model.addAttribute("requisitos", requisitoService.findAll());
+			model.addAttribute("materia", new Materia());
 			return "home";
 		} else {
 			return "redirect:/login";
@@ -341,6 +357,9 @@ public class HomeController {
 			}
 			model.addAttribute("usuarios", usuarioService.findAll());
 			model.addAttribute("list", list);
+			model.addAttribute("requisitos", requisitoService.findAll());
+			model.addAttribute("materia", new Materia());
+			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
 			return "home";
 		} else {
 			return "redirect:/login";
@@ -595,32 +614,83 @@ public class HomeController {
 
 	// ----------- FIN DEL METODO
 
+	/*
+	 * @PostMapping("/guardar-archivo")
+	 * public String guardarArchivo(@Validated Archivo archivo, RedirectAttributes
+	 * redirectAttrs,
+	 * 
+	 * @RequestParam(name = "archivo", required = false) List<MultipartFile> file,
+	 * 
+	 * @RequestParam(value = "auxiliar") Long id_carpeta_anterior,
+	 * 
+	 * @RequestParam(value = "idParametro", required = false) Long id_parametro)
+	 * throws IOException {
+	 * List<Archivo> archivoS = new ArrayList<>();
+	 * 
+	 * String NombValidos[] = { "FOTOCOPIA DE TITULO DE BACHILLER",
+	 * "FOTOCOPIA DE C.I.",
+	 * "FOTOCOPIA DE CERTIFICADO DE NACIMIENTO",
+	 * "MODALIDAD DE INGRESO", "MATRICULA", "PROGRAMACIÓN", "FOTO"
+	 * };
+	 * for (MultipartFile multipartFile : file) {
+	 * Archivo archivo2 = new Archivo();
+	 * if (id_carpeta_anterior != null) {
+	 * archivo2.setCarpeta(carpetaService.findOne(id_carpeta_anterior));
+	 * }
+	 * String nombA = multipartFile.getOriginalFilename();
+	 * String[] ta2 = nombA.split("\\.");
+	 * String nombreSinExtension = obtenerNombreSinExtension(nombA);
+	 * 
+	 * System.out.println("anterior " + id_carpeta_anterior);
+	 * if (!multipartFile.isEmpty()) {
+	 * String arch = config.guardarArchivo(multipartFile);
+	 * // archivo.setContenido(file.getBytes());
+	 * String[] ta = arch.split("\\.");
+	 * archivo2.setFile(arch);
+	 * archivo2.setNom_archivo(nombreSinExtension);
+	 * archivo2.setTipoArchivo(ta2[ta2.length - 1]);
+	 * archivo2.setDescripcion(archivo.getDescripcion());
+	 * archivo2.setEstado("A");
+	 * archivo2.setFecha_registro(new Date());
+	 * 
+	 * for (String nombres : NombValidos) {
+	 * // System.out.println("***************EL NOMBRE DEL ARCHIVO ES****"
+	 * // +(archivo2.getNom_archivo()));
+	 * if (archivo2.getNom_archivo().equals(nombres)) {
+	 * archivoService.save(archivo2);
+	 * 
+	 * }
+	 * }
+	 * // archivoService.save(archivo2);
+	 * System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" +
+	 * archivo2.getNom_archivo());
+	 * 
+	 * 
+	 * } else {
+	 * redirectAttrs
+	 * .addFlashAttribute("mensaje", "Es necesario cargar un archivo")
+	 * .addFlashAttribute("clase", "danger");
+	 * return "redirect:/home/" + id_carpeta_anterior;
+	 * }
+	 * 
+	 * }
+	 * 
+	 * redirectAttrs
+	 * .addFlashAttribute("mensaje", "Agregado correctamente")
+	 * .addFlashAttribute("clase", "success");
+	 * return "redirect:/home/" + id_carpeta_anterior;
+	 * }
+	 */
 	@PostMapping("/guardar-archivo")
 	public String guardarArchivo(@Validated Archivo archivo, RedirectAttributes redirectAttrs,
 			@RequestParam(name = "archivo", required = false) List<MultipartFile> file,
-			@RequestParam(value = "auxiliar") Long id_carpeta_anterior) throws IOException {
-		/*
-		 * if (archivo.getNom_archivo() == null || archivo.getNom_archivo() == "" ||
-		 * archivo.getDescripcion() == null
-		 * || archivo.getDescripcion() == "") {
-		 * redirectAttrs
-		 * .addFlashAttribute("mensaje", "Se requiere llenar los campos")
-		 * .addFlashAttribute("clase", "danger");
-		 * return "redirect:/home/" + id_carpeta_anterior;
-		 * }
-		 */
-		/*
-		 * String NombValidos[] = { "FOTOCOPIA DE TITULO DE BACHILLER",
-		 * "FOTOCOPIA DE C.I.",
-		 * "FOTOCOPIA DE CERTIFICADO DE NACIMIENTO",
-		 * "MODALIDAD DE INGRESO", "MATRICULA 1", "MATRICULA 2", "PROGRAMACIÓN", "FOTO"
-		 * };
-		 */
-		String NombValidos[] = { "FOTOCOPIA DE TITULO DE BACHILLER",
-				"FOTOCOPIA DE C.I.",
-				"FOTOCOPIA DE CERTIFICADO DE NACIMIENTO",
-				"MODALIDAD DE INGRESO", "MATRICULA", "PROGRAMACIÓN", "FOTO"
-		};
+			@RequestParam(value = "auxiliar") Long id_carpeta_anterior,
+			@RequestParam(value = "idParametro", required = false) Long id_parametro) throws IOException {
+
+		Parametro parametro = parametroService.findOne(id_parametro);
+		Set<Parametro> parametros = new HashSet<>();
+		
+
 		for (MultipartFile multipartFile : file) {
 			Archivo archivo2 = new Archivo();
 			if (id_carpeta_anterior != null) {
@@ -635,39 +705,23 @@ public class HomeController {
 				String arch = config.guardarArchivo(multipartFile);
 				// archivo.setContenido(file.getBytes());
 				String[] ta = arch.split("\\.");
+				//archivo.setFile(arch);
 				archivo2.setFile(arch);
+
 				archivo2.setNom_archivo(nombreSinExtension);
 				archivo2.setTipoArchivo(ta2[ta2.length - 1]);
 				archivo2.setDescripcion(archivo.getDescripcion());
 				archivo2.setEstado("A");
 				archivo2.setFecha_registro(new Date());
-				for (String nombres : NombValidos) {
-					// System.out.println("***************EL NOMBRE DEL ARCHIVO ES****"
-					// +(archivo2.getNom_archivo()));
-					if (archivo2.getNom_archivo().equals(nombres)) {
-						archivoService.save(archivo2);
-					}
-				}
-				// archivoService.save(archivo2);
-				System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" + archivo2.getNom_archivo());
 
-				/*
-				 * for (int i = 0; i < NombValidos.length; i++) {
-				 * if (ta[0].equals(NombValidos[i])) {
-				 * archivo2.setFile(arch);
-				 * archivo2.setNom_archivo(ta[0]);
-				 * archivo2.setDescripcion(archivo.getDescripcion());
-				 * archivo2.setEstado("A");
-				 * archivo2.setFecha_registro(new Date());
-				 * archivoService.save(archivo2);
-				 * } else{
-				 * redirectAttrs
-				 * .addFlashAttribute("mensaje", "HAY ARCHIVOS CON NOMBRE NO VALIDOS")
-				 * .addFlashAttribute("clase", "danger");
-				 * return "redirect:/home/" + id_carpeta_anterior;
-				 * }
-				 * }
-				 */
+				parametros.add(parametro);
+				archivo2.setParametros(parametros);
+
+				archivoService.save(archivo2);
+
+				// System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" +
+				// archivo2.getNom_archivo());
+
 			} else {
 				redirectAttrs
 						.addFlashAttribute("mensaje", "Es necesario cargar un archivo")
@@ -884,4 +938,273 @@ public class HomeController {
 		}
 		return ResponseEntity.ok(usuariosArray);
 	}
+
+	@PostMapping("/ListMaterias")
+	public ResponseEntity<String[][]> ListMaterias(
+			HttpServletRequest request) {
+
+		List<Materia> materias = materiaService.findAll();
+
+		String[][] materiaArray = new String[materias.size()][3];
+
+		int index = 0;
+		for (Materia materia : materias) {
+			materiaArray[index][0] = materia.getNombre();
+			materiaArray[index][1] = String.valueOf(materia.getId_materia());
+			materiaArray[index][2] = String.valueOf(materia.getEstado());
+			index++;
+		}
+		return ResponseEntity.ok(materiaArray);
+	}
+
+	/*
+	 * @PostMapping("/GuardarMateria")
+	 * public ResponseEntity<String> GuardarMateria(@Validated Materia materia,
+	 * 
+	 * @RequestParam(value = "id_carpetaD")Long id_carpeta){
+	 * try {
+	 * materia.setCarpeta(carpetaService.findOne(id_carpeta));
+	 * materiaService.save(materia);
+	 * return ResponseEntity.ok("Se ha Guardado la Materia");
+	 * } catch (Exception e) {
+	 * return ResponseEntity.ok("Error: "+e);
+	 * }
+	 * 
+	 * }
+	 */
+	@PostMapping("/GuardarMateria")
+	public String GuardarMateria(@Validated Materia materia,
+			@RequestParam(value = "id_carpetaD") Long id_carpeta) {
+
+		materia.setCarpeta(carpetaService.findOne(id_carpeta));
+		materiaService.save(materia);
+		return "redirect:/home/" + id_carpeta;
+	}
+
+	@GetMapping("/RequisitosMateria/{id_carpeta}/{id_materia}/")
+	public String RequisitosMateria(@PathVariable(value = "id_carpeta") Long id_carpeta,
+			@PathVariable(value = "id_materia") Long id_materia,
+			ModelMap model,
+			HttpServletRequest request) {
+		if (request.getSession().getAttribute("persona") != null) {
+			Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
+
+			Calendar cal = Calendar.getInstance();
+			int year = cal.get(Calendar.YEAR);
+			Carpeta carpeta = carpetaService.findOne(id_carpeta);
+			model.addAttribute("personasession", p);
+			model.addAttribute("tipoPersonasession",
+					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
+			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
+			/*
+			 * for (int i = 0; i < carpetas.size(); i++) {
+			 * for (int j = 0; j < carpetas.get(i).getArchivos().size(); j++) {
+			 * String nombA = carpetas.get(i).getArchivos().get(j).getFile();
+			 * String[] ta2 = nombA.split("\\.");
+			 * System.out.println("el NOMBRE DE ES: "+ta2[1]);
+			 * carpetas.get(i).getArchivos().get(j).setTipoArchivo(ta2[1]);
+			 * }
+			 * }
+			 */
+
+			model.addAttribute("carpetas", carpetas);
+			model.addAttribute("menus", carpetas);
+
+			Archivo archivo = new Archivo();
+			model.addAttribute("carpeta", new Carpeta());
+			model.addAttribute("archivo", archivo);
+			model.addAttribute("editMode", "true");
+			model.addAttribute("anterior", carpeta);
+			// model.addAttribute("carpetas", carpetas);
+			model.addAttribute("ExisteCarpeta", carpetas.isEmpty());
+			model.addAttribute("ExisteArchivo", carpeta.getArchivos().isEmpty());
+			// model.addAttribute("TiposArchivos2", tipoArchivoService.findAll());
+			// model.addAttribute("menus", menus);
+			List<Carpeta> list = new ArrayList<Carpeta>();
+
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+
+				list.add(carpeta);
+
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Evaluador")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Docente")) {
+
+				list.add(carpeta);
+				// List<Usuario> usuarios = new
+				// ArrayList<>(carpeta.getCarpetaPadre().getUsuarios());
+
+				/*
+				 * while (carpeta.getCarpetaPadre() != null) {
+				 * for (int i = 0; i < usuarios.size(); i++) {
+				 * if (usuarios.get(i) == p.getUsuario()) {
+				 * list.add(carpeta.getCarpetaPadre());
+				 * carpeta = carpeta.getCarpetaPadre();
+				 * }
+				 * }
+				 * }
+				 */
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			model.addAttribute("usuarios", usuarioService.findAll());
+			model.addAttribute("list", list);
+			model.addAttribute("requisitos", requisitoService.findAll());
+			// model.addAttribute("requisitosM",
+			// materiaService.findOne(id_materia).getRequisitos());
+			model.addAttribute("requisitosM", iRequisitoDao.listaRequisitosMateria(id_materia));
+			model.addAttribute("materia", new Materia());
+			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
+			model.addAttribute("opcionMSelect", id_materia);
+
+			return "home";
+		} else {
+			return "redirect:/login";
+		}
+	}
+
+	@GetMapping("/ParametroRequisitosMateria/{id_carpeta}/{id_materia}/{id_requisito}")
+	public String ParametroRequisitosMateria(@PathVariable(value = "id_carpeta") Long id_carpeta,
+			@PathVariable(value = "id_materia") Long id_materia,
+			@PathVariable(value = "id_requisito") Long id_requisito,
+			ModelMap model,
+			HttpServletRequest request) {
+		if (request.getSession().getAttribute("persona") != null) {
+			Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
+
+			Calendar cal = Calendar.getInstance();
+			int year = cal.get(Calendar.YEAR);
+			Carpeta carpeta = carpetaService.findOne(id_carpeta);
+			model.addAttribute("personasession", p);
+			model.addAttribute("tipoPersonasession",
+					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
+			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
+			/*
+			 * for (int i = 0; i < carpetas.size(); i++) {
+			 * for (int j = 0; j < carpetas.get(i).getArchivos().size(); j++) {
+			 * String nombA = carpetas.get(i).getArchivos().get(j).getFile();
+			 * String[] ta2 = nombA.split("\\.");
+			 * System.out.println("el NOMBRE DE ES: "+ta2[1]);
+			 * carpetas.get(i).getArchivos().get(j).setTipoArchivo(ta2[1]);
+			 * }
+			 * }
+			 */
+
+			model.addAttribute("carpetas", carpetas);
+			model.addAttribute("menus", carpetas);
+
+			Archivo archivo = new Archivo();
+			model.addAttribute("carpeta", new Carpeta());
+			model.addAttribute("archivo", archivo);
+			model.addAttribute("editMode", "true");
+			model.addAttribute("anterior", carpeta);
+			// model.addAttribute("carpetas", carpetas);
+			model.addAttribute("ExisteCarpeta", carpetas.isEmpty());
+			model.addAttribute("ExisteArchivo", carpeta.getArchivos().isEmpty());
+			// model.addAttribute("TiposArchivos2", tipoArchivoService.findAll());
+			// model.addAttribute("menus", menus);
+			List<Carpeta> list = new ArrayList<Carpeta>();
+
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+
+				list.add(carpeta);
+
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Evaluador")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Docente")) {
+
+				list.add(carpeta);
+				// List<Usuario> usuarios = new
+				// ArrayList<>(carpeta.getCarpetaPadre().getUsuarios());
+
+				/*
+				 * while (carpeta.getCarpetaPadre() != null) {
+				 * for (int i = 0; i < usuarios.size(); i++) {
+				 * if (usuarios.get(i) == p.getUsuario()) {
+				 * list.add(carpeta.getCarpetaPadre());
+				 * carpeta = carpeta.getCarpetaPadre();
+				 * }
+				 * }
+				 * }
+				 */
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			model.addAttribute("usuarios", usuarioService.findAll());
+			model.addAttribute("list", list);
+			model.addAttribute("requisitos", requisitoService.findAll());
+			model.addAttribute("requisitosM", iRequisitoDao.listaRequisitosMateria(id_materia));
+			model.addAttribute("materia", new Materia());
+			Materia materia = materiaService.findOne(id_materia);
+
+			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
+			model.addAttribute("parametrosR", requisitoService.findOne(id_requisito).getParametros());
+			model.addAttribute("opcionRselect", id_requisito);
+			model.addAttribute("opcionMSelect", id_materia);
+			return "home";
+		} else {
+			return "redirect:/login";
+		}
+	}
+
+	/*
+	 * @GetMapping("/ContenidoParametro/{id_parametro}")
+	 * public String ContenidoParametro(@PathVariable(value = "id_parametro") Long
+	 * id_parametro, ModelMap model,
+	 * HttpServletRequest request) {
+	 * 
+	 * }
+	 */
 }

@@ -171,11 +171,11 @@
 
             </ul>
         </div>
-        <div class="shadow-bottom"></div>
+        <!--<div class="shadow-bottom"></div>-->
         <div class="main-menu-content" style="background-color: rgb(4, 0, 243);">
             <!--<img th:src="'/acreditacion/uploads/'+${personasession.carrera.file}" alt="" height="300px" width="300px">-->
             <div class="d-flex align-items-center"
-                style="background-color: rgb(255, 255, 255); top: 5%; width: 100%; height: 35%; background-repeat: no-repeat; overflow: hidden; justify-content: center; text-align: center;">
+                style=" top: 5%; width: 100%; height: 35%; background-repeat: no-repeat; overflow: hidden; justify-content: center; text-align: center; ">
                 <img th:src="@{'/acreditacion/uploads/' + ${personasession.carrera.file}}" alt=""
                     style="max-width: 70%; height: 96%;">
             </div>
@@ -194,7 +194,8 @@
 
                 <li class=" nav-item">
                     <a class="d-flex align-items-center" href="#" onclick="botonSubMenu(event)"
-                        style="color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;"><i data-feather="layout" style="color: aliceblue; "></i><span class="menu-title text-truncate"
+                        style="color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;"><i data-feather="layout" style="color: aliceblue; ">
+                        </i><span class="menu-title text-truncate"
                             data-i18n="Form Layouts" style="color: aliceblue;">INSTITUCIONAL</span></a>
                     <ul class="menu-content">
                         <li><a class="d-flex align-items-center" style="color: aliceblue; "
@@ -204,9 +205,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class=" nav-item"#
+                <li class=" nav-item" 
                     th:if="${tipoPersonasession.nom_tipo_persona=='Director'} or ${tipoPersonasession.nom_tipo_persona=='Administrador'}">
-                    <a class="d-flex align-items-center" href="" onclick="botonSubMenu(event)" style="color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;"><i
+                    <a class="d-flex align-items-center" href="" onclick="botonSubMenu(event)" 
+                    th:style="${subMenuSeleccionado}? 'color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px; background-color: rgb(91, 67, 230);' :'color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;'"><i
                             data-feather="copy" style="color: aliceblue; "></i><span class="menu-title text-truncate"
                             data-i18n="Form Elements" style="color: alice blue;">ELEMENTOS</span></a>
                     <ul class="menu-content">
@@ -280,7 +282,7 @@
     <!-- END: Content-->
 
     <div class="sidenav-overlay"></div>
-    <div class="drag-target"></div>
+    <div class="drag-target" ></div>
 
     <!-- BEGIN: Footer-->
     <footer th:fragment="pie" class="footer footer-static footer-light">
@@ -332,7 +334,7 @@
 
                 if (boton.style.backgroundColor === '' || boton.style.backgroundColor === 'rgb(4, 0, 243)') {
                     
-                    boton.style.backgroundColor = 'rgb(185, 27, 27)';
+                    boton.style.backgroundColor = 'rgb(91, 67, 230)';
                     boton.style.color = 'aliceblue';
                 } else {
                     

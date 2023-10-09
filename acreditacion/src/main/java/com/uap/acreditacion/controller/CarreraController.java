@@ -59,6 +59,7 @@ public class CarreraController {
             model.addAttribute("success", success);
         }
         model.addAttribute("opcionCarrera", "true");
+        model.addAttribute("subMenuSeleccionado", "true");
         return "Carrera/formulario";
 		} else {
 			return "redirect:/login";
@@ -80,6 +81,7 @@ public class CarreraController {
             model.addAttribute("success", success);
         }
         model.addAttribute("opcionCarrera", "true");
+        model.addAttribute("subMenuSeleccionado", "true");
         return "Carrera/formulario";
 		} else {
 			return "redirect:/login";

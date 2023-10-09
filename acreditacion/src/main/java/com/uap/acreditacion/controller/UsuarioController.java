@@ -68,6 +68,7 @@ public class UsuarioController {
 			model.addAttribute("ExisteArchivo", "true");
 			// model.addAttribute("personasUser",p.getCarrera().getPersonas());
 			model.addAttribute("opcionUsuario", "true");
+			model.addAttribute("subMenuSeleccionado", "true");
 			return "/Usuarios/formulario";
 		} else {
 			return "redirect:/login";
@@ -123,6 +124,7 @@ public class UsuarioController {
 			}
 			model.addAttribute("editMode", "true");
 			model.addAttribute("opcionUsuario", "true");
+			model.addAttribute("subMenuSeleccionado", "true");
 			return "/Usuarios/formulario";
 		} else {
 			return "redirect:/login";

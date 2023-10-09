@@ -46,6 +46,7 @@ public class FacultadController {
             model.addAttribute("success", success);
         }
         model.addAttribute("opcionFacultad", "true");
+        model.addAttribute("subMenuSeleccionado", "true");
         return "Facultad/formulario";
 		} else {
 			return "redirect:/login";
@@ -66,6 +67,7 @@ public class FacultadController {
             model.addAttribute("success", success);
         }
         model.addAttribute("opcionFacultad", "true");
+        model.addAttribute("subMenuSeleccionado", "true");
         return "Facultad/formulario";
 		} else {
 			return "redirect:/login";

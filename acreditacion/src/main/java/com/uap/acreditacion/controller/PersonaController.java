@@ -75,6 +75,7 @@ public class PersonaController {
 			model.addAttribute("listaPuesto", iPuestoService.findAll());
 			model.addAttribute("listaTipoPersonas", listaTipoPersonas);
 			model.addAttribute("opcionPersona", "true");
+			model.addAttribute("subMenuSeleccionado", "true");
 			return "persona";
 		} else {
 			return "redirect:/login"; 
@@ -195,6 +196,7 @@ public class PersonaController {
 			model.addAttribute("listaPuesto", iPuestoService.findAll());
 			model.addAttribute("listaTipoPersonas", listaTipoPersonas);
 			model.addAttribute("opcionPersona", "true");
+			model.addAttribute("subMenuSeleccionado", "true");
 			return "persona";
 		} else {
 			return "redirect:/login";

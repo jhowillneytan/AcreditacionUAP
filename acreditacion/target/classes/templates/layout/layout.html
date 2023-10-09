@@ -259,8 +259,7 @@
                                     style="color: aliceblue;">Carrera</span>
                             </a>
                         </li>
-                        <!--<li th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}"><a class="d-flex align-items-center" th:href="@{/tipo-archivo/formulario}"><i data-feather="check-circle"></i><span class="menu-item text-truncate" data-i18n="Quill Editor">Tipo de archivo</span></a>
-                        </li>-->
+                        
                         <li th:class="${opcionUsuario}? 'active':''"
                             th:if="${tipoPersonasession.nom_tipo_persona=='Administrador' or tipoPersonasession.nom_tipo_persona=='Director'}">
                             <a class="d-flex align-items-center" th:href="@{/form-usuario}" style="color: aliceblue;"><i

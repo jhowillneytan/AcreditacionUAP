@@ -47,6 +47,7 @@ public class CargoController {
     	List<Cargo> listaCargos = cargoService.findAll();
 		model.addAttribute("cargo", new Cargo());
 		model.addAttribute("listaCargos", listaCargos);
+		model.addAttribute("opcionCargo", "true");
 		return "cargo";
 	} else {
 		return "redirect:/login";
@@ -84,7 +85,7 @@ public class CargoController {
 		model.addAttribute("editMode", "true");
 		model.addAttribute("listaCargos", listaCargos);
 		model.addAttribute("cargo", cargo);
-		
+		model.addAttribute("opcionCargo", "true");
 		return "cargo";
 		} else {
 			return "redirect:/login";

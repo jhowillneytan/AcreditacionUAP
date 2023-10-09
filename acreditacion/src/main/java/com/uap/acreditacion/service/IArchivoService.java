@@ -19,5 +19,7 @@ public interface IArchivoService {
 	public List<Archivo> listaArchivosPorDescripcionAdmin(String descripcion);
 
 	public Optional<Archivo> findOneOptional(Long id);
+
+	public List<Archivo> archivoParametro(Long id_parametro, Long id_carpeta, Long id_materia);
  
 }

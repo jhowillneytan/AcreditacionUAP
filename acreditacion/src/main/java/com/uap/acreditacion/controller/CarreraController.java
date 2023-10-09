@@ -58,7 +58,7 @@ public class CarreraController {
         if (success != null) {
             model.addAttribute("success", success);
         }
-
+        model.addAttribute("opcionCarrera", "true");
         return "Carrera/formulario";
 		} else {
 			return "redirect:/login";
@@ -79,7 +79,7 @@ public class CarreraController {
         if (success != null) {
             model.addAttribute("success", success);
         }
-
+        model.addAttribute("opcionCarrera", "true");
         return "Carrera/formulario";
 		} else {
 			return "redirect:/login";

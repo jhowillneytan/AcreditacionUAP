@@ -45,7 +45,7 @@ public class FacultadController {
         if (success != null) {
             model.addAttribute("success", success);
         }
-
+        model.addAttribute("opcionFacultad", "true");
         return "Facultad/formulario";
 		} else {
 			return "redirect:/login";
@@ -65,7 +65,7 @@ public class FacultadController {
         if (success != null) {
             model.addAttribute("success", success);
         }
-
+        model.addAttribute("opcionFacultad", "true");
         return "Facultad/formulario";
 		} else {
 			return "redirect:/login";

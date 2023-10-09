@@ -34,5 +34,10 @@ public class IRequisitoServiceImpl implements IRequisitoService{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
+
+    @Override
+    public List<Requisito> listaRequisitosMateria2(Long id_materia, Long id_carpeta) {
+        return requisitoDao.listaRequisitosMateria2(id_materia, id_carpeta);
+    }
     
 }

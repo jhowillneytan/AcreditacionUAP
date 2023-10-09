@@ -34,5 +34,10 @@ public class ParametroServiceImpl implements IParametroService{
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
+
+    @Override
+    public List<Parametro> listaParametro2(Long id_carpeta, Long id_materia, Long id_requisito) {
+        return parametroDao.listaParametro2(id_carpeta, id_materia, id_requisito);
+    }
     
 }

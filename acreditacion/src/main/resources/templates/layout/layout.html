@@ -65,24 +65,22 @@
 <body class="vertical-layout vertical-menu-modern content-left-sidebar navbar-floating footer-static" data-open="click"
     data-menu="vertical-menu-modern" data-col="content-left-sidebar">
 
+    </style>
     <!-- BEGIN: Header-->
     <nav th:fragment="cabecera" class="header-navbar navbar navbar-dark bg-success navbar navbar-expand-lg align-items-center 
         floating-nav navbar-light navbar-shadow container-xxl" style="
         height: 64px;
-        background-image: url(firefox.png), url(bubbles.png), linear-gradient(to right, rgba(45, 9, 224), rgba(235, 26, 26, 0.9));
+        background-image: url(firefox.png), url(bubbles.png), linear-gradient(to right, rgba(45, 9, 224), rgba(45, 9, 224));
         background-repeat: no-repeat, no-repeat, no-repeat;
         background-position: bottom right, left, right;
-        background: -moz-linear-gradient(to right, rgba(45, 9, 224), rgba(235, 26, 26, 0.9)), 
-                        -webkit-gradient(to right, rgba(45, 9, 224), rgba(235, 26, 26, 0.9)), 
-                     -ms-linear-gradient(to right, rgba(45, 9, 224), rgba(235, 26, 26, 0.9)), 
-                         linear-gradient(to right, rgb(45, 9, 224),  rgba(235, 26, 26, 0.9));">
+        ">
         <div class="navbar-container d-flex content">
             <div class="bookmark-wrapper d-flex align-items-center">
                 <ul class="nav navbar-nav align-items-center ms-auto">
 
                     <!--<li class="nav-item d-none d-lg-block"><a class="nav-link nav-link-style"><i class="ficon" data-feather="moon"></i></a></li>
                     -->
-                    
+
                     <li class="nav-item nav-search"><a class="nav-link nav-link-search"><i class="ficon"
                                 data-feather="search"></i></a>
                         <div class="search-input">
@@ -132,7 +130,8 @@
                     <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-user">
                         <a class="dropdown-item" th:href="@{'/mi-perfil/' + ${personasession.id_persona}}"><i
                                 class="me-50" data-feather="user"></i> Mi perfil</a>
-                        <a class="dropdown-item" href="/logout"><i class="me-50" data-feather="power"></i> Logout</a>
+                        <a class="dropdown-item" href="/logout"><i class="me-50" data-feather="power"></i> Cerrar
+                            Sesion</a>
                     </div>
                 </li>
             </ul>
@@ -147,7 +146,7 @@
         data-scroll-to-active="true">
         <div class="navbar-header" style="
         height: 64px;
-        background-image: url(firefox.png), url(bubbles.png), linear-gradient(to right, rgba(45, 9, 224), rgba(235, 26, 26, 0.9));
+        background-image: url(firefox.png), url(bubbles.png), linear-gradient(to right, rgb(185, 27, 27), rgb(185, 27, 27));
         background-repeat: no-repeat, no-repeat, no-repeat;
         background-position: bottom right, left, right;
         background: -moz-linear-gradient(to right, rgba(45, 9, 224), rgba(235, 26, 26, 0.9)), 
@@ -155,93 +154,117 @@
                      -ms-linear-gradient(to right, rgba(45, 9, 224), rgba(235, 26, 26, 0.9)), 
                          linear-gradient(to right, rgb(45, 9, 224),  rgba(235, 26, 26, 0.9));">
             <ul class="nav navbar-nav flex-row">
-                <li class="nav-item me-auto"><a class="navbar-brand" th:href="@{/home}"><span class="brand-logo">
+                <li class="nav-item me-auto">
+                    <a class="navbar-brand" th:href="@{/home}"><span class="brand-logo">
                         </span>
                         <h2 class="brand-text" style="color: rgb(255, 255, 255)"
                             th:text="${personasession.carrera.nom_carrera}"></h2>
-                    </a></li>
-                <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pe-0" data-bs-toggle="collapse"><i
+                    </a>
+                </li>
+                <li class="nav-item nav-toggle">
+                    <a class="nav-link modern-nav-toggle pe-0" data-bs-toggle="collapse"><i
                             class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i><i
                             class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary"
-                            data-feather="disc" data-ticon="disc"></i></a></li>
+                            data-feather="disc" data-ticon="disc"></i>
+                    </a>
+                </li>
 
             </ul>
         </div>
         <div class="shadow-bottom"></div>
-        <div class="main-menu-content">
+        <div class="main-menu-content" style="background-color: rgb(4, 0, 243);">
             <!--<img th:src="'/acreditacion/uploads/'+${personasession.carrera.file}" alt="" height="300px" width="300px">-->
             <div class="d-flex align-items-center"
-                style="top: 5%; width: 100%; height: 35%; background-repeat: no-repeat; overflow: hidden; justify-content: center; text-align: center;">
+                style="background-color: rgb(255, 255, 255); top: 5%; width: 100%; height: 35%; background-repeat: no-repeat; overflow: hidden; justify-content: center; text-align: center;">
                 <img th:src="@{'/acreditacion/uploads/' + ${personasession.carrera.file}}" alt=""
                     style="max-width: 70%; height: 96%;">
             </div>
 
 
-            <div class="dropdown-divider"></div>
-            <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation">
+            <div class="dropdown-divider" style="background-color: rgb(255, 255, 255);"></div>
+            <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation"
+                style="background-color: rgb(4, 0, 243);">
                 <!-- filter:alpha(opacity=10); opacity:0.5;  -->
 
-                <li class=" nav-item">
-                    <a class="d-flex align-items-center" th:href="@{/home}"><i data-feather="home"></i><span
-                            class="menu-title text-truncate" data-i18n="File Manager">PRINCIPAL</span></a>
+                <li th:class="${opcionHome}? 'nav-item active':'nav-item'">
+                    <a class="d-flex align-items-center" th:href="@{/home}" style="color: aliceblue; " ><i
+                            data-feather="home"></i><span class="menu-title text-truncate" data-i18n="File Manager"
+                            style="color: aliceblue;">PRINCIPAL</span></a>
                 </li>
 
                 <li class=" nav-item">
-                    <a class="d-flex align-items-center" href="#"><i data-feather="layout"></i><span
-                            class="menu-title text-truncate" data-i18n="Form Layouts">INSTITUCIONAL</span></a>
+                    <a class="d-flex align-items-center" href="#" onclick="botonSubMenu(event)"
+                        style="color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;"><i data-feather="layout" style="color: aliceblue; "></i><span class="menu-title text-truncate"
+                            data-i18n="Form Layouts" style="color: aliceblue;">INSTITUCIONAL</span></a>
                     <ul class="menu-content">
-                        <li><a class="d-flex align-items-center" href="https://uap.edu.bo/ingenieria-industrial/"><i
+                        <li><a class="d-flex align-items-center" style="color: aliceblue; "
+                                href="https://uap.edu.bo/ingenieria-industrial/"><i
                                     data-feather="check-circle"></i><span class="menu-item text-truncate"
-                                    data-i18n="Input">Perfil Profesional</span></a>
+                                    data-i18n="Input" style="color: aliceblue;">Perfil Profesional</span></a>
                         </li>
                     </ul>
                 </li>
-                <li class=" nav-item"
+                <li class=" nav-item"#
                     th:if="${tipoPersonasession.nom_tipo_persona=='Director'} or ${tipoPersonasession.nom_tipo_persona=='Administrador'}">
-                    <a class="d-flex align-items-center" href="#"><i data-feather="copy"></i><span
-                            class="menu-title text-truncate" data-i18n="Form Elements">ELEMENTOS</span></a>
+                    <a class="d-flex align-items-center" href="" onclick="botonSubMenu(event)" style="color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;"><i
+                            data-feather="copy" style="color: aliceblue; "></i><span class="menu-title text-truncate"
+                            data-i18n="Form Elements" style="color: alice blue;">ELEMENTOS</span></a>
                     <ul class="menu-content">
-                        <li><a class="d-flex align-items-center" th:href="@{/tipo-persona/form-tipo-persona}"><i
-                                    data-feather="check-circle"></i><span class="menu-item text-truncate"
-                                    data-i18n="Input">Tipo de persona</span></a>
+                        <li th:class="${opcionTipoPersona}? 'active':''"><a class="d-flex align-items-center"
+                                style="color: aliceblue;" th:href="@{/tipo-persona/form-tipo-persona}"><i
+                                    data-feather="check-circle"></i><span style="color: aliceblue;"
+                                    class="menu-item text-truncate" data-i18n="Input">Tipo de persona</span></a>
                         </li>
-                        <li><a class="d-flex align-items-center" th:href="@{/persona/form-persona}">
+                        <li th:class="${opcionPersona}? 'active':''"><a class="d-flex align-items-center"
+                                style="color: aliceblue;" th:href="@{/persona/form-persona}">
                                 <i data-feather="check-circle"></i>
-                                <span class="menu-item text-truncate" data-i18n="Quill Editor">Persona</span>
+                                <span style="color: aliceblue;" class="menu-item text-truncate"
+                                    data-i18n="Quill Editor">Persona</span>
                             </a>
                         </li>
-                        <li><a class="d-flex align-items-center" th:href="@{/cargo/form-cargo}">
+                        <li th:class="${opcionCargo}? 'active':''"><a class="d-flex align-items-center"
+                                style="color: aliceblue;" th:href="@{/cargo/form-cargo}">
                                 <i data-feather="check-circle"></i>
-                                <span class="menu-item text-truncate" data-i18n="Quill Editor">Cargo</span>
+                                <span class="menu-item text-truncate" style="color: aliceblue;"
+                                    data-i18n="Quill Editor">Cargo</span>
                             </a>
                         </li><!-- sec:authorize="hasAnyRole('Administrador','Responsable de acreditacion')" -->
-                        <li
+                        <li th:class="${opcionPuesto}? 'active':''"
                             th:if="${tipoPersonasession.nom_tipo_persona=='Administrador' or tipoPersonasession.nom_tipo_persona=='Director'}">
-                            <a class="d-flex align-items-center" th:href="@{/puesto/form-puesto}">
+                            <a class="d-flex align-items-center" th:href="@{/puesto/form-puesto}"
+                                style="color: aliceblue;">
                                 <i data-feather="check-circle"></i>
-                                <span class="menu-item text-truncate" data-i18n="Quill Editor">Puesto</span>
+                                <span class="menu-item text-truncate" data-i18n="Quill Editor"
+                                    style="color: aliceblue;">Puesto</span>
                             </a>
                         </li>
 
-                        <li th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
-                            <a class="d-flex align-items-center" th:href="@{/facultad/formulario}">
+                        <li th:class="${opcionFacultad}? 'active':''"
+                            th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
+                            <a class="d-flex align-items-center" th:href="@{/facultad/formulario}"
+                                style="color: aliceblue;">
                                 <i data-feather="check-circle"></i>
-                                <span class="menu-item text-truncate" data-i18n="Input">Facultad</span>
+                                <span class="menu-item text-truncate" data-i18n="Input"
+                                    style="color: aliceblue;">Facultad</span>
                             </a>
                         </li>
-                        <li th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
-                            <a class="d-flex align-items-center" th:href="@{/carrera/formulario}">
+                        <li th:class="${opcionCarrera}? 'active':''"
+                            th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
+                            <a class="d-flex align-items-center" th:href="@{/carrera/formulario}"
+                                style="color: aliceblue;">
                                 <i data-feather="check-circle"></i>
-                                <span class="menu-item text-truncate" data-i18n="Quill Editor">Carrera</span>
+                                <span class="menu-item text-truncate" data-i18n="Quill Editor"
+                                    style="color: aliceblue;">Carrera</span>
                             </a>
                         </li>
                         <!--<li th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}"><a class="d-flex align-items-center" th:href="@{/tipo-archivo/formulario}"><i data-feather="check-circle"></i><span class="menu-item text-truncate" data-i18n="Quill Editor">Tipo de archivo</span></a>
                         </li>-->
-                        <li
+                        <li th:class="${opcionUsuario}? 'active':''"
                             th:if="${tipoPersonasession.nom_tipo_persona=='Administrador' or tipoPersonasession.nom_tipo_persona=='Director'}">
-                            <a class="d-flex align-items-center" th:href="@{/form-usuario}"><i
+                            <a class="d-flex align-items-center" th:href="@{/form-usuario}" style="color: aliceblue;"><i
                                     data-feather="check-circle">
-                                </i><span class="menu-item text-truncate" data-i18n="Quill Editor">Usuarios</span>
+                                </i><span class="menu-item text-truncate" data-i18n="Quill Editor"
+                                    style="color: aliceblue;">Usuarios</span>
                             </a>
                         </li>
                     </ul>
@@ -303,7 +326,21 @@
         <script src="../../../../dist/js/bootstrap.min.js"></script>
         <script src="../../../../js/bs-dropzone.js"></script>
         <script src="../../../../js/swallAlert2.js"></script>
+        <script>
+            function botonSubMenu(event) {
+                var boton = event.target;
 
+                if (boton.style.backgroundColor === '' || boton.style.backgroundColor === 'rgb(4, 0, 243)') {
+                    
+                    boton.style.backgroundColor = 'rgb(185, 27, 27)';
+                    boton.style.color = 'aliceblue';
+                } else {
+                    
+                    boton.style.backgroundColor = 'rgb(4, 0, 243)';
+                    boton.style.color = 'aliceblue';
+                }
+            }
+        </script>
         <script>
             $(window).on('load', function () {
                 if (feather) {

@@ -1,8 +1,10 @@
 package com.uap.acreditacion.entity;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -45,4 +47,7 @@ public class Materia implements Serializable{
     joinColumns=@JoinColumn(name = "id_materia"),
     inverseJoinColumns = @JoinColumn(name = "id_requisito"))
     private Set<Requisito> requisitos;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "materia")
+    private List<Archivo> archivos;
 }

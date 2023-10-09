@@ -46,6 +46,7 @@ public class TipoPersonaController {
 		List<TipoPersona> listaTipoPersonas = tipoPersonaService.findAll();
 		model.addAttribute("tipoPersona", new TipoPersona());
 		model.addAttribute("listaTipoPersonas", listaTipoPersonas);
+		model.addAttribute("opcionTipoPersona", "true");
 		return "tipo_persona";
 
 		} else {
@@ -83,6 +84,7 @@ public class TipoPersonaController {
 		model.addAttribute("editMode", "true");
 		List<TipoPersona> listaTipoPersonas = tipoPersonaService.findAll();
 		model.addAttribute("listaTipoPersonas", listaTipoPersonas);
+		model.addAttribute("opcionTipoPersona", "true");
 		return "tipo_persona";
 		} else {
 			return "redirect:/login";

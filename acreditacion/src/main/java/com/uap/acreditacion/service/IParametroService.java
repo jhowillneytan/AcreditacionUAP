@@ -12,4 +12,6 @@ public interface IParametroService {
     public Parametro findOne(Long id);
 
     public void delete(Long id);
+
+    public List<Parametro> listaParametro2(Long id_carpeta, Long id_materia, Long id_requisito);
 }

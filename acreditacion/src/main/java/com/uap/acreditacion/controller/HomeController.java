@@ -35,11 +35,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uap.acreditacion.Config;
+import com.uap.acreditacion.dao.IArchivoDao;
+import com.uap.acreditacion.dao.IParametroDao;
+import com.uap.acreditacion.dao.IPersonaDao;
 import com.uap.acreditacion.dao.IRequisitoDao;
 import com.uap.acreditacion.entity.Archivo;
 import com.uap.acreditacion.entity.Carpeta;
@@ -47,6 +51,7 @@ import com.uap.acreditacion.entity.Carrera;
 import com.uap.acreditacion.entity.Materia;
 import com.uap.acreditacion.entity.Parametro;
 import com.uap.acreditacion.entity.Persona;
+import com.uap.acreditacion.entity.Requisito;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.entity.Usuario;
 import com.uap.acreditacion.service.IArchivoService;
@@ -99,9 +104,6 @@ public class HomeController {
 
 	@Autowired
 	private IParametroService parametroService;
-
-	@Autowired
-	private IRequisitoDao iRequisitoDao;
 
 	@GetMapping(value = "/home")
 	public String home(ModelMap model, HttpServletRequest request,
@@ -230,8 +232,9 @@ public class HomeController {
 			System.out.println("***********TIPO PERSONA: " + tipoPersona.getId_tipo_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersona);
-			model.addAttribute("requisitos", requisitoService.findAll());
+			// model.addAttribute("requisitos", requisitoService.findAll());
 			model.addAttribute("materia", new Materia());
+			model.addAttribute("opcionHome", "true");
 			return "home";
 		} else {
 			return "redirect:/login";
@@ -357,9 +360,10 @@ public class HomeController {
 			}
 			model.addAttribute("usuarios", usuarioService.findAll());
 			model.addAttribute("list", list);
-			model.addAttribute("requisitos", requisitoService.findAll());
+			model.addAttribute("requisitosList", requisitoService.findAll());
 			model.addAttribute("materia", new Materia());
 			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
+			model.addAttribute("opcionHome", "true");
 			return "home";
 		} else {
 			return "redirect:/login";
@@ -371,13 +375,13 @@ public class HomeController {
 			@RequestParam(name = "ruta_icon", required = false) MultipartFile ruta_icon,
 			@RequestParam(value = "auxiliar", required = false) Long id_carpeta_anterior, HttpServletRequest request) {
 
-		if (carpeta.getNom_carpeta() == null || carpeta.getNom_carpeta() == "" || carpeta.getDescripcion() == null
+		/*if (carpeta.getNom_carpeta() == null || carpeta.getNom_carpeta() == "" || carpeta.getDescripcion() == null
 				|| carpeta.getDescripcion() == "") {
 			redirectAttrs
 					.addFlashAttribute("mensaje", "Se requiere llenar los campos")
 					.addFlashAttribute("clase", "danger");
 			return "redirect:/home/" + id_carpeta_anterior;
-		}
+		}*/
 
 		Calendar cal = Calendar.getInstance();
 		int year = cal.get(Calendar.YEAR);
@@ -685,16 +689,27 @@ public class HomeController {
 	public String guardarArchivo(@Validated Archivo archivo, RedirectAttributes redirectAttrs,
 			@RequestParam(name = "archivo", required = false) List<MultipartFile> file,
 			@RequestParam(value = "auxiliar") Long id_carpeta_anterior,
-			@RequestParam(value = "idParametro", required = false) Long id_parametro) throws IOException {
+			@RequestParam(value = "idParametro", required = false) Long id_parametro,
+			@RequestParam(value = "idMateria", required = false) Long id_materia,
+			@RequestParam(value = "idRequisito", required = false) Long id_requisito) throws IOException {
 
 		Parametro parametro = parametroService.findOne(id_parametro);
 		Set<Parametro> parametros = new HashSet<>();
-		
-
+		String direccion = "redirect:/home/";
 		for (MultipartFile multipartFile : file) {
 			Archivo archivo2 = new Archivo();
 			if (id_carpeta_anterior != null) {
 				archivo2.setCarpeta(carpetaService.findOne(id_carpeta_anterior));
+				direccion = "redirect:/home/" + id_carpeta_anterior;
+			}
+			if (id_materia != null) {
+				archivo2.setMateria(materiaService.findOne(id_materia));
+				direccion = "redirect:/RequisitosMateria/" + id_carpeta_anterior + "/" + id_materia + "/";
+			}
+			if (id_requisito != null) {
+				// archivo2.setMateria(materiaService.findOne(id_materia));
+				direccion = "redirect:/ParametroRequisitosMateria/" + id_carpeta_anterior + "/" + id_materia + "/"
+						+ id_requisito;
 			}
 			String nombA = multipartFile.getOriginalFilename();
 			String[] ta2 = nombA.split("\\.");
@@ -703,9 +718,7 @@ public class HomeController {
 			System.out.println("anterior " + id_carpeta_anterior);
 			if (!multipartFile.isEmpty()) {
 				String arch = config.guardarArchivo(multipartFile);
-				// archivo.setContenido(file.getBytes());
-				String[] ta = arch.split("\\.");
-				//archivo.setFile(arch);
+
 				archivo2.setFile(arch);
 
 				archivo2.setNom_archivo(nombreSinExtension);
@@ -719,14 +732,11 @@ public class HomeController {
 
 				archivoService.save(archivo2);
 
-				// System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" +
-				// archivo2.getNom_archivo());
-
 			} else {
 				redirectAttrs
 						.addFlashAttribute("mensaje", "Es necesario cargar un archivo")
 						.addFlashAttribute("clase", "danger");
-				return "redirect:/home/" + id_carpeta_anterior;
+				return direccion;
 			}
 
 		}
@@ -734,7 +744,7 @@ public class HomeController {
 		redirectAttrs
 				.addFlashAttribute("mensaje", "Agregado correctamente")
 				.addFlashAttribute("clase", "success");
-		return "redirect:/home/" + id_carpeta_anterior;
+		return direccion;
 	}
 
 	private String obtenerNombreSinExtension(String nombreArchivo) {
@@ -754,11 +764,8 @@ public class HomeController {
 		Path projectPath = Paths.get("").toAbsolutePath();
 
 		Archivo archivo = archivoService.findOne(id);
-		// String rutaArchivo = projectPath + "\\acreditacion\\\\uploads\\" +
-		// archivo.getFile();
 		String rutaArchivo = projectPath + "/acreditacion/uploads/" + archivo.getFile();
 		try {
-
 			byte[] fileBytes;
 			try (InputStream inputStream = new FileInputStream(rutaArchivo)) {
 				ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -780,11 +787,16 @@ public class HomeController {
 			// Convertir la primera página a imagen
 			BufferedImage image = renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
 
+			// Obtener la mitad superior de la imagen
+			int height = image.getHeight();
+			int width = image.getWidth();
+			BufferedImage topHalfImage = image.getSubimage(0, 0, width, height / 2);
+
 			// Crear un flujo de bytes para la imagen
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
 			// Guardar la imagen en formato JPG
-			ImageIO.write(image, "jpg", baos);
+			ImageIO.write(topHalfImage, "jpg", baos);
 
 			baos.flush();
 			byte[] imageBytes = baos.toByteArray();
@@ -807,6 +819,7 @@ public class HomeController {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 		}
 	}
+
 	/* aaaaaaaaaaaaaaaaa */
 
 	@PostMapping("/renombrar-archivo")
@@ -849,6 +862,15 @@ public class HomeController {
 				.addFlashAttribute("clase", "success");
 
 		return "redirect:/home/" + carpeta.getId_carpeta();
+	}
+
+	@PostMapping("/eliminar-archivo2/{id_archivo}")
+	@ResponseBody
+	public void eliminarArchivo2(@PathVariable(value = "id_archivo") Long id_archivo) {
+
+		Archivo archivo = archivoService.findOne(id_archivo);
+		archivo.setEstado("X");
+		archivoService.save(archivo);
 	}
 
 	@GetMapping("home/archivo/{texto}")
@@ -974,7 +996,8 @@ public class HomeController {
 	 */
 	@PostMapping("/GuardarMateria")
 	public String GuardarMateria(@Validated Materia materia,
-			@RequestParam(value = "id_carpetaD") Long id_carpeta) {
+			@RequestParam(value = "id_carpetaD") Long id_carpeta
+			) {
 
 		materia.setCarpeta(carpetaService.findOne(id_carpeta));
 		materiaService.save(materia);
@@ -997,16 +1020,6 @@ public class HomeController {
 			model.addAttribute("tipoPersonasession",
 					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
-			/*
-			 * for (int i = 0; i < carpetas.size(); i++) {
-			 * for (int j = 0; j < carpetas.get(i).getArchivos().size(); j++) {
-			 * String nombA = carpetas.get(i).getArchivos().get(j).getFile();
-			 * String[] ta2 = nombA.split("\\.");
-			 * System.out.println("el NOMBRE DE ES: "+ta2[1]);
-			 * carpetas.get(i).getArchivos().get(j).setTipoArchivo(ta2[1]);
-			 * }
-			 * }
-			 */
 
 			model.addAttribute("carpetas", carpetas);
 			model.addAttribute("menus", carpetas);
@@ -1016,11 +1029,10 @@ public class HomeController {
 			model.addAttribute("archivo", archivo);
 			model.addAttribute("editMode", "true");
 			model.addAttribute("anterior", carpeta);
-			// model.addAttribute("carpetas", carpetas);
+
 			model.addAttribute("ExisteCarpeta", carpetas.isEmpty());
 			model.addAttribute("ExisteArchivo", carpeta.getArchivos().isEmpty());
-			// model.addAttribute("TiposArchivos2", tipoArchivoService.findAll());
-			// model.addAttribute("menus", menus);
+
 			List<Carpeta> list = new ArrayList<Carpeta>();
 
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
@@ -1045,19 +1057,6 @@ public class HomeController {
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Docente")) {
 
 				list.add(carpeta);
-				// List<Usuario> usuarios = new
-				// ArrayList<>(carpeta.getCarpetaPadre().getUsuarios());
-
-				/*
-				 * while (carpeta.getCarpetaPadre() != null) {
-				 * for (int i = 0; i < usuarios.size(); i++) {
-				 * if (usuarios.get(i) == p.getUsuario()) {
-				 * list.add(carpeta.getCarpetaPadre());
-				 * carpeta = carpeta.getCarpetaPadre();
-				 * }
-				 * }
-				 * }
-				 */
 				while (carpeta.getCarpetaPadre() != null) {
 					list.add(carpeta.getCarpetaPadre());
 					carpeta = carpeta.getCarpetaPadre();
@@ -1075,14 +1074,15 @@ public class HomeController {
 			}
 			model.addAttribute("usuarios", usuarioService.findAll());
 			model.addAttribute("list", list);
-			model.addAttribute("requisitos", requisitoService.findAll());
+			// model.addAttribute("requisitos",
+			// materiaService.findOne(id_materia).getRequisitos());
 			// model.addAttribute("requisitosM",
 			// materiaService.findOne(id_materia).getRequisitos());
-			model.addAttribute("requisitosM", iRequisitoDao.listaRequisitosMateria(id_materia));
+			model.addAttribute("requisitos", requisitoService.listaRequisitosMateria2(id_materia, id_carpeta));
 			model.addAttribute("materia", new Materia());
 			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
 			model.addAttribute("opcionMSelect", id_materia);
-
+			model.addAttribute("opcionHome", "true");
 			return "home";
 		} else {
 			return "redirect:/login";
@@ -1106,16 +1106,6 @@ public class HomeController {
 			model.addAttribute("tipoPersonasession",
 					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
-			/*
-			 * for (int i = 0; i < carpetas.size(); i++) {
-			 * for (int j = 0; j < carpetas.get(i).getArchivos().size(); j++) {
-			 * String nombA = carpetas.get(i).getArchivos().get(j).getFile();
-			 * String[] ta2 = nombA.split("\\.");
-			 * System.out.println("el NOMBRE DE ES: "+ta2[1]);
-			 * carpetas.get(i).getArchivos().get(j).setTipoArchivo(ta2[1]);
-			 * }
-			 * }
-			 */
 
 			model.addAttribute("carpetas", carpetas);
 			model.addAttribute("menus", carpetas);
@@ -1157,16 +1147,6 @@ public class HomeController {
 				// List<Usuario> usuarios = new
 				// ArrayList<>(carpeta.getCarpetaPadre().getUsuarios());
 
-				/*
-				 * while (carpeta.getCarpetaPadre() != null) {
-				 * for (int i = 0; i < usuarios.size(); i++) {
-				 * if (usuarios.get(i) == p.getUsuario()) {
-				 * list.add(carpeta.getCarpetaPadre());
-				 * carpeta = carpeta.getCarpetaPadre();
-				 * }
-				 * }
-				 * }
-				 */
 				while (carpeta.getCarpetaPadre() != null) {
 					list.add(carpeta.getCarpetaPadre());
 					carpeta = carpeta.getCarpetaPadre();
@@ -1184,27 +1164,90 @@ public class HomeController {
 			}
 			model.addAttribute("usuarios", usuarioService.findAll());
 			model.addAttribute("list", list);
-			model.addAttribute("requisitos", requisitoService.findAll());
-			model.addAttribute("requisitosM", iRequisitoDao.listaRequisitosMateria(id_materia));
+			model.addAttribute("requisitos", requisitoService.listaRequisitosMateria2(id_materia, id_carpeta));
+			// model.addAttribute("requisitosM",
+			// iRequisitoDao.listaRequisitosMateria(id_materia));
 			model.addAttribute("materia", new Materia());
-			Materia materia = materiaService.findOne(id_materia);
 
 			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
-			model.addAttribute("parametrosR", requisitoService.findOne(id_requisito).getParametros());
+			List<Parametro> parametros = parametroService.listaParametro2(id_carpeta, id_materia, id_requisito);
+			for (Parametro parametro : parametros) {
+				parametro.getArchivos().clear();
+			}
+			for (Parametro parametro : parametros) {
+				parametro.setArchivos(
+						archivoService.archivoParametro(parametro.getId_parametro(), id_carpeta, id_materia));
+			}
+			/*
+			 * for (Parametro parametro : parametros) {
+			 * for (int i = 0; i < parametro.getArchivos().size(); i++) {
+			 * if (parametro.getArchivos().get(i).getEstado().equals("X")) {
+			 * parametro.getArchivos().remove(i);
+			 * }
+			 * }
+			 * }
+			 */
+			for (Parametro parametro : parametros) {
+				List<Archivo> archivosAEliminar = new ArrayList<>();
+
+				for (Archivo archivo2 : parametro.getArchivos()) {
+					if (archivo2.getEstado().equals("X")) {
+						archivosAEliminar.add(archivo2);
+					}
+				}
+
+				parametro.getArchivos().removeAll(archivosAEliminar);
+			}
+
+			// List<Archivo> archivos = ;
+			model.addAttribute("parametrosR", parametros);
 			model.addAttribute("opcionRselect", id_requisito);
 			model.addAttribute("opcionMSelect", id_materia);
+			model.addAttribute("opcionHome", "true");
 			return "home";
 		} else {
 			return "redirect:/login";
 		}
 	}
 
+	@PostMapping("/CargarRequisitos/")
+	public ResponseEntity<String[][]> CargarRequisitos() {
+		List<Requisito> requisitos = requisitoService.findAll();
+		String[][] materiaArray = new String[requisitos.size()][2];
+		int index = 0;
+		for (Requisito requisito : requisitos) {
+			materiaArray[index][0] = String.valueOf(requisito.getId_requisito());
+			materiaArray[index][1] = requisito.getNombre();
+			index++;
+		}
+		return ResponseEntity.ok(materiaArray);
+	}
+
 	/*
-	 * @GetMapping("/ContenidoParametro/{id_parametro}")
-	 * public String ContenidoParametro(@PathVariable(value = "id_parametro") Long
-	 * id_parametro, ModelMap model,
+	 * @PostMapping("/ArchivoParametro/{id_parametro}/{id_carpeta}/{id_materia}")
+	 * public ResponseEntity<String[][]> ArchivoParametro(@PathVariable(value =
+	 * "id_parametro") Long id_parametro,
+	 * 
+	 * @PathVariable(value = "id_carpeta") Long id_carpeta,
+	 * 
+	 * @PathVariable(value = "id_materia") Long id_materia,
+	 * ModelMap model,
 	 * HttpServletRequest request) {
 	 * 
+	 * List<Archivo> archivos = archivoDao.archivoParametro(id_parametro,
+	 * id_carpeta, id_materia);
+	 * 
+	 * String[][] materiaArray = new String[archivos.size()][3];
+	 * 
+	 * int index = 0;
+	 * for (Archivo archivo : archivos) {
+	 * materiaArray[index][0] = String.valueOf(archivo.getId_archivo());
+	 * materiaArray[index][1] = archivo.getNom_archivo();
+	 * materiaArray[index][2] = archivo.getFile();
+	 * index++;
+	 * }
+	 * return ResponseEntity.ok(materiaArray);
 	 * }
 	 */
+
 }

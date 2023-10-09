@@ -35,7 +35,7 @@ body {
   min-height: 100vh;
   overflow: hidden;
   color: white;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/wallpaper.jpg);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url(../img/plantaPiloto.jpg);
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -81,7 +81,7 @@ body .login-form i {
   left: -32px;
 }
 body .login-form .text-body {
-  border-bottom: 2px solid #55ae95;
+  border-bottom: 2px solid #2600ff;
   position: relative;
   margin-top: 3.5rem;
   padding: 5px;
@@ -101,7 +101,7 @@ body .login-form .text-body span::before {
   position: absolute;
   top: 50%;
   left: 5px;
-  color: rgba(253, 119, 146, 0.4);
+  color: rgba(233, 233, 233, 0.616);
   transform: translateY(-50%);
   z-index: -1;
   transition: all 0.5s ease-in-out;
@@ -113,12 +113,12 @@ body .login-form .text-body span::after {
   left: 0px;
   width: 0%;
   height: 2px;
-  background: #fd7792;
+  background: #ffffffee;
   transition: all 0.5s ease-in-out;
 }
 body .login-form .text-body .focus + span::before {
   top: -5px;
-  color: #fd7792;
+  color: #f8f8f8ea;
 }
 body .login-form .text-body .focus + span::after {
   width: 100%;
@@ -130,9 +130,9 @@ body .login-form .login-btn {
   border: none;
   border-radius: 50px;
   outline: none;
-  background: linear-gradient(120deg, #7cdfc3, #fd7792);
+  background: linear-gradient(120deg, #0420bd, #ff0033);
   background-size: 350%;
-  box-shadow: 0px 0px 6px 6px rgba(253, 119, 146, 0.3);
+  /*box-shadow: 0px 0px 6px 6px rgba(253, 119, 146, 0.3);*/
   font-size: 1.5rem;
   color: white;
   transition: all 0.5s ease-in-out;
@@ -149,6 +149,7 @@ body .login-form .login-btn i {
 }
 body .login-form .login-btn:hover {
   background-position: right;
+  box-shadow: 0px 0px 5px 5px rgba(255, 1, 52, 0.349);
 }
 body .login-form .login-btn:focus {
   background-position: right;
@@ -165,7 +166,7 @@ body .login-form .bottom-text {
   color: #ffac8e;
 }
 body .login-form .bottom-text a {
-  color: #6da6fc;
+  color: #0010f5;
   font-size: 1.5rem;
   text-decoration: underline;
 }/*# sourceMappingURL=main.css.map */

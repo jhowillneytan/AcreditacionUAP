@@ -47,10 +47,11 @@ public class UsuarioController {
 			Persona p = personaService.findOne(p2.getId_persona());
 			Calendar cal = Calendar.getInstance();
 			int year = cal.get(Calendar.YEAR);
-			List<Usuario> listUsuarios = new ArrayList<>();
+			List<Usuario> listUsuarios = iUsuarioService.findAll();
+			/*List<Usuario> listUsuarios = new ArrayList<>();
 			for (Persona persona : p.getCarrera().getPersonas()) {
 				listUsuarios.add(persona.getUsuario());
-			}
+			}*/
 			TipoPersona tipoPersona = tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersona);
@@ -66,6 +67,7 @@ public class UsuarioController {
 			// model.addAttribute("carpetas", carpetaService.findAll());
 			model.addAttribute("ExisteArchivo", "true");
 			// model.addAttribute("personasUser",p.getCarrera().getPersonas());
+			model.addAttribute("opcionUsuario", "true");
 			return "/Usuarios/formulario";
 		} else {
 			return "redirect:/login";
@@ -111,14 +113,16 @@ public class UsuarioController {
 				model.addAttribute("usuarios", iUsuarioService.findAll());
 				model.addAttribute("personasUser", iPersonaService.findAll());
 			} else {
-				List<Usuario> listUsuarios = new ArrayList<>();
+				List<Usuario> listUsuarios = iUsuarioService.findAll();
+				/*List<Usuario> listUsuarios = new ArrayList<>();
 				for (Persona persona : p.getCarrera().getPersonas()) {
 					listUsuarios.add(persona.getUsuario());
-				}
+				}*/
 				model.addAttribute("usuarios", listUsuarios);
 				model.addAttribute("personasUser", p.getCarrera().getPersonas());
 			}
 			model.addAttribute("editMode", "true");
+			model.addAttribute("opcionUsuario", "true");
 			return "/Usuarios/formulario";
 		} else {
 			return "redirect:/login";

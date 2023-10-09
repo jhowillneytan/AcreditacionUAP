@@ -54,5 +54,10 @@ public class ArchivoServiceImpl implements IArchivoService{
     public List<Archivo> listaArchivosPorDescripcionAdmin(String descripcion) {
         return archivoDao.listaArchivosPorDescripcionAdmin(descripcion);
     }
+
+    @Override
+    public List<Archivo> archivoParametro(Long id_parametro, Long id_carpeta, Long id_materia) {
+        return archivoDao.archivoParametro(id_parametro, id_carpeta, id_materia);
+    }
     
 }

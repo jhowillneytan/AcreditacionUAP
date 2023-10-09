@@ -12,4 +12,6 @@ public interface IRequisitoService {
     public Requisito findOne(Long id);
 
     public void delete(Long id);
+
+    public List<Requisito> listaRequisitosMateria2(Long id_materia, Long id_carpeta);
 }

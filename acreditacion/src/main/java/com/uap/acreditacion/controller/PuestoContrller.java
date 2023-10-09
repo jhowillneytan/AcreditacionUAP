@@ -44,6 +44,7 @@ public class PuestoContrller {
 		List<Puesto> listaPuestos = puestoService.findAll();
 		model.addAttribute("listaPuestos", listaPuestos);
 		model.addAttribute("puesto", new Puesto());
+		model.addAttribute("opcionPuesto", "true");
 		return "puesto";
 		} else {
 			return "redirect:/login"; 
@@ -84,6 +85,7 @@ public class PuestoContrller {
 		model.addAttribute("listaPuestos", listaPuestos);
 		model.addAttribute("editMode", "true");
 		System.out.println("id="+id_puesto);
+		model.addAttribute("opcionPuesto", "true");
 		return "puesto";
 		} else {
 			return "redirect:/login";

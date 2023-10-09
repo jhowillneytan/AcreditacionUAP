@@ -56,6 +56,10 @@ public class Archivo implements Serializable{
     @JoinColumn(name = "id_carpeta")
     private Carpeta carpeta;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_materia")
+    private Materia materia;
+
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="parametro_archivo",

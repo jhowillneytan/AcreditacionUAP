@@ -30,9 +30,8 @@
 								<h4 class="card-title">Formulario</h4>
 							</div>
 							<div class="card-body">
-								<form
-									th:action="${editMode} ?@{/ModificarUsuario} :@{/RegistrarUsuario}"
-									method="post">
+								<form th:action="${editMode} ?@{/ModificarUsuario} :@{/RegistrarUsuario}" method="post"
+									id="formularioUsuario">
 									<input class="form-control" type="hidden" th:field="${usuario.id_usuario}"
 										th:if="${editMode}">
 									<input class="form-control" type="hidden" th:field="${usuario.estado}"
@@ -55,21 +54,24 @@
 										<div class="invalid-feedback" th:if="${#fields.hasErrors('usuario.password')}"
 											th:errors="${usuario.password}">Favor ingresar datos Correctos.</div>
 									</div>
-									<div class="col-md-6 ">
+									<div class="mb-1">
 										<label class="form-label" for="select-country1">Persona</label>
-										<select class="form-control form-select" th:field="${usuario.persona}" required>
-											<option th:value="${editMode}? ${usuario.persona.id_persona} : ''" th:text="${editMode}? ${usuario.persona.nombre}+' '+${usuario.persona.ap_paterno} : 'Seleccionar'" selected>
+										<select class="form-select select2" th:field="${usuario.persona}" required>
+											<option th:value="${editMode}? ${usuario.persona.id_persona} : ''"
+												th:text="${editMode}? ${usuario.persona.nombre}+' '+${usuario.persona.ap_paterno} : 'Seleccionar'"
+												selected>
 											</option>
 											<option th:each="userp: ${personasUser}" th:value="${userp.id_persona}"
 												th:text="${userp.nombre}+' '+${userp.ap_paterno}"
 												th:if="${userp.usuario == null}"></option>
 										</select>
 									</div>
-									<a th:class="${editMode}?'btn btn-secondary'"
-										th:href="@{/form-usuario}"
+									<div class="mb-1">
+										<a th:class="${editMode}?'btn btn-secondary'" th:href="@{/form-usuario}"
 										th:text="${editMode}?'Cancelar'"></a>
 									<input type="submit" class="btn btn-primary"
 										th:value="${editMode}?'Actualizar':'Agregar'" />
+									</div>
 								</form>
 							</div>
 						</div>
@@ -99,12 +101,10 @@
 												</td>
 												<!--<td th:text="${users.estado = 'A'}? 'Activo': 'Inactivo'"></td>-->
 												<td>
-													<a
-														th:href="@{'/ModUsuario/' + ${users.id_usuario}}"><button
+													<a th:href="@{'/ModUsuario/' + ${users.id_usuario}}"><button
 															class="btn btn-outline-primary"><i
 																class="fas fa-edit"></i></button></a>
-													<a
-														th:href="@{'/EliminarUsuario/' + ${users.id_usuario}}"><button
+													<a th:href="@{'/EliminarUsuario/' + ${users.id_usuario}}"><button
 															class="btn btn-outline-danger"><i
 																class="fa fa-trash"></i></button></a>
 												</td>
@@ -163,6 +163,41 @@
 
 			table.buttons().container()
 				.appendTo('#example_wrapper .col-md-6:eq(0)');
+
+			$("#formularioUsuario").submit(function (event) {
+				event.preventDefault();
+				var form = document.getElementById("formularioUsuario");
+				var action = form.action;
+				var formData = $(this).serialize();
+				$.ajax({
+					type: "POST",
+					url: '/BuscarUsuario/',
+					data: formData,  
+					contentType: "application/x-www-form-urlencoded",
+					success: function (response) {
+						var mensaje = response;
+						//alert(mensaje);
+						if (mensaje == "registra") {
+							 form.submit();
+						} else {
+							Swal.fire({
+								icon: 'error',
+								title: 'Imposible Registrar',
+								text: mensaje,
+							});
+						}
+					},
+					error: function (xhr, status, error) {
+						toastr.error(
+							"Ha ocurrido un error. Por favor, intenta nuevamente." + xhr,
+							status,
+							error
+						);
+						console.error(error);
+					},
+				});
+			});
+
 		});
 	</script>
 </body>

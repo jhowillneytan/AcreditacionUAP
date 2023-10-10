@@ -8,6 +8,7 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
@@ -156,6 +157,19 @@ public class UsuarioController {
 		} else {
 			return "redirect:/login";
 		}
+	}
+
+	@PostMapping("/BuscarUsuario/")
+	public ResponseEntity<String> BuscarUsuario(@Validated Usuario usuario) {
+		String mensaje = "";
+		//Usuario usuario2 = iUsuarioService.findByUsername(usuario.getUsername());
+		
+		if (iUsuarioService.findByUsername(usuario.getUsername()) == null) {
+			mensaje = "registra";
+		} else {
+			mensaje = "Ya existe un Usuario con este nombre";
+		}
+		return ResponseEntity.ok(mensaje);
 	}
 
 }

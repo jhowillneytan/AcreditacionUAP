@@ -39,4 +39,9 @@ public class UsuarioServiceImlp implements IUsuarioService{
         return iUsuarioDao.findByUsernamePassword(username, password);
     }
 
+    @Override
+    public Usuario findByUsername(String username) {
+       return iUsuarioDao.findByUsername(username);
+    }
+
 }

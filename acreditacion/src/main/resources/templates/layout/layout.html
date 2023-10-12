@@ -268,6 +268,15 @@
                                     style="color: aliceblue;">Usuarios</span>
                             </a>
                         </li>
+                        <li th:class="${opcionRequisito}? 'active':''"
+                            th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
+                            <a class="d-flex align-items-center" th:href="@{/form-requisito}"
+                                style="color: aliceblue;">
+                                <i data-feather="check-circle"></i>
+                                <span class="menu-item text-truncate" data-i18n="Quill Editor"
+                                    style="color: aliceblue;">Requisito</span>
+                            </a>
+                        </li>
                         <li th:class="${opcionParametro}? 'active':''"
                             th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
                             <a class="d-flex align-items-center" th:href="@{/form-parametro}"

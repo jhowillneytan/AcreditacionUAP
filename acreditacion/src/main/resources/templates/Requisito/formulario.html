@@ -30,27 +30,26 @@
 								<h4 class="card-title">Formulario Requisito</h4>
 							</div>
 							<div class="card-body">
-								<form th:action="@{/RegistrarRequisito}" method="post"
-									id="formularioUsuario">
+								<form th:action="@{/RegistrarRequisito}" method="post">
 									<div class="mb-1">
 										<label class="form-label" for="basic-addon-name">Nombre de requisito</label>
 
 										<input type="text" class="form-control" placeholder="Nombre"
-											th:field="${usuario.username}" required />
+											th:field="${requisito.nombre}" required />
 										<div class="valid-feedback">Correcto!</div>
-										<div class="invalid-feedback" th:if="${#fields.hasErrors('usuario.username')}"
-											th:errors="${usuario.username}">Favor ingresar datos Correctos.</div>
+										<div class="invalid-feedback" th:if="${#fields.hasErrors('requisito.nombre')}"
+											th:errors="${requisito.nombre}">Favor ingresar datos Correctos.</div>
 									</div>
 									<div class="mb-1">
-										<label class="form-label" for="select-country1">Persona</label>
-										<select class="form-select select2" th:field="${usuario.persona}" required>
-											<option th:value="${editMode}? ${usuario.persona.id_persona} : ''"
-												th:text="${editMode}? ${usuario.persona.nombre}+' '+${usuario.persona.ap_paterno} : 'Seleccionar'"
+										<label class="form-label" for="select-country1">Parametro</label>
+										<select class="form-select select2" th:field="${requisito.parametros}" required>
+											<option th:value="${editMode}? ${requisito.parametros.id_parametro} : ''"
+												th:text="${editMode}? ${requisito.parametros.nombre}: 'Seleccionar'"
 												selected>
 											</option>
-											<option th:each="userp: ${personasUser}" th:value="${userp.id_persona}"
-												th:text="${userp.nombre}+' '+${userp.ap_paterno}"
-												th:if="${userp.usuario == null}"></option>
+											<option th:each="parametro${parametros}" th:value="${parametro.id_parametro}"
+												th:text="${parametro.nombre}"
+												th:if="${parametro == null}"></option>
 										</select>
 									</div>
 									<div class="mb-1">
@@ -71,40 +70,23 @@
 										<thead>
 											<tr>
 												<th></th>
-												<th>Nombre de usuario</th>
-												<th>Contrasena</th>
-												<th>Persona</th>
-												<!--<th>Estado</th>-->
-												<th>Acciones</th>
+												<th>Nombre de requisito</th>
+												<th>parametro</th>
+												
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="users, rowStat: ${usuarios}" th:if="${users.estado != 'X'}">
+											<tr th:each="requisito, rowStat: ${requisitos}" th:if="${requisito.estado != 'X'}">
 												<td th:text="${rowStat.count}"></td>
-												<td th:text="${users.username}"></td>
-												<td th:text="${users.password}"></td>
-												<td
-													th:text="${users.persona.nombre}+' '+${users.persona.ap_paterno}+' Rol:'+${users.persona.tipoPersona.nom_tipo_persona}">
-												</td>
-												<!--<td th:text="${users.estado = 'A'}? 'Activo': 'Inactivo'"></td>-->
-												<td>
-													<a th:href="@{'/ModUsuario/' + ${users.id_usuario}}"><button
-															class="btn btn-outline-primary"><i
-																class="fas fa-edit"></i></button></a>
-													<a th:href="@{'/EliminarUsuario/' + ${users.id_usuario}}"><button
-															class="btn btn-outline-danger"><i
-																class="fa fa-trash"></i></button></a>
-												</td>
+												<td th:text="${requisito.nombre}"></td>
+                                                <td th:text="${requisito.parametros.size}"></td>
 											</tr>
 										</tbody>
 										<tfoot>
 											<tr>
 												<th></th>
-												<th>Nombre de usuario</th>
-												<th>Contrasena</th>
-												<th>Persona</th>
-												<!--<th>Estado</th>-->
-												<th>Acciones</th>
+												<th>Nombre de requisito</th>
+												<th>parametro</th>
 											</tr>
 										</tfoot>
 									</table>
@@ -116,7 +98,6 @@
 
 			</section>
 
-			<!-- /Validation -->
 
 		</div>
 

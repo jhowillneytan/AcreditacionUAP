@@ -1,6 +1,5 @@
 package com.uap.acreditacion.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,30 +10,32 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.uap.acreditacion.entity.Cargo;
 import com.uap.acreditacion.entity.Parametro;
 import com.uap.acreditacion.entity.Persona;
-import com.uap.acreditacion.service.ICargoService;
+import com.uap.acreditacion.entity.Requisito;
 import com.uap.acreditacion.service.IParametroService;
 import com.uap.acreditacion.service.IPersonaService;
+import com.uap.acreditacion.service.IRequisitoService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 
 @Controller
-public class ParametroController {
+public class RequisitoController {
 
-    @Autowired
+@Autowired
     private ITipoPersonaService tipoPersonaService;
 
     @Autowired
     private IPersonaService personaService;
 
     @Autowired
+    private IRequisitoService requisitoService;
+
+    @Autowired
     private IParametroService parametroService;
 
-    @GetMapping("/form-parametro")
+    @GetMapping("/form-requisito")
     public String formCargo(ModelMap model, HttpServletRequest request) {
         if (request.getSession().getAttribute("persona") != null) {
             Persona p2 = (Persona) request.getSession().getAttribute("persona");
@@ -42,24 +43,25 @@ public class ParametroController {
             model.addAttribute("personasession", p);
             model.addAttribute("tipoPersonasession",
                     tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
-            List<Parametro> listpParametros = parametroService.findAll();
-            model.addAttribute("parametro", new Parametro());
-            model.addAttribute("parametros", listpParametros);
-            model.addAttribute("opcionParametro", "true");
+            List<Requisito> listpRequisitos = requisitoService.findAll();
+            model.addAttribute("requisito", new Requisito());
+            model.addAttribute("requisitos", listpRequisitos);
+            model.addAttribute("parametros", parametroService.findAll());
+            model.addAttribute("opcionRequisito", "true");
             model.addAttribute("subMenuSeleccionado", "true");
-            return "/Parametro/formulario";
+            return "/Requisito/formulario";
         } else {
             return "redirect:/login";
         }
     }
 
-    @PostMapping("/RegistrarParametro")
-    public String agregarParametro(RedirectAttributes redirectAttrs, @Validated Parametro parametro) {
-        parametro.setEstado("A");
-        parametroService.save(parametro);
+    @PostMapping("/RegistrarRequisito")
+    public String agregarParametro(RedirectAttributes redirectAttrs, @Validated Requisito requisito) {
+        requisito.setEstado("A");
+        requisitoService.save(requisito);
         redirectAttrs
                 .addFlashAttribute("mensaje", "Agregado correctamente")
                 .addFlashAttribute("clase", "success");
-        return "redirect:/form-parametro";
+        return "redirect:/form-requisito";
     }
 }

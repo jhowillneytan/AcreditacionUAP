@@ -10,6 +10,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uap.acreditacion.entity.Parametro;
@@ -56,7 +57,9 @@ public class RequisitoController {
     }
 
     @PostMapping("/RegistrarRequisito")
-    public String agregarParametro(RedirectAttributes redirectAttrs, @Validated Requisito requisito) {
+    public String agregarParametro(RedirectAttributes redirectAttrs, @Validated Requisito requisito,
+        @RequestParam(value = "ListParametro")List<Parametro> listParametros) {
+        requisito.setParametros(listParametros);
         requisito.setEstado("A");
         requisitoService.save(requisito);
         redirectAttrs

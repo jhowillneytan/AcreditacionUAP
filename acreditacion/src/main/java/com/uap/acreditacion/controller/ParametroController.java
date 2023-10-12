@@ -20,6 +20,7 @@ import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.service.ICargoService;
 import com.uap.acreditacion.service.IParametroService;
 import com.uap.acreditacion.service.IPersonaService;
+import com.uap.acreditacion.service.IRequisitoService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 
 @Controller
@@ -34,6 +35,9 @@ public class ParametroController {
     @Autowired
     private IParametroService parametroService;
 
+    @Autowired
+    private IRequisitoService requisitoService;
+
     @GetMapping("/form-parametro")
     public String formCargo(ModelMap model, HttpServletRequest request) {
         if (request.getSession().getAttribute("persona") != null) {
@@ -45,6 +49,7 @@ public class ParametroController {
             List<Parametro> listpParametros = parametroService.findAll();
             model.addAttribute("parametro", new Parametro());
             model.addAttribute("parametros", listpParametros);
+            model.addAttribute("requisitos", requisitoService.findAll());
             model.addAttribute("opcionParametro", "true");
             model.addAttribute("subMenuSeleccionado", "true");
             return "/Parametro/formulario";

@@ -421,8 +421,178 @@
 
 
 								<div id="replace_div">
+									<!--<div class="view-container">
+										<a class="btn btn-primary add-file-btn text-center" type="button"
+											aria-haspopup="true" aria-expanded="true"
+											th:href="'/ReporteDocente/' + ${anterior.id_carpeta}">
+											<span class="align-middle">Reportes</span>
+										</a>
+										<div class="table-responsive" th:if="${ReporteSeleccionado}">
+											<table id="example" class="table" style="width:100%">
+												<thead>
+													<tr>
+														<th></th>
+														<th>Nombre del Docente</th>
+														<th>Materia</th>
+														<th>Requisito</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="docente, rowStat: ${carpetasDocente}">
+														<td th:text="${rowStat.count}"></td>
+														<td th:text="${docente.nom_carpeta}"></td>
+														<td colspan="2">
+															<ul class="list-group"
+																th:each="materiaD: ${docente.materias}"
+																th:if="${materiaD.estado != 'X'}">
+																<li class="list-group-item">
+																	<span th:text="${materiaD.nombre}"></span>
+																	<div class="container border"
+																		style="margin-left: 100px;">
+																		<div th:each="requisito: ${materiaD.requisitos}"
+																			th:if="${requisito.estado != 'X'}">
+																			<span th:text="${requisito.nombre}"></span>
+																			<div class="container border"
+																				style="margin-left: 5px;">
+																				<div th:each="parametro: ${requisito.parametros}"
+																					th:if="${parametro.estado != 'X'}">
+																					<span
+																						th:text="${parametro.nombre}"></span><br>
+																					<span
+																						th:text="'Cant. Archivos '+${parametro.archivos.size}"></span>
+																				</div>
+																			</div>
+																		</div>
+																	</div>
+																</li>
+															</ul>
+														</td>
+													</tr>
+												</tbody>
+												<tfoot>
+													<tr>
+														<th></th>
+														<th>Nombre del Docente</th>
+														<th>Materia</th>
+														<th>Requisito</th>
+													</tr>
+												</tfoot>
+											</table>
 
+										</div>
+									</div>-->
+									<div class="view-container" th:if="${anterior.nom_carpeta =='FILE DOCENTES'}">
+										<p>
+											<a class="btn btn-primary" data-toggle="collapse" href="#formFiltroReport"
+												role="button" aria-expanded="false"
+												aria-controls="formFiltroReport">Reporte</a>
+										</p>
+										<div class="collapse" id="formFiltroReport" style="width: 100%;">
+											<div class="card card-body">
+												<form method="post" th:action="@{/ReporteMateria}"
+													id="formularioReporteMateria">
+													<input type="hidden" name="idCarpetaActual"
+														th:value="${anterior.id_carpeta}">
+													<div class="mb-1">
+														<label class="form-label" for="select-country1">Gestion</label>
+														<select class="form-select select2" id="" name="selectGestion"
+															onchange="cargarPeriodo(this.value)" required>
+															<option value="0">Seleccionar</option>
+															<option th:each="gestion: ${GestionCarpeta}"
+																th:if="${gestion.estado != 'X'}"
+																th:value="${gestion.id_carpeta}"
+																th:text="${gestion.nom_carpeta}">
+															</option>
+
+														</select>
+													</div>
+													<div class="mb-1">
+														<label class="form-label" for="select-country1">Periodo</label>
+														<select class="form-select select2" name="selectPeriodo"
+															id="selectPeriodo"
+															onchange="cargarDocentePeriodo(this.value)" required>
+															<option value="0">Seleccionar</option>
+														</select>
+													</div>
+													<div class="mb-1">
+														<label class="form-label" for="select-country1">Docente</label>
+														<select class="form-select select2" name="selectDocente"
+															id="selectDocente" required>
+															<option value="0">Seleccionar</option>
+														</select>
+													</div>
+													<div class="mb-1">
+														<a data-toggle="collapse" href="#formFiltroReport" role="button"
+															aria-expanded="false" aria-controls="formFiltroReport"></a>
+														<input type="submit" data-bs-toggle="modal"
+															data-bs-target="#reporteModal" class="btn btn-primary"
+															value="Generar" />
+													</div>
+												</form>
+											</div>
+										</div>
+									</div>
+									<!--<div class="view-container">
+										
+										<div>
+											<div class="card">
+												<div class="card-header">Docente:</div>
+												<div class="card-body">
+													<div class="table-responsive">
+														<table class="table">
+															<tbody>
+																<tr>
+																	<td scope="row"> Nombre</td>
+																	<td th:each="docente: ${carpetaDocente}"
+																		th:text="${docente.nom_carpeta}"></td>
+																</tr>
+																<tr>
+																	<td scope="row"> Gestion</td>
+																	<td th:each="docente: ${carpetaGestion}"
+																		th:text="${docente.nom_carpeta}"></td>
+																</tr>
+																<tr>
+																	<td scope="row"> Periodo</td>
+																	<td th:each="docente: ${carpetaPeriodo}"
+																		th:text="${docente.nom_carpeta}"></td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+
+										</div>
+										<div >
+											<div class="card" th:each="materia: ${carpetaMateria.materias}">
+												<div class="card-header" th:text="${materia.nombre}"></div>
+												<div class="card-body">
+													<div>
+														<table>
+															<tbody>
+																<tr th:each="requisito, rowStat: ${materia.requisitos}">
+																	<th scope="row" th:text="${rowStat.count}"></th>
+																	<td th:text="${requisito.nombre}"></td>
+																	<td>
+																		<ul>
+																			<li th:each="parametro: ${requisito.parametros}">
+																				<p th:text="${parametro.nombre}"></p>
+																				<span th:each="archivo: ${parametro.archivos}" th:if="${archivo.materia == parametro.materia}"
+																					th:text="${materia.archivos.size}"></span>
+																			</li>
+																		</ul>
+
+																	</td>
+																</tr>
+															</tbody>
+														</table>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>-->
 									<div class="view-container" th:if="${anterior.nom_carpeta!='MATERIAS'}">
+
 										<h6 class="files-section-title mt-25 mb-75" th:if="!${ExisteCarpeta}">Carpetas
 										</h6>
 										<div class="files-header">
@@ -1832,6 +2002,57 @@
 			}
 
 		}
+
+		function cargarPeriodo(id) {
+			//alert('AAAAAAAAAAAAAAA');
+
+			var selectElement = $('#selectPeriodo');
+
+			$.ajax({
+				type: 'POST',
+				url: '/CargarPeriodo/' + id,
+				dataType: "json",
+				contentType: 'application/x-www-form-urlencoded',
+				success: function (data) {
+
+					data.forEach(function (fila) {
+						var option = document.createElement('option');
+						option.value = fila[0];
+						option.text = fila[1];
+						//option.selected = true;
+						selectElement.append(option);
+					});
+				},
+				error: function () {
+					console.log("Error al obtener la lista de usuarios");
+				}
+			});
+		}
+		function cargarDocentePeriodo(id) {
+			//alert('AAAAAAAAAAAAAAA');
+
+			var selectElement = $('#selectDocente');
+
+			$.ajax({
+				type: 'POST',
+				url: '/CargarDocentePeriodo/' + id,
+				dataType: "json",
+				contentType: 'application/x-www-form-urlencoded',
+				success: function (data) {
+
+					data.forEach(function (fila) {
+						var option = document.createElement('option');
+						option.value = fila[0];
+						option.text = fila[1];
+						//option.selected = true;
+						selectElement.append(option);
+					});
+				},
+				error: function () {
+					console.log("Error al obtener la lista de usuarios");
+				}
+			});
+		}
 	</script>
 
 	<script>
@@ -1877,6 +2098,57 @@
 				}
 			});
 		}*/
+
+	</script>
+	<!-------------- REPORTE MODAL -------------->
+	<div class="modal fade" id="reporteModal" tabindex="-1" aria-labelledby="reporteModal" aria-hidden="true"
+		data-bs-backdrop="static">
+		<div class="modal-dialog modal-xl">
+			<div class="modal-content" id="ContenidoReporte">
+				<div class="modal-header">
+					Reporte
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<embed src="" type="" id="reportePDFMaterias">
+				</div>
+			</div>
+			<!-- /.modal-content -->
+		</div>
+		<!-- /.modal-dialog -->
+	</div>
+
+	<script>
+
+		$(document).ready(function () {
+			$('formularioReporteMateria').on('submit', function (event) {
+				event.preventDefault();
+
+				$.ajax({
+					url: '/GenerarReporteMateriaPDF',
+					method: 'POST', // Cambiar a POST si el controlador espera una solicitud POST
+					dataType: 'blob',
+					data: $(this).serialize(),
+					success: function (data) {
+						var blob = new Blob([data], { type: 'application/pdf' });
+						var url = window.URL.createObjectURL(blob);
+
+						// Obtener el elemento <embed> dentro del modal
+						var embed = $('#reportePDFMaterias');
+
+						// Asignar la URL del PDF al elemento <embed>
+						embed.attr('src', url);
+
+						// Abrir el modal si no está abierto
+						$('#reporteModal').modal('show');
+					},
+					error: function (xhr, status, error) {
+						console.error('Error al cargar el PDF:', status, error);
+					}
+				});
+
+			});
+		});
 
 	</script>
 

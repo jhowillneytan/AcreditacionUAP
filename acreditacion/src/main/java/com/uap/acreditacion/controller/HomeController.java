@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -63,7 +65,30 @@ import com.uap.acreditacion.service.IPersonaService;
 import com.uap.acreditacion.service.IRequisitoService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 import com.uap.acreditacion.service.IUsuarioService;
+
+import javafx.scene.image.Image;
+import javafx.scene.text.Font;
+
 import java.awt.image.BufferedImage;
+
+import com.itextpdf.text.BaseColor;
+import com.itextpdf.text.Document;
+
+import com.itextpdf.text.Element;
+
+import com.itextpdf.text.FontFactory;
+
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.ColumnText;
+import com.itextpdf.text.pdf.PdfContentByte;
+import com.itextpdf.text.pdf.PdfPCell;
+import com.itextpdf.text.pdf.PdfPCellEvent;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfPageEventHelper;
+import com.itextpdf.text.pdf.PdfWriter;
 
 @Controller
 
@@ -348,6 +373,7 @@ public class HomeController {
 					carpeta = carpeta.getCarpetaPadre();
 				}
 				Collections.reverse(list);
+
 			}
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
 
@@ -358,6 +384,14 @@ public class HomeController {
 				}
 				Collections.reverse(list);
 			}
+			List<Carpeta> carp = carpeta.getCarpetasHijos();
+			for (Carpeta carpeta2 : carp) {
+				if (carpeta2.getNom_carpeta().equals("FILE DOCENTES")) {
+					model.addAttribute("GestionCarpeta", carpeta2.getCarpetasHijos());
+				}
+
+			}
+
 			model.addAttribute("usuarios", usuarioService.findAll());
 			model.addAttribute("list", list);
 			model.addAttribute("requisitosList", requisitoService.findAll());
@@ -375,13 +409,16 @@ public class HomeController {
 			@RequestParam(name = "ruta_icon", required = false) MultipartFile ruta_icon,
 			@RequestParam(value = "auxiliar", required = false) Long id_carpeta_anterior, HttpServletRequest request) {
 
-		/*if (carpeta.getNom_carpeta() == null || carpeta.getNom_carpeta() == "" || carpeta.getDescripcion() == null
-				|| carpeta.getDescripcion() == "") {
-			redirectAttrs
-					.addFlashAttribute("mensaje", "Se requiere llenar los campos")
-					.addFlashAttribute("clase", "danger");
-			return "redirect:/home/" + id_carpeta_anterior;
-		}*/
+		/*
+		 * if (carpeta.getNom_carpeta() == null || carpeta.getNom_carpeta() == "" ||
+		 * carpeta.getDescripcion() == null
+		 * || carpeta.getDescripcion() == "") {
+		 * redirectAttrs
+		 * .addFlashAttribute("mensaje", "Se requiere llenar los campos")
+		 * .addFlashAttribute("clase", "danger");
+		 * return "redirect:/home/" + id_carpeta_anterior;
+		 * }
+		 */
 
 		Calendar cal = Calendar.getInstance();
 		int year = cal.get(Calendar.YEAR);
@@ -790,7 +827,7 @@ public class HomeController {
 			// Obtener la mitad superior de la imagen
 			int height = image.getHeight();
 			int width = image.getWidth();
-			BufferedImage topHalfImage = image.getSubimage(0, 0, width, height / 2);
+			BufferedImage topHalfImage = image.getSubimage(0, 0, width, height / 3);
 
 			// Crear un flujo de bytes para la imagen
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -996,8 +1033,7 @@ public class HomeController {
 	 */
 	@PostMapping("/GuardarMateria")
 	public String GuardarMateria(@Validated Materia materia,
-			@RequestParam(value = "id_carpetaD") Long id_carpeta
-			) {
+			@RequestParam(value = "id_carpetaD") Long id_carpeta) {
 
 		materia.setCarpeta(carpetaService.findOne(id_carpeta));
 		materiaService.save(materia);
@@ -1178,15 +1214,6 @@ public class HomeController {
 				parametro.setArchivos(
 						archivoService.archivoParametro(parametro.getId_parametro(), id_carpeta, id_materia));
 			}
-			/*
-			 * for (Parametro parametro : parametros) {
-			 * for (int i = 0; i < parametro.getArchivos().size(); i++) {
-			 * if (parametro.getArchivos().get(i).getEstado().equals("X")) {
-			 * parametro.getArchivos().remove(i);
-			 * }
-			 * }
-			 * }
-			 */
 			for (Parametro parametro : parametros) {
 				List<Archivo> archivosAEliminar = new ArrayList<>();
 
@@ -1199,7 +1226,6 @@ public class HomeController {
 				parametro.getArchivos().removeAll(archivosAEliminar);
 			}
 
-			// List<Archivo> archivos = ;
 			model.addAttribute("parametrosR", parametros);
 			model.addAttribute("opcionRselect", id_requisito);
 			model.addAttribute("opcionMSelect", id_materia);
@@ -1221,6 +1247,190 @@ public class HomeController {
 			index++;
 		}
 		return ResponseEntity.ok(materiaArray);
+	}
+
+	@PostMapping("/CargarPeriodo/{id_carpeta}")
+	public ResponseEntity<String[][]> CargarPeriodo(@PathVariable(value = "id_carpeta") Long id_carpeta) {
+		List<Carpeta> carpetas = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+		String[][] materiaArray = new String[carpetas.size()][2];
+		int index = 0;
+		for (Carpeta carpeta : carpetas) {
+			materiaArray[index][0] = String.valueOf(carpeta.getId_carpeta());
+			materiaArray[index][1] = carpeta.getNom_carpeta();
+			index++;
+		}
+		return ResponseEntity.ok(materiaArray);
+	}
+
+	@PostMapping("/CargarDocentePeriodo/{id_carpeta}")
+	public ResponseEntity<String[][]> CargarDocentePeriodo(@PathVariable(value = "id_carpeta") Long id_carpeta) {
+		List<Carpeta> carpetas = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+		String[][] materiaArray = new String[carpetas.size()][2];
+		int index = 0;
+		for (Carpeta carpeta : carpetas) {
+			materiaArray[index][0] = String.valueOf(carpeta.getId_carpeta());
+			materiaArray[index][1] = carpeta.getNom_carpeta();
+			index++;
+		}
+		return ResponseEntity.ok(materiaArray);
+	}
+
+	@GetMapping("/ReporteDocente/{id_carpeta}")
+	public String ReporteDocente(@PathVariable(value = "id_carpeta") Long id_carpeta, ModelMap model,
+			HttpServletRequest request) {
+		if (request.getSession().getAttribute("persona") != null) {
+			Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
+
+			Calendar cal = Calendar.getInstance();
+			int year = cal.get(Calendar.YEAR);
+			Carpeta carpeta = carpetaService.findOne(id_carpeta);
+			model.addAttribute("personasession", p);
+			model.addAttribute("tipoPersonasession",
+					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
+			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
+			/*
+			 * for (int i = 0; i < carpetas.size(); i++) {
+			 * for (int j = 0; j < carpetas.get(i).getArchivos().size(); j++) {
+			 * String nombA = carpetas.get(i).getArchivos().get(j).getFile();
+			 * String[] ta2 = nombA.split("\\.");
+			 * System.out.println("el NOMBRE DE ES: "+ta2[1]);
+			 * carpetas.get(i).getArchivos().get(j).setTipoArchivo(ta2[1]);
+			 * }
+			 * }
+			 */
+
+			model.addAttribute("carpetas", carpetas);
+			model.addAttribute("menus", carpetas);
+
+			Archivo archivo = new Archivo();
+			model.addAttribute("carpeta", new Carpeta());
+			model.addAttribute("archivo", archivo);
+			model.addAttribute("editMode", "true");
+			model.addAttribute("anterior", carpeta);
+			// model.addAttribute("carpetas", carpetas);
+			model.addAttribute("ExisteCarpeta", carpetas.isEmpty());
+			model.addAttribute("ExisteArchivo", carpeta.getArchivos().isEmpty());
+			// model.addAttribute("TiposArchivos2", tipoArchivoService.findAll());
+			// model.addAttribute("menus", menus);
+			List<Carpeta> list = new ArrayList<Carpeta>();
+
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+
+				list.add(carpeta);
+
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Evaluador")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Docente")) {
+
+				list.add(carpeta);
+				// List<Usuario> usuarios = new
+				// ArrayList<>(carpeta.getCarpetaPadre().getUsuarios());
+
+				/*
+				 * while (carpeta.getCarpetaPadre() != null) {
+				 * for (int i = 0; i < usuarios.size(); i++) {
+				 * if (usuarios.get(i) == p.getUsuario()) {
+				 * list.add(carpeta.getCarpetaPadre());
+				 * carpeta = carpeta.getCarpetaPadre();
+				 * }
+				 * }
+				 * }
+				 */
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			List<Carpeta> carpetasDocente = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+
+			List<Materia> materias = materiaService.findAll();
+
+			// List<Archivo> archivos = archivoService.findAll();
+			for (Materia materia : materias) {
+				Carpeta carpetaMateria = materia.getCarpeta().getCarpetaPadre();
+				for (Carpeta carpeta2 : carpetasDocente) {
+					if (carpetaMateria.equals(carpeta2)) {
+						carpeta2.getMaterias().add(materia);
+						System.out.println("");
+						break;
+					}
+				}
+			}
+			List<Archivo> archivos = new ArrayList<>();
+			for (Carpeta carpeta2 : carpetasDocente) {
+				for (Carpeta carpeta3 : carpeta2.getCarpetasHijos()) {
+					for (Archivo archivo2 : carpeta3.getArchivos()) {
+						archivos.add(archivo);
+						break;
+					}
+				}
+			}
+
+			for (Carpeta carpeta2 : carpetasDocente) {
+				for (Materia materia : carpeta2.getMaterias()) {
+					for (Requisito requisito : materia.getRequisitos()) {
+						List<Parametro> parametros = parametroService.listaParametro2(carpeta2.getId_carpeta(),
+								materia.getId_materia(),
+								requisito.getId_requisito());
+						for (Parametro parametro : parametros) {
+							parametro.getArchivos().clear();
+						}
+						for (Parametro parametro : parametros) {
+							parametro.setArchivos(
+									archivoService.archivoParametro(parametro.getId_parametro(),
+											carpeta2.getId_carpeta(),
+											materia.getId_materia()));
+						}
+						for (Parametro parametro : parametros) {
+							List<Archivo> archivosAEliminar = new ArrayList<>();
+
+							for (Archivo archivo2 : parametro.getArchivos()) {
+								if (archivo2.getEstado().equals("X")) {
+									archivosAEliminar.add(archivo2);
+								}
+							}
+
+							parametro.getArchivos().removeAll(archivosAEliminar);
+						}
+					}
+				}
+			}
+
+			model.addAttribute("carpetasDocente", carpetasDocente);
+			model.addAttribute("usuarios", usuarioService.findAll());
+			model.addAttribute("list", list);
+			model.addAttribute("requisitosList", requisitoService.findAll());
+			model.addAttribute("materia", new Materia());
+			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
+			model.addAttribute("ReporteSeleccionado", "true");
+			return "home";
+		} else {
+			return "redirect:/login";
+		}
 	}
 
 	/*
@@ -1249,5 +1459,357 @@ public class HomeController {
 	 * return ResponseEntity.ok(materiaArray);
 	 * }
 	 */
+
+	/*--------- REPORTE MATERIA ---------------- */
+	@PostMapping("/ReporteMateria")
+	public String ReporteMateria(@RequestParam(value = "selectDocente") Long id_carpetaD,
+			@RequestParam(value = "idCarpetaActual") Long id_carpeta,
+			@RequestParam(value = "selectPeriodo") Long id_carpetaP,
+			@RequestParam(value = "selectGestion") Long id_carpetaG,
+			ModelMap model, HttpServletRequest request) {
+		if (request.getSession().getAttribute("persona") != null) {
+			Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
+
+			Calendar cal = Calendar.getInstance();
+			int year = cal.get(Calendar.YEAR);
+			Carpeta carpeta = carpetaService.findOne(id_carpeta);
+			model.addAttribute("personasession", p);
+			model.addAttribute("tipoPersonasession",
+					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
+			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
+
+			model.addAttribute("carpetas", carpetas);
+			model.addAttribute("menus", carpetas);
+
+			Archivo archivo = new Archivo();
+			model.addAttribute("carpeta", new Carpeta());
+			model.addAttribute("archivo", archivo);
+			model.addAttribute("editMode", "true");
+			model.addAttribute("anterior", carpeta);
+			model.addAttribute("ExisteCarpeta", carpetas.isEmpty());
+			model.addAttribute("ExisteArchivo", carpeta.getArchivos().isEmpty());
+
+			List<Carpeta> list = new ArrayList<Carpeta>();
+
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+
+				list.add(carpeta);
+
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Evaluador")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Docente")) {
+
+				list.add(carpeta);
+
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+
+			}
+			if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
+
+				list.add(carpeta);
+				while (carpeta.getCarpetaPadre() != null) {
+					list.add(carpeta.getCarpetaPadre());
+					carpeta = carpeta.getCarpetaPadre();
+				}
+				Collections.reverse(list);
+			}
+			List<Carpeta> carp = carpeta.getCarpetasHijos();
+			for (Carpeta carpeta2 : carp) {
+				if (carpeta2.getNom_carpeta().equals("FILE DOCENTES")) {
+					model.addAttribute("GestionCarpeta", carpeta2.getCarpetasHijos());
+				}
+
+			}
+
+			model.addAttribute("usuarios", usuarioService.findAll());
+			model.addAttribute("list", list);
+			model.addAttribute("requisitosList", requisitoService.findAll());
+			model.addAttribute("materia", new Materia());
+			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
+			model.addAttribute("opcionHome", "true");
+
+			Carpeta carpetaDoc = carpetaService.findOne(id_carpetaD);
+			model.addAttribute("carpetaDocente", carpetaDoc);
+
+			Carpeta carpetaGes = carpetaService.findOne(id_carpetaG);
+			model.addAttribute("carpetaGestion", carpetaGes);
+
+			Carpeta carpetaPer = carpetaService.findOne(id_carpetaP);
+			model.addAttribute("carpetaPeriodo", carpetaPer);
+
+			// List<Materia> materiasConRequisitos = new ArrayList<>();
+			List<Carpeta> carpetasMateria = carpetaDoc.getCarpetasHijos();
+			Carpeta carpetaMateria = new Carpeta();
+			for (Carpeta carpeta2 : carpetasMateria) {
+				if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+					for (Materia materia : carpeta2.getMaterias()) {
+
+						materia.getRequisitos().clear();
+
+						List<Requisito> nuevosRequisitos = requisitoService
+								.listaRequisitosMateria2(materia.getId_materia(), carpeta2.getId_carpeta());
+
+						materia.getRequisitos().addAll(nuevosRequisitos);
+
+					}
+				}
+			}
+
+			for (Carpeta carpeta2 : carpetasMateria) {
+				if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+					for (Materia materia : carpeta2.getMaterias()) {
+						for (Requisito requisito : materia.getRequisitos()) {
+							requisito.getParametros().clear();
+							List<Parametro> nuevosParametros = parametroService.listaParametro2(
+									carpeta2.getId_carpeta(), materia.getId_materia(), requisito.getId_requisito());
+
+							requisito.getParametros().addAll(nuevosParametros);
+						}
+					}
+				}
+			}
+
+			for (Carpeta carpeta2 : carpetasMateria) {
+				if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+					for (Materia materia : carpeta2.getMaterias()) {
+						for (Requisito requisito : materia.getRequisitos()) {
+							for (Parametro parametro : requisito.getParametros()) {
+								System.out.println("REQUISITO: " + requisito.getNombre());
+								System.out.println("PARAMETRO: " + parametro.getNombre() + "-"
+										+ parametro.getId_parametro() + " CARPETA: " + carpeta2.getNom_carpeta() + "-"
+										+ carpeta2.getId_carpeta() + " MATERIA: " + materia.getNombre() + "-"
+										+ materia.getId_materia());
+								parametro.getArchivos().clear();
+								List<Archivo> archivos = archivoService.archivoParametro(
+										parametro.getId_parametro(), carpeta2.getId_carpeta(), materia.getId_materia());
+
+								parametro.getArchivos().addAll(archivos);
+
+								// parametro.setArchivos(archivoService.archivoParametro(
+								// parametro.getId_parametro(), carpeta2.getId_carpeta(),
+								// materia.getId_materia()));
+								System.out.println("TOTAL ARCHIVOS: " + parametro.getArchivos().size());
+							}
+
+						}
+					}
+				}
+			}
+
+			model.addAttribute("carpetaMateria", carpetaMateria);
+			// model.addAttribute("carpetasMateria", carpetasMateria);
+
+			return "home";
+		} else {
+			return "redirect:/login";
+		}
+	}
+
+	/* --------------- GENERAR REPORTE PDF */
+	@PostMapping("/GenerarReporteMateriaPDF")
+	public ResponseEntity<ByteArrayResource> verPdf(Model model, HttpServletRequest request,
+			@RequestParam(value = "selectDocente") Long id_carpetaD,
+			@RequestParam(value = "idCarpetaActual") Long id_carpeta,
+			@RequestParam(value = "selectPeriodo") Long id_carpetaP,
+			@RequestParam(value = "selectGestion") Long id_carpetaG)
+			throws DocumentException, MalformedURLException, IOException, com.itextpdf.text.DocumentException {
+		Carpeta carpetaDoc = carpetaService.findOne(id_carpetaD);
+		model.addAttribute("carpetaDocente", carpetaDoc);
+
+		Carpeta carpetaGes = carpetaService.findOne(id_carpetaG);
+		model.addAttribute("carpetaGestion", carpetaGes);
+
+		Carpeta carpetaPer = carpetaService.findOne(id_carpetaP);
+		model.addAttribute("carpetaPeriodo", carpetaPer);
+
+		List<Carpeta> carpetasMateria = carpetaDoc.getCarpetasHijos();
+
+		byte[] bytes = generarPdf(carpetaDoc, carpetaGes, carpetaPer, carpetasMateria);
+
+		ByteArrayResource resource = new ByteArrayResource(bytes);
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + "Reporte de lista de Archivos.pdf")
+				.contentType(MediaType.APPLICATION_PDF)
+				.contentLength(bytes.length)
+				.body(resource);
+	}
+
+	public byte[] generarPdf(Carpeta carpetaDoc, Carpeta carpetaGes, Carpeta carpetaPer, List<Carpeta> carpetaMateria)
+			throws IOException, DocumentException, com.itextpdf.text.DocumentException {
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		Document document = new Document(PageSize.LETTER, 30f, 20f, 50f, 40f);
+		Paragraph emptyParagraph = new Paragraph();
+
+		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+		document.open();
+
+		emptyParagraph.add(" ");
+		document.add(emptyParagraph);
+
+		/* tabla datos DOCENTE */
+		PdfPTable tablaSegunda = new PdfPTable(2);
+		tablaSegunda.setWidthPercentage(95);
+
+		float[] columnWidths2 = { 3.5f, 6f };
+		tablaSegunda.setWidths(columnWidths2);
+
+		PdfContentByte canvas2 = writer.getDirectContent();
+		canvas2.saveState();
+		canvas2.setLineDash(2, 2);
+
+		PdfPCell cell1 = new PdfPCell(new Phrase("NOMBRE:"));
+		canvas2.setLineDash(2, 2);
+
+		PdfPCell cell2 = new PdfPCell(
+				new Phrase(carpetaDoc.getNom_carpeta()));
+		canvas2.setLineDash(2, 2);
+
+		PdfPCell cell3 = new PdfPCell(new Phrase("PERIODO:"));
+
+		PdfPCell cell4 = new PdfPCell(
+				new Phrase(carpetaPer.getNom_carpeta()));
+
+		PdfPCell cell5 = new PdfPCell(new Phrase("GESTION:"));
+
+		PdfPCell cell6 = new PdfPCell(
+				new Phrase(carpetaGes.getNom_carpeta()));
+
+		// Agregar las celdas a la tabla
+		tablaSegunda.addCell(cell1);
+		tablaSegunda.addCell(cell2);
+		tablaSegunda.addCell(cell3);
+		tablaSegunda.addCell(cell4);
+		tablaSegunda.addCell(cell5);
+		tablaSegunda.addCell(cell6);
+
+		document.add(tablaSegunda);
+		canvas2.restoreState();
+		emptyParagraph.add(" ");
+		document.add(emptyParagraph);
+
+		// TABLA 3
+		PdfPTable tablaArchivos = new PdfPTable(7);
+		tablaArchivos.setWidthPercentage(95);
+
+		float[] columnWidths = { 10 };
+		tablaArchivos.setWidths(columnWidths);
+
+		for (Carpeta carpeta2 : carpetaMateria) {
+			if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+				for (Materia materia : carpeta2.getMaterias()) {
+
+					materia.getRequisitos().clear();
+
+					List<Requisito> nuevosRequisitos = requisitoService
+							.listaRequisitosMateria2(materia.getId_materia(), carpeta2.getId_carpeta());
+
+					materia.getRequisitos().addAll(nuevosRequisitos);
+
+				}
+			}
+		}
+
+		for (Carpeta carpeta2 : carpetaMateria) {
+			if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+				for (Materia materia : carpeta2.getMaterias()) {
+					for (Requisito requisito : materia.getRequisitos()) {
+						requisito.getParametros().clear();
+						List<Parametro> nuevosParametros = parametroService.listaParametro2(
+								carpeta2.getId_carpeta(), materia.getId_materia(), requisito.getId_requisito());
+
+						requisito.getParametros().addAll(nuevosParametros);
+					}
+				}
+			}
+		}
+
+		for (Carpeta carpeta2 : carpetaMateria) {
+			if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+				for (Materia materia : carpeta2.getMaterias()) {
+
+					// Crear celda con el color específico para la primera fila
+					PdfPCell greenCell = new PdfPCell(new Phrase(materia.getNombre()));
+					greenCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+					greenCell.setBackgroundColor(new BaseColor(101, 147, 8)); // HEX #659308
+					greenCell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
+					greenCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+					greenCell.setPaddingBottom(12);
+					greenCell.setPaddingTop(10);
+					tablaArchivos.addCell(greenCell);
+
+					for (Requisito requisito : materia.getRequisitos()) {
+
+
+						PdfPCell titleCell = new PdfPCell(
+									new Phrase(requisito.getNombre()));
+							titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+							titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+							tablaArchivos.addCell(titleCell);
+
+						for (Parametro parametro : requisito.getParametros()) {
+							System.out.println("REQUISITO: " + requisito.getNombre());
+							System.out.println("PARAMETRO: " + parametro.getNombre() + "-"
+									+ parametro.getId_parametro() + " CARPETA: " + carpeta2.getNom_carpeta() + "-"
+									+ carpeta2.getId_carpeta() + " MATERIA: " + materia.getNombre() + "-"
+									+ materia.getId_materia());
+							parametro.getArchivos().clear();
+							List<Archivo> archivos = archivoService.archivoParametro(
+									parametro.getId_parametro(), carpeta2.getId_carpeta(), materia.getId_materia());
+
+							parametro.getArchivos().addAll(archivos);
+
+							System.out.println("TOTAL ARCHIVOS: " + parametro.getArchivos().size());
+
+							String cumple = "N0";
+							if (parametro.getArchivos().size() > 0) {
+								cumple = "SI";
+							}
+
+							PdfPCell titleCell2 = new PdfPCell(
+									new Phrase(parametro.getNombre()+"-"+cumple));
+							titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+							titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+							tablaArchivos.addCell(titleCell2);
+
+						}
+
+					}
+				}
+			}
+		}
+		document.add(tablaArchivos);
+		// Cerrar el documento
+		document.close();
+
+		return outputStream.toByteArray();
+	}
+
+	private void configureCell(PdfPCell cell) {
+		cell.setBackgroundColor(BaseColor.GREEN);
+		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
+		cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+		// Otras configuraciones de celda
+	}
 
 }

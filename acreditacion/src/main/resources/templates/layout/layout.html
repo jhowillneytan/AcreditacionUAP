@@ -268,7 +268,6 @@
                                     style="color: aliceblue;">Usuarios</span>
                             </a>
                         </li>
-                        
                         <li th:class="${opcionParametro}? 'active':''"
                             th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
                             <a class="d-flex align-items-center" th:href="@{/form-parametro}"
@@ -278,6 +277,7 @@
                                     style="color: aliceblue;">Parametro</span>
                             </a>
                         </li>
+                        
                     </ul>
                 </li>
             </ul>

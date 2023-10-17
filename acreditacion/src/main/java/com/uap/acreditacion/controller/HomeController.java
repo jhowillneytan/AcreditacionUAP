@@ -1749,20 +1749,24 @@ public class HomeController {
 					tablaArchivos2.addCell(greenCell2);
 					document.add(tablaArchivos2);
 
-					PdfPTable tablaArchivos = new PdfPTable(2);
-					tablaArchivos.setWidthPercentage(95);
-
-					float[] columnWidths = { 3, 6 };
-					tablaArchivos.setWidths(columnWidths);
-
 					for (Requisito requisito : materia.getRequisitos()) {
+
+						PdfPTable tablarequisito = new PdfPTable(2);
+						tablarequisito.setWidthPercentage(95);
+
+						float[] columnWidths = { 3 , 6};
+						tablarequisito.setWidths(columnWidths);
+
 						PdfPCell titleCell = new PdfPCell(new Phrase(requisito.getNombre()));
 						titleCell.setRowspan(requisito.getParametros().size());
 						titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 						titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-						tablaArchivos.addCell(titleCell);
+						tablarequisito.addCell(titleCell);
+
+						
 
 						for (Parametro parametro : requisito.getParametros()) {
+
 							System.out.println("REQUISITO: " + requisito.getNombre());
 							System.out.println("PARAMETRO: " + parametro.getNombre() + "-"
 									+ parametro.getId_parametro() + " CARPETA: " + carpeta2.getNom_carpeta() + "-"
@@ -1781,22 +1785,28 @@ public class HomeController {
 							if (parametro.getArchivos().size() > 0) {
 								cumple = "SI";
 							}
-							PdfPCell titleCell2 = new PdfPCell(
-									new Phrase(parametro.getNombre() + "-" + cumple));
+
+							PdfPCell titleCell2 = new PdfPCell(new Phrase(parametro.getNombre() + "-" + cumple));
 							titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
 							titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+
 							if (cumple.equals("N0 CUMPLE")) {
+								// Cambia el color de fondo solo para esta celda
 								titleCell2.setBackgroundColor(new BaseColor(255, 0, 0, 128));
+							} else {
+								// Establece el color de fondo en blanco o cualquier otro color deseado
+								titleCell2.setBackgroundColor(BaseColor.WHITE);
 							}
-							tablaArchivos.addCell(titleCell2);
+
+							// Agrega la celda al documento
+							tablarequisito.addCell(titleCell2);
+							
+							//document.add(tablarequisito);
 
 						}
-					}
-
-					document.add(tablaArchivos);
+						document.add(tablarequisito);
 					emptyParagraph.add(" ");
-					document.add(emptyParagraph);
-
+					}
 				}
 
 			}

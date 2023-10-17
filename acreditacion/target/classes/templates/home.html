@@ -489,13 +489,12 @@
 										</p>
 										<div class="collapse" id="formFiltroReport" style="width: 100%;">
 											<div class="card card-body">
-												<form method="post" th:action="@{/ReporteMateria}"
-													id="formularioReporteMateria">
-													<input type="hidden" name="idCarpetaActual"
+												<form action="">
+													<input type="hidden" name="idCarpetaActual" id="idCarpetaActual"
 														th:value="${anterior.id_carpeta}">
 													<div class="mb-1">
 														<label class="form-label" for="select-country1">Gestion</label>
-														<select class="form-select select2" id="" name="selectGestion"
+														<select class="form-select select2" id="selectGestion" name="selectGestion"
 															onchange="cargarPeriodo(this.value)" required>
 															<option value="0">Seleccionar</option>
 															<option th:each="gestion: ${GestionCarpeta}"
@@ -524,9 +523,9 @@
 													<div class="mb-1">
 														<a data-toggle="collapse" href="#formFiltroReport" role="button"
 															aria-expanded="false" aria-controls="formFiltroReport"></a>
-														<input type="submit" data-bs-toggle="modal"
+														<a type="button" data-bs-toggle="modal"
 															data-bs-target="#reporteModal" class="btn btn-primary"
-															value="Generar" />
+															onclick="GenerarReporteMateriaPDF()">Generar</a>
 													</div>
 												</form>
 											</div>
@@ -2005,7 +2004,6 @@
 
 		function cargarPeriodo(id) {
 			//alert('AAAAAAAAAAAAAAA');
-
 			var selectElement = $('#selectPeriodo');
 
 			$.ajax({
@@ -2110,7 +2108,8 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					<embed src="" type="" id="reportePDFMaterias">
+					<div id="reportePDFMaterias" ></div>
+
 				</div>
 			</div>
 			<!-- /.modal-content -->
@@ -2120,36 +2119,29 @@
 
 	<script>
 
-		$(document).ready(function () {
-			$('formularioReporteMateria').on('submit', function (event) {
-				event.preventDefault();
-
+			function GenerarReporteMateriaPDF() {
+				var selectD = $('#selectDocente').val();
+				var selectC = $('#idCarpetaActual').val();
+				var selectP = $('#selectPeriodo').val();
+				var selectG = $('#selectGestion').val();
+				//alert(selectD);
 				$.ajax({
-					url: '/GenerarReporteMateriaPDF',
-					method: 'POST', // Cambiar a POST si el controlador espera una solicitud POST
-					dataType: 'blob',
+					type: 'GET',
+					url: '/GenerarReporteMateriaPDF/'+selectD+'/'+selectC+'/'+selectP+'/'+selectG,
 					data: $(this).serialize(),
 					success: function (data) {
-						var blob = new Blob([data], { type: 'application/pdf' });
-						var url = window.URL.createObjectURL(blob);
+						//alert('AAAAAAAA');
+						$('#reportePDFMaterias').html('<embed class="embed-responsive-item" src="/GenerarReporteMateriaPDF/' + selectD+'/'+selectC+'/'+selectP+'/'+selectG + '" style="width: 100%; height: 500px;" type="application/pdf" >');
+							//$('#reportePDFMaterias').html('<object data="' + data + '" type="application/pdf" width="100%" height="600px"></object>');
 
-						// Obtener el elemento <embed> dentro del modal
-						var embed = $('#reportePDFMaterias');
-
-						// Asignar la URL del PDF al elemento <embed>
-						embed.attr('src', url);
-
-						// Abrir el modal si no está abierto
-						$('#reporteModal').modal('show');
+						//$('#reporteModal').modal('show');
 					},
 					error: function (xhr, status, error) {
 						console.error('Error al cargar el PDF:', status, error);
 					}
 				});
-
-			});
-		});
-
+			}
+		
 	</script>
 
 </body>

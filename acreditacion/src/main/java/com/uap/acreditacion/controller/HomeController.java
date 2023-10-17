@@ -66,9 +66,6 @@ import com.uap.acreditacion.service.IRequisitoService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 import com.uap.acreditacion.service.IUsuarioService;
 
-import javafx.scene.image.Image;
-import javafx.scene.text.Font;
-
 import java.awt.image.BufferedImage;
 
 import com.itextpdf.text.BaseColor;
@@ -1624,21 +1621,21 @@ public class HomeController {
 	}
 
 	/* --------------- GENERAR REPORTE PDF */
-	@PostMapping("/GenerarReporteMateriaPDF")
+	@GetMapping("/GenerarReporteMateriaPDF/{id_carpetaD}/{id_carpeta}/{id_carpetaP}/{id_carpetaG}")
 	public ResponseEntity<ByteArrayResource> verPdf(Model model, HttpServletRequest request,
-			@RequestParam(value = "selectDocente") Long id_carpetaD,
-			@RequestParam(value = "idCarpetaActual") Long id_carpeta,
-			@RequestParam(value = "selectPeriodo") Long id_carpetaP,
-			@RequestParam(value = "selectGestion") Long id_carpetaG)
+			@PathVariable(value = "id_carpetaD") Long id_carpetaD,
+			@PathVariable(value = "id_carpeta") Long id_carpeta,
+			@PathVariable(value = "id_carpetaP") Long id_carpetaP,
+			@PathVariable(value = "id_carpetaG") Long id_carpetaG)
 			throws DocumentException, MalformedURLException, IOException, com.itextpdf.text.DocumentException {
 		Carpeta carpetaDoc = carpetaService.findOne(id_carpetaD);
-		model.addAttribute("carpetaDocente", carpetaDoc);
+		// model.addAttribute("carpetaDocente", carpetaDoc);
 
 		Carpeta carpetaGes = carpetaService.findOne(id_carpetaG);
-		model.addAttribute("carpetaGestion", carpetaGes);
+		// model.addAttribute("carpetaGestion", carpetaGes);
 
 		Carpeta carpetaPer = carpetaService.findOne(id_carpetaP);
-		model.addAttribute("carpetaPeriodo", carpetaPer);
+		// model.addAttribute("carpetaPeriodo", carpetaPer);
 
 		List<Carpeta> carpetasMateria = carpetaDoc.getCarpetasHijos();
 
@@ -1647,7 +1644,8 @@ public class HomeController {
 		ByteArrayResource resource = new ByteArrayResource(bytes);
 
 		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + "Reporte de lista de Archivos.pdf")
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						"inline;filename=" + "Reporte de Control de Archivos Docente.pdf")
 				.contentType(MediaType.APPLICATION_PDF)
 				.contentLength(bytes.length)
 				.body(resource);
@@ -1674,16 +1672,10 @@ public class HomeController {
 		float[] columnWidths2 = { 3.5f, 6f };
 		tablaSegunda.setWidths(columnWidths2);
 
-		PdfContentByte canvas2 = writer.getDirectContent();
-		canvas2.saveState();
-		canvas2.setLineDash(2, 2);
-
 		PdfPCell cell1 = new PdfPCell(new Phrase("NOMBRE:"));
-		canvas2.setLineDash(2, 2);
 
 		PdfPCell cell2 = new PdfPCell(
 				new Phrase(carpetaDoc.getNom_carpeta()));
-		canvas2.setLineDash(2, 2);
 
 		PdfPCell cell3 = new PdfPCell(new Phrase("PERIODO:"));
 
@@ -1704,16 +1696,9 @@ public class HomeController {
 		tablaSegunda.addCell(cell6);
 
 		document.add(tablaSegunda);
-		canvas2.restoreState();
+		// canvas2.restoreState();
 		emptyParagraph.add(" ");
 		document.add(emptyParagraph);
-
-		// TABLA 3
-		PdfPTable tablaArchivos = new PdfPTable(7);
-		tablaArchivos.setWidthPercentage(95);
-
-		float[] columnWidths = { 10 };
-		tablaArchivos.setWidths(columnWidths);
 
 		for (Carpeta carpeta2 : carpetaMateria) {
 			if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
@@ -1747,25 +1732,35 @@ public class HomeController {
 		for (Carpeta carpeta2 : carpetaMateria) {
 			if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
 				for (Materia materia : carpeta2.getMaterias()) {
+					PdfPTable tablaArchivos2 = new PdfPTable(1);
+					tablaArchivos2.setWidthPercentage(95);
+
+					float[] columnWidths3 = { 2 };
+					tablaArchivos2.setWidths(columnWidths3);
 
 					// Crear celda con el color específico para la primera fila
-					PdfPCell greenCell = new PdfPCell(new Phrase(materia.getNombre()));
-					greenCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-					greenCell.setBackgroundColor(new BaseColor(101, 147, 8)); // HEX #659308
-					greenCell.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
-					greenCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-					greenCell.setPaddingBottom(12);
-					greenCell.setPaddingTop(10);
-					tablaArchivos.addCell(greenCell);
+					PdfPCell greenCell2 = new PdfPCell(new Phrase(materia.getNombre()));
+					greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+					greenCell2.setBackgroundColor(new BaseColor(200, 200, 200)); // HEX #659308
+					greenCell2.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
+					greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+					greenCell2.setPaddingBottom(12);
+					greenCell2.setPaddingTop(10);
+					tablaArchivos2.addCell(greenCell2);
+					document.add(tablaArchivos2);
+
+					PdfPTable tablaArchivos = new PdfPTable(2);
+					tablaArchivos.setWidthPercentage(95);
+
+					float[] columnWidths = { 3, 6 };
+					tablaArchivos.setWidths(columnWidths);
 
 					for (Requisito requisito : materia.getRequisitos()) {
-
-
-						PdfPCell titleCell = new PdfPCell(
-									new Phrase(requisito.getNombre()));
-							titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
-							titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
-							tablaArchivos.addCell(titleCell);
+						PdfPCell titleCell = new PdfPCell(new Phrase(requisito.getNombre()));
+						titleCell.setRowspan(requisito.getParametros().size());
+						titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+						titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+						tablaArchivos.addCell(titleCell);
 
 						for (Parametro parametro : requisito.getParametros()) {
 							System.out.println("REQUISITO: " + requisito.getNombre());
@@ -1781,24 +1776,33 @@ public class HomeController {
 
 							System.out.println("TOTAL ARCHIVOS: " + parametro.getArchivos().size());
 
-							String cumple = "N0";
+							String cumple = "N0 CUMPLE";
+
 							if (parametro.getArchivos().size() > 0) {
 								cumple = "SI";
 							}
-
 							PdfPCell titleCell2 = new PdfPCell(
-									new Phrase(parametro.getNombre()+"-"+cumple));
+									new Phrase(parametro.getNombre() + "-" + cumple));
 							titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
 							titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+							if (cumple.equals("N0 CUMPLE")) {
+								titleCell2.setBackgroundColor(new BaseColor(255, 0, 0, 128));
+							}
+							
 							tablaArchivos.addCell(titleCell2);
 
 						}
-
 					}
+
+					document.add(tablaArchivos);
+					emptyParagraph.add(" ");
+					document.add(emptyParagraph);
+
 				}
+
 			}
 		}
-		document.add(tablaArchivos);
+
 		// Cerrar el documento
 		document.close();
 
@@ -1806,7 +1810,7 @@ public class HomeController {
 	}
 
 	private void configureCell(PdfPCell cell) {
-		cell.setBackgroundColor(BaseColor.GREEN);
+		cell.setBackgroundColor(BaseColor.DARK_GRAY);
 		cell.setHorizontalAlignment(Element.ALIGN_CENTER);
 		cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		// Otras configuraciones de celda

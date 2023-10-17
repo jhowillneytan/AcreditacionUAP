@@ -1788,7 +1788,6 @@ public class HomeController {
 							if (cumple.equals("N0 CUMPLE")) {
 								titleCell2.setBackgroundColor(new BaseColor(255, 0, 0, 128));
 							}
-							
 							tablaArchivos.addCell(titleCell2);
 
 						}

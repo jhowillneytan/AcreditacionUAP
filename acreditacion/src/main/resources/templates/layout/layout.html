@@ -56,7 +56,7 @@
     <link rel="stylesheet" href="../../../../css/bs-dropzone.min.css">
     <link rel="stylesheet" href="../../../../dist/css/bootstrap.min.css">
     <!--<link rel="stylesheet" th:href="@{/dist/css/bootstrap.vertical-tabs.css}">-->
-
+    
 </head>
 <!-- END: Head-->
 
@@ -280,6 +280,14 @@
                         
                     </ul>
                 </li>
+                <th:block th:if="${opcionHome}">
+                    <li class="nav-item" th:if="${anterior.nom_carpeta =='FILE DOCENTES'}">
+                        <a class="d-flex align-items-center" data-bs-toggle="modal"
+                        data-bs-target="#reporteModal" style="color: aliceblue; " ><i
+                        class="fa fa-file"></i><span class="menu-item text-truncate" data-i18n="File Manager"
+                                style="color: aliceblue;">Reportes</span></a>
+                    </li>
+                </th:block>
             </ul>
         </div>
     </div>

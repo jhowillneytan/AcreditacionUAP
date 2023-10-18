@@ -72,7 +72,7 @@ import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
 
 import com.itextpdf.text.Element;
-
+import com.itextpdf.text.Font;
 import com.itextpdf.text.FontFactory;
 
 import com.itextpdf.text.PageSize;
@@ -1621,13 +1621,14 @@ public class HomeController {
 	}
 
 	/* --------------- GENERAR REPORTE PDF */
-	@GetMapping("/GenerarReporteMateriaPDF/{id_carpetaD}/{id_carpeta}/{id_carpetaP}/{id_carpetaG}")
-	public ResponseEntity<ByteArrayResource> verPdf(Model model, HttpServletRequest request,
-			@PathVariable(value = "id_carpetaD") Long id_carpetaD,
-			@PathVariable(value = "id_carpeta") Long id_carpeta,
-			@PathVariable(value = "id_carpetaP") Long id_carpetaP,
-			@PathVariable(value = "id_carpetaG") Long id_carpetaG)
+	@GetMapping("/GenerarReporteMateriaDocentePDF/{id_carpetaD}/{id_carpeta}/{id_carpetaP}/{id_carpetaG}")
+	public ResponseEntity<ByteArrayResource> GenerarReporteMateriaDocentePDF(Model model, HttpServletRequest request,
+			@PathVariable(value = "id_carpetaD", required = false) Long id_carpetaD,
+			@PathVariable(value = "id_carpeta", required = false) Long id_carpeta,
+			@PathVariable(value = "id_carpetaP", required = false) Long id_carpetaP,
+			@PathVariable(value = "id_carpetaG", required = false) Long id_carpetaG)
 			throws DocumentException, MalformedURLException, IOException, com.itextpdf.text.DocumentException {
+
 		Carpeta carpetaDoc = carpetaService.findOne(id_carpetaD);
 		// model.addAttribute("carpetaDocente", carpetaDoc);
 
@@ -1656,36 +1657,49 @@ public class HomeController {
 
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-		Document document = new Document(PageSize.LETTER, 30f, 20f, 50f, 40f);
+		Document document = new Document(PageSize.LETTER, 30f, 20f, 20f, 70f);
+
 		Paragraph emptyParagraph = new Paragraph();
 
 		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
 		document.open();
+
+		Path projectPath = Paths.get("").toAbsolutePath();
+		String fuenteCalibriRegular = projectPath
+				+ "/acreditacion/src/main/resources/static/fuenteLetra/Calibri Regular.ttf";
+		String fuenteCalibriBold = projectPath + "/acreditacion/src/main/resources/static/fuenteLetra/Calibri Bold.ttf";
+		Font fontSimple = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
+		Font fontNegrilla = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
+		Font fontSimple9 = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
+		Font fontNegrilla9 = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
 
 		emptyParagraph.add(" ");
 		document.add(emptyParagraph);
 
 		/* tabla datos DOCENTE */
 		PdfPTable tablaSegunda = new PdfPTable(2);
-		tablaSegunda.setWidthPercentage(95);
+		float tableWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+		tablaSegunda.setTotalWidth(tableWidth);
+		// tablaSegunda.setWidthPercentage(95);
 
 		float[] columnWidths2 = { 3.5f, 6f };
 		tablaSegunda.setWidths(columnWidths2);
 
-		PdfPCell cell1 = new PdfPCell(new Phrase("NOMBRE:"));
+		PdfPCell cell1 = new PdfPCell(new Phrase("NOMBRE:", fontNegrilla));
 
 		PdfPCell cell2 = new PdfPCell(
-				new Phrase(carpetaDoc.getNom_carpeta()));
+				new Phrase(carpetaDoc.getNom_carpeta(), fontSimple));
 
-		PdfPCell cell3 = new PdfPCell(new Phrase("PERIODO:"));
+		PdfPCell cell3 = new PdfPCell(new Phrase("PERIODO:", fontNegrilla));
 
 		PdfPCell cell4 = new PdfPCell(
-				new Phrase(carpetaPer.getNom_carpeta()));
+				new Phrase(carpetaPer.getNom_carpeta(), fontSimple));
 
-		PdfPCell cell5 = new PdfPCell(new Phrase("GESTION:"));
+		PdfPCell cell5 = new PdfPCell(new Phrase("GESTION:", fontNegrilla));
 
 		PdfPCell cell6 = new PdfPCell(
-				new Phrase(carpetaGes.getNom_carpeta()));
+				new Phrase(carpetaGes.getNom_carpeta(), fontSimple));
 
 		// Agregar las celdas a la tabla
 		tablaSegunda.addCell(cell1);
@@ -1733,37 +1747,68 @@ public class HomeController {
 			if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
 				for (Materia materia : carpeta2.getMaterias()) {
 					PdfPTable tablaArchivos2 = new PdfPTable(1);
-					tablaArchivos2.setWidthPercentage(95);
+					float tableWidth2 = document.getPageSize().getWidth() - document.leftMargin()
+							- document.rightMargin();
+					tablaArchivos2.setTotalWidth(tableWidth2);
+					// tablaArchivos2.setWidthPercentage(95);
 
 					float[] columnWidths3 = { 2 };
 					tablaArchivos2.setWidths(columnWidths3);
 
-					// Crear celda con el color específico para la primera fila
-					PdfPCell greenCell2 = new PdfPCell(new Phrase(materia.getNombre()));
+					PdfPCell greenCell2 = new PdfPCell(new Phrase(materia.getNombre(), fontNegrilla));
 					greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
-					greenCell2.setBackgroundColor(new BaseColor(200, 200, 200)); // HEX #659308
-					greenCell2.setVerticalAlignment(Element.ALIGN_MIDDLE); // Alineación vertical al centro
+					greenCell2.setBackgroundColor(new BaseColor(200, 200, 200));
+					greenCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
 					greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
 					greenCell2.setPaddingBottom(12);
 					greenCell2.setPaddingTop(10);
 					tablaArchivos2.addCell(greenCell2);
 					document.add(tablaArchivos2);
 
-					for (Requisito requisito : materia.getRequisitos()) {
+					PdfPTable tablaArchivosh = new PdfPTable(3);
+					float tableWidth3 = document.getPageSize().getWidth() - document.leftMargin()
+							- document.rightMargin();
+					tablaArchivosh.setTotalWidth(tableWidth3);
+					// tablaArchivosh.setWidthPercentage(95);
 
-						PdfPTable tablarequisito = new PdfPTable(2);
-						tablarequisito.setWidthPercentage(95);
+					float[] columnWidthsh1 = { 3, 6, 1 };
+					tablaArchivosh.setWidths(columnWidthsh1);
 
-						float[] columnWidths = { 3 , 6};
+					PdfPCell titleh1 = new PdfPCell(new Phrase("Requisito", fontNegrilla));
+					// titleh1.setRowspan(requisito.getParametros().size());
+					titleh1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					titleh1.setHorizontalAlignment(Element.ALIGN_CENTER);
+					tablaArchivosh.addCell(titleh1);
+					PdfPCell titleh2 = new PdfPCell(new Phrase("Parametro", fontNegrilla));
+					titleh2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					titleh2.setHorizontalAlignment(Element.ALIGN_CENTER);
+					tablaArchivosh.addCell(titleh2);
+					PdfPCell titleh3 = new PdfPCell(new Phrase("Cant. Archivos", fontNegrilla));
+					titleh3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+					titleh3.setHorizontalAlignment(Element.ALIGN_CENTER);
+					tablaArchivosh.addCell(titleh3);
+
+					document.add(tablaArchivosh);
+
+					List<Requisito> nuevosRequisitos = requisitoService
+							.listaRequisitosMateria2(materia.getId_materia(), carpeta2.getId_carpeta());
+
+					for (Requisito requisito : nuevosRequisitos) {
+
+						PdfPTable tablarequisito = new PdfPTable(3);
+						float tableWidthRe = document.getPageSize().getWidth() - document.leftMargin()
+								- document.rightMargin();
+						tablarequisito.setTotalWidth(tableWidthRe);
+						// tablarequisito.setWidthPercentage(95);
+
+						float[] columnWidths = { 3, 6, 1 };
 						tablarequisito.setWidths(columnWidths);
 
-						PdfPCell titleCell = new PdfPCell(new Phrase(requisito.getNombre()));
+						PdfPCell titleCell = new PdfPCell(new Phrase(requisito.getNombre(), fontNegrilla9));
 						titleCell.setRowspan(requisito.getParametros().size());
 						titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 						titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
 						tablarequisito.addCell(titleCell);
-
-						
 
 						for (Parametro parametro : requisito.getParametros()) {
 
@@ -1780,36 +1825,589 @@ public class HomeController {
 
 							System.out.println("TOTAL ARCHIVOS: " + parametro.getArchivos().size());
 
-							String cumple = "N0 CUMPLE";
+							/*
+							 * String cumple = "N0 CUMPLE";
+							 * 
+							 * if (parametro.getArchivos().size() > 0) {
+							 * cumple = "SI";
+							 * }
+							 */
 
-							if (parametro.getArchivos().size() > 0) {
-								cumple = "SI";
-							}
-
-							PdfPCell titleCell2 = new PdfPCell(new Phrase(parametro.getNombre() + "-" + cumple));
+							PdfPCell titleCell2 = new PdfPCell(new Phrase(parametro.getNombre(), fontSimple9));
 							titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
 							titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
 
-							if (cumple.equals("N0 CUMPLE")) {
-								// Cambia el color de fondo solo para esta celda
-								titleCell2.setBackgroundColor(new BaseColor(255, 0, 0, 128));
-							} else {
-								// Establece el color de fondo en blanco o cualquier otro color deseado
-								titleCell2.setBackgroundColor(BaseColor.WHITE);
-							}
+							/*
+							 * if (cumple.equals("N0 CUMPLE")) {
+							 * 
+							 * titleCell2.setBackgroundColor(new BaseColor(255, 0, 0, 128));
+							 * } else {
+							 * 
+							 * titleCell2.setBackgroundColor(BaseColor.WHITE);
+							 * }
+							 */
 
-							// Agrega la celda al documento
 							tablarequisito.addCell(titleCell2);
-							
-							//document.add(tablarequisito);
+
+							PdfPCell titleCell3 = new PdfPCell(
+									new Phrase(String.valueOf(parametro.getArchivos().size()), fontSimple9));
+							titleCell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+							titleCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
+							tablarequisito.addCell(titleCell3);
+
+							// document.add(tablarequisito);
 
 						}
 						document.add(tablarequisito);
-					emptyParagraph.add(" ");
+
 					}
+					emptyParagraph.add(" ");
+					document.add(emptyParagraph);
 				}
 
 			}
+		}
+
+		// Cerrar el documento
+		document.close();
+
+		return outputStream.toByteArray();
+	}
+
+	@GetMapping("/GenerarReporteMateriaPeriodoPDF/{id_carpeta}/{id_carpetaP}/{id_carpetaG}")
+	public ResponseEntity<ByteArrayResource> GenerarReporteMateriaPeriodoPDF(Model model, HttpServletRequest request,
+			@PathVariable(value = "id_carpeta", required = false) Long id_carpeta,
+			@PathVariable(value = "id_carpetaP", required = false) Long id_carpetaP,
+			@PathVariable(value = "id_carpetaG", required = false) Long id_carpetaG)
+			throws DocumentException, MalformedURLException, IOException, com.itextpdf.text.DocumentException {
+
+		Carpeta carpetaGes = carpetaService.findOne(id_carpetaG);
+		// model.addAttribute("carpetaGestion", carpetaGes);
+
+		Carpeta carpetaPer = carpetaService.findOne(id_carpetaP);
+		// model.addAttribute("carpetaPeriodo", carpetaPer);
+
+		List<Carpeta> carpetasDocente = carpetaPer.getCarpetasHijos();
+
+		byte[] bytes = generarPdfP(carpetaGes, carpetaPer, carpetasDocente);
+
+		ByteArrayResource resource = new ByteArrayResource(bytes);
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						"inline;filename=" + "Reporte de Control de Archivos Docente.pdf")
+				.contentType(MediaType.APPLICATION_PDF)
+				.contentLength(bytes.length)
+				.body(resource);
+	}
+
+	public byte[] generarPdfP(Carpeta carpetaGes, Carpeta carpetaPer, List<Carpeta> carpetasDocente)
+			throws IOException, DocumentException, com.itextpdf.text.DocumentException {
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		Document document = new Document(PageSize.LETTER, 30f, 20f, 20f, 70f);
+
+		Paragraph emptyParagraph = new Paragraph();
+
+		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+		document.open();
+
+		Path projectPath = Paths.get("").toAbsolutePath();
+		String fuenteCalibriRegular = projectPath
+				+ "/acreditacion/src/main/resources/static/fuenteLetra/Calibri Regular.ttf";
+		String fuenteCalibriBold = projectPath + "/acreditacion/src/main/resources/static/fuenteLetra/Calibri Bold.ttf";
+		Font fontSimple = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
+		Font fontNegrilla = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
+		Font fontSimple9 = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
+		Font fontNegrilla9 = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
+
+		emptyParagraph.add(" ");
+		document.add(emptyParagraph);
+
+		/* tabla datos DOCENTE */
+		PdfPTable tablaSegunda = new PdfPTable(2);
+		float tableWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+		tablaSegunda.setTotalWidth(tableWidth);
+		// tablaSegunda.setWidthPercentage(95);
+
+		float[] columnWidths2 = { 3.5f, 6f };
+		tablaSegunda.setWidths(columnWidths2);
+
+		PdfPCell cell5 = new PdfPCell(new Phrase("GESTION:", fontNegrilla));
+
+		PdfPCell cell6 = new PdfPCell(
+				new Phrase(carpetaGes.getNom_carpeta(), fontSimple));
+
+		PdfPCell cell3 = new PdfPCell(new Phrase("PERIODO:", fontNegrilla));
+
+		PdfPCell cell4 = new PdfPCell(
+				new Phrase(carpetaPer.getNom_carpeta(), fontSimple));
+
+		// Agregar las celdas a la tabla
+		tablaSegunda.addCell(cell5);
+		tablaSegunda.addCell(cell6);
+		tablaSegunda.addCell(cell3);
+		tablaSegunda.addCell(cell4);
+
+		document.add(tablaSegunda);
+		// canvas2.restoreState();
+		emptyParagraph.add(" ");
+		document.add(emptyParagraph);
+
+		int contador = 0;
+		for (Carpeta carpetaDoc : carpetaPer.getCarpetasHijos()) {
+			contador++;
+			PdfPTable tablaDocente = new PdfPTable(4);
+			float tableWidthDoc = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+			tablaSegunda.setTotalWidth(tableWidthDoc);
+			// tablaSegunda.setWidthPercentage(95);
+
+			float[] columnWidthsDoc = { 1f, 1, 3.5f, 6f };
+			tablaDocente.setWidths(columnWidthsDoc);
+
+			PdfPCell Nro = new PdfPCell(new Phrase("Nro:", fontNegrilla));
+			Nro.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			Nro.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tablaDocente.addCell(Nro);
+
+			PdfPCell contadorN = new PdfPCell(new Phrase(String.valueOf(contador), fontNegrilla));
+			contadorN.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			contadorN.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tablaDocente.addCell(contadorN);
+
+			PdfPCell Docente = new PdfPCell(new Phrase("Docente:", fontNegrilla));
+			Docente.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			Docente.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tablaDocente.addCell(Docente);
+
+			PdfPCell DocenteN = new PdfPCell(
+					new Phrase(carpetaDoc.getNom_carpeta(), fontSimple));
+			DocenteN.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			DocenteN.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tablaDocente.addCell(DocenteN);
+
+			document.add(tablaDocente);
+
+			PdfPTable tablaTitulo = new PdfPTable(4);
+			float tableWidth3 = document.getPageSize().getWidth() - document.leftMargin()
+					- document.rightMargin();
+			tablaTitulo.setTotalWidth(tableWidth3);
+			// tablaArchivosh.setWidthPercentage(95);
+
+			float[] columnWidthsh1 = { 2, 3, 6, 1 };
+			tablaTitulo.setWidths(columnWidthsh1);
+
+			PdfPCell titlehm = new PdfPCell(new Phrase("Materia", fontNegrilla9));
+			// titleh1.setRowspan(requisito.getParametros().size());
+			titlehm.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			titlehm.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tablaTitulo.addCell(titlehm);
+
+			PdfPCell titleh1 = new PdfPCell(new Phrase("Requisito", fontNegrilla9));
+			// titleh1.setRowspan(requisito.getParametros().size());
+			titleh1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			titleh1.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tablaTitulo.addCell(titleh1);
+
+			PdfPCell titleh2 = new PdfPCell(new Phrase("Parametro", fontNegrilla9));
+			titleh2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			titleh2.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tablaTitulo.addCell(titleh2);
+
+			PdfPCell titleh3 = new PdfPCell(new Phrase("Cant. Archivos", fontNegrilla9));
+			titleh3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+			titleh3.setHorizontalAlignment(Element.ALIGN_CENTER);
+			tablaTitulo.addCell(titleh3);
+
+			document.add(tablaTitulo);
+
+			for (Carpeta carpeta2 : carpetaDoc.getCarpetasHijos()) {
+				if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+					for (Materia materia : carpeta2.getMaterias()) {
+
+						materia.getRequisitos().clear();
+
+						List<Requisito> nuevosRequisitos = requisitoService
+								.listaRequisitosMateria2(materia.getId_materia(), carpeta2.getId_carpeta());
+
+						materia.getRequisitos().addAll(nuevosRequisitos);
+
+					}
+				}
+			}
+
+			for (Carpeta carpeta2 : carpetaDoc.getCarpetasHijos()) {
+				if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+					for (Materia materia : carpeta2.getMaterias()) {
+						for (Requisito requisito : materia.getRequisitos()) {
+							requisito.getParametros().clear();
+							List<Parametro> nuevosParametros = parametroService.listaParametro2(
+									carpeta2.getId_carpeta(), materia.getId_materia(), requisito.getId_requisito());
+
+							requisito.getParametros().addAll(nuevosParametros);
+						}
+					}
+				}
+			}
+
+			for (Carpeta carpeta2 : carpetaDoc.getCarpetasHijos()) {
+				if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+
+					for (Materia materia : carpeta2.getMaterias()) {
+
+						int total = materia.getRequisitos().size();
+
+						for (Requisito requisito : materia.getRequisitos()) {
+							total += requisito.getParametros().size();
+						}
+
+						List<Requisito> nuevosRequisitos = requisitoService
+								.listaRequisitosMateria2(materia.getId_materia(), carpeta2.getId_carpeta());
+
+						PdfPTable tablarequisito = new PdfPTable(4);
+						float tableWidthRe = document.getPageSize().getWidth() - document.leftMargin()
+								- document.rightMargin();
+						tablarequisito.setTotalWidth(tableWidthRe);
+						float[] columnWidths = { 2, 3, 6, 1 };
+						tablarequisito.setWidths(columnWidths);
+
+						PdfPCell greenCell2 = new PdfPCell(new Phrase(materia.getNombre(), fontNegrilla));
+						greenCell2.setRowspan(total);
+						greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+						greenCell2.setBackgroundColor(new BaseColor(200, 200, 200));
+						greenCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+						greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+						tablarequisito.addCell(greenCell2);
+
+						for (Requisito requisito : nuevosRequisitos) {
+
+							// tablarequisito.setWidthPercentage(95);
+
+							PdfPCell titleCell = new PdfPCell(new Phrase(requisito.getNombre(), fontNegrilla9));
+							titleCell.setRowspan(requisito.getParametros().size());
+							titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+							titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+							tablarequisito.addCell(titleCell);
+
+							for (Parametro parametro : requisito.getParametros()) {
+
+								System.out.println("REQUISITO: " + requisito.getNombre());
+								System.out.println("PARAMETRO: " + parametro.getNombre() + "-"
+										+ parametro.getId_parametro() + " CARPETA: " + carpeta2.getNom_carpeta() + "-"
+										+ carpeta2.getId_carpeta() + " MATERIA: " + materia.getNombre() + "-"
+										+ materia.getId_materia());
+								parametro.getArchivos().clear();
+								List<Archivo> archivos = archivoService.archivoParametro(
+										parametro.getId_parametro(), carpeta2.getId_carpeta(), materia.getId_materia());
+
+								parametro.getArchivos().addAll(archivos);
+
+								System.out.println("TOTAL ARCHIVOS: " + parametro.getArchivos().size());
+
+								PdfPCell titleCell2 = new PdfPCell(new Phrase(parametro.getNombre(), fontSimple9));
+								titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+								titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+								tablarequisito.addCell(titleCell2);
+
+								PdfPCell titleCell3 = new PdfPCell(
+										new Phrase(String.valueOf(parametro.getArchivos().size()), fontSimple9));
+								titleCell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+								titleCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
+								tablarequisito.addCell(titleCell3);
+
+							}
+
+						}
+						document.add(tablarequisito);
+					}
+
+				}
+			}
+			emptyParagraph.add(" ");
+			document.add(emptyParagraph);
+		}
+
+		// Cerrar el documento
+		document.close();
+
+		return outputStream.toByteArray();
+	}
+
+	@GetMapping("/GenerarReporteMateriaGestionPDF/{id_carpeta}/{id_carpetaG}")
+	public ResponseEntity<ByteArrayResource> GenerarReporteMateriaGestionPDF(Model model, HttpServletRequest request,
+			@PathVariable(value = "id_carpeta", required = false) Long id_carpeta,
+			@PathVariable(value = "id_carpetaP", required = false) Long id_carpetaP,
+			@PathVariable(value = "id_carpetaG", required = false) Long id_carpetaG)
+			throws DocumentException, MalformedURLException, IOException, com.itextpdf.text.DocumentException {
+
+		Carpeta carpetaGes = carpetaService.findOne(id_carpetaG);
+		// model.addAttribute("carpetaGestion", carpetaGes);
+
+		List<Carpeta> carpetasPeriodo = carpetaGes.getCarpetasHijos();
+
+		byte[] bytes = generarPdfG(carpetaGes, carpetasPeriodo);
+
+		ByteArrayResource resource = new ByteArrayResource(bytes);
+
+		return ResponseEntity.ok()
+				.header(HttpHeaders.CONTENT_DISPOSITION,
+						"inline;filename=" + "Reporte de Control de Archivos Docente.pdf")
+				.contentType(MediaType.APPLICATION_PDF)
+				.contentLength(bytes.length)
+				.body(resource);
+	}
+
+	public byte[] generarPdfG(Carpeta carpetaGes, List<Carpeta> carpetasPeriodo)
+			throws IOException, DocumentException, com.itextpdf.text.DocumentException {
+
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+		// Document document = new Document(PageSize.LETTER, 30f, 20f, 20f, 40f);
+		Document document = new Document(PageSize.LETTER, 30f, 20f, 20f, 70f);
+
+		Paragraph emptyParagraph = new Paragraph();
+
+		PdfWriter writer = PdfWriter.getInstance(document, outputStream);
+
+		document.open();
+
+		Path projectPath = Paths.get("").toAbsolutePath();
+		String fuenteCalibriRegular = projectPath
+				+ "/acreditacion/src/main/resources/static/fuenteLetra/Calibri Regular.ttf";
+		String fuenteCalibriBold = projectPath + "/acreditacion/src/main/resources/static/fuenteLetra/Calibri Bold.ttf";
+		Font fontSimple = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
+		Font fontNegrilla = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 11);
+		Font fontSimple9 = FontFactory.getFont(fuenteCalibriRegular, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
+		Font fontNegrilla9 = FontFactory.getFont(fuenteCalibriBold, BaseFont.IDENTITY_H, BaseFont.EMBEDDED, 9);
+
+		emptyParagraph.add(" ");
+		document.add(emptyParagraph);
+
+		/* tabla datos DOCENTE */
+		PdfPTable tablaSegunda = new PdfPTable(2);
+		float tableWidth = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+		tablaSegunda.setTotalWidth(tableWidth);
+		// tablaSegunda.setWidthPercentage(95);
+
+		float[] columnWidths2 = { 3.5f, 6f };
+		tablaSegunda.setWidths(columnWidths2);
+
+		PdfPCell cell5 = new PdfPCell(new Phrase("GESTION:", fontNegrilla));
+
+		PdfPCell cell6 = new PdfPCell(
+				new Phrase(carpetaGes.getNom_carpeta(), fontSimple));
+
+		// Agregar las celdas a la tabla
+		tablaSegunda.addCell(cell5);
+		tablaSegunda.addCell(cell6);
+
+		document.add(tablaSegunda);
+		// canvas2.restoreState();
+		emptyParagraph.add(" ");
+		document.add(emptyParagraph);
+
+		int contador = 0;
+		for (Carpeta carpetaPer : carpetaGes.getCarpetasHijos()) {
+
+			PdfPTable tablaPer = new PdfPTable(1);
+			float tableWidthPer = document.getPageSize().getWidth() - document.leftMargin() - document.rightMargin();
+			tablaSegunda.setTotalWidth(tableWidthPer);
+			// tablaSegunda.setWidthPercentage(95);
+
+			float[] columnWidthsPer = { 5 };
+			tablaPer.setWidths(columnWidthsPer);
+
+			PdfPCell cellPer = new PdfPCell(new Phrase(carpetaPer.getNom_carpeta(), fontNegrilla));
+			tablaPer.addCell(cellPer);
+
+			document.add(tablaPer);
+
+			for (Carpeta carpetaDoc : carpetaPer.getCarpetasHijos()) {
+				contador++;
+				PdfPTable tablaDocente = new PdfPTable(4);
+				float tableWidthDoc = document.getPageSize().getWidth() - document.leftMargin()
+						- document.rightMargin();
+				tablaSegunda.setTotalWidth(tableWidthDoc);
+				// tablaSegunda.setWidthPercentage(95);
+
+				float[] columnWidthsDoc = { 1f, 1, 3.5f, 6f };
+				tablaDocente.setWidths(columnWidthsDoc);
+
+				PdfPCell Nro = new PdfPCell(new Phrase("Nro:", fontNegrilla));
+				Nro.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				Nro.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tablaDocente.addCell(Nro);
+
+				PdfPCell contadorN = new PdfPCell(new Phrase(String.valueOf(contador), fontNegrilla));
+				contadorN.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				contadorN.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tablaDocente.addCell(contadorN);
+
+				PdfPCell Docente = new PdfPCell(new Phrase("Docente:", fontNegrilla));
+				Docente.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				Docente.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tablaDocente.addCell(Docente);
+
+				PdfPCell DocenteN = new PdfPCell(
+						new Phrase(carpetaDoc.getNom_carpeta(), fontSimple));
+				DocenteN.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				DocenteN.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tablaDocente.addCell(DocenteN);
+
+				document.add(tablaDocente);
+
+				PdfPTable tablaTitulo = new PdfPTable(4);
+				float tableWidth3 = document.getPageSize().getWidth() - document.leftMargin()
+						- document.rightMargin();
+				tablaTitulo.setTotalWidth(tableWidth3);
+				// tablaArchivosh.setWidthPercentage(95);
+
+				float[] columnWidthsh1 = { 2, 3, 6, 1 };
+				tablaTitulo.setWidths(columnWidthsh1);
+
+				PdfPCell titlehm = new PdfPCell(new Phrase("Materia", fontNegrilla9));
+				// titleh1.setRowspan(requisito.getParametros().size());
+				titlehm.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				titlehm.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tablaTitulo.addCell(titlehm);
+
+				PdfPCell titleh1 = new PdfPCell(new Phrase("Requisito", fontNegrilla9));
+				// titleh1.setRowspan(requisito.getParametros().size());
+				titleh1.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				titleh1.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tablaTitulo.addCell(titleh1);
+
+				PdfPCell titleh2 = new PdfPCell(new Phrase("Parametro", fontNegrilla9));
+				titleh2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				titleh2.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tablaTitulo.addCell(titleh2);
+
+				PdfPCell titleh3 = new PdfPCell(new Phrase("Cant. Archivos", fontNegrilla9));
+				titleh3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+				titleh3.setHorizontalAlignment(Element.ALIGN_CENTER);
+				tablaTitulo.addCell(titleh3);
+
+				document.add(tablaTitulo);
+
+				for (Carpeta carpeta2 : carpetaDoc.getCarpetasHijos()) {
+					if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+						for (Materia materia : carpeta2.getMaterias()) {
+
+							materia.getRequisitos().clear();
+
+							List<Requisito> nuevosRequisitos = requisitoService
+									.listaRequisitosMateria2(materia.getId_materia(), carpeta2.getId_carpeta());
+
+							materia.getRequisitos().addAll(nuevosRequisitos);
+
+						}
+					}
+				}
+
+				for (Carpeta carpeta2 : carpetaDoc.getCarpetasHijos()) {
+					if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+						for (Materia materia : carpeta2.getMaterias()) {
+							for (Requisito requisito : materia.getRequisitos()) {
+								requisito.getParametros().clear();
+								List<Parametro> nuevosParametros = parametroService.listaParametro2(
+										carpeta2.getId_carpeta(), materia.getId_materia(), requisito.getId_requisito());
+
+								requisito.getParametros().addAll(nuevosParametros);
+							}
+						}
+					}
+				}
+
+				for (Carpeta carpeta2 : carpetaDoc.getCarpetasHijos()) {
+					if (carpeta2.getNom_carpeta().equals("MATERIAS") && !carpeta2.getEstado().equals("X")) {
+
+						for (Materia materia : carpeta2.getMaterias()) {
+
+							int total = materia.getRequisitos().size();
+
+							for (Requisito requisito : materia.getRequisitos()) {
+								total += requisito.getParametros().size();
+							}
+
+							List<Requisito> nuevosRequisitos = requisitoService
+									.listaRequisitosMateria2(materia.getId_materia(), carpeta2.getId_carpeta());
+
+							PdfPTable tablarequisito = new PdfPTable(4);
+							float tableWidthRe = document.getPageSize().getWidth() - document.leftMargin()
+									- document.rightMargin();
+							tablarequisito.setTotalWidth(tableWidthRe);
+							float[] columnWidths = { 2, 3, 6, 1 };
+							tablarequisito.setWidths(columnWidths);
+
+							PdfPCell greenCell2 = new PdfPCell(new Phrase(materia.getNombre(), fontNegrilla));
+							greenCell2.setRowspan(total);
+							greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+							greenCell2.setBackgroundColor(new BaseColor(200, 200, 200));
+							greenCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+							greenCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+							tablarequisito.addCell(greenCell2);
+
+							for (Requisito requisito : nuevosRequisitos) {
+
+								// tablarequisito.setWidthPercentage(95);
+
+								PdfPCell titleCell = new PdfPCell(new Phrase(requisito.getNombre(), fontNegrilla9));
+								titleCell.setRowspan(requisito.getParametros().size());
+								titleCell.setVerticalAlignment(Element.ALIGN_MIDDLE);
+								titleCell.setHorizontalAlignment(Element.ALIGN_CENTER);
+								tablarequisito.addCell(titleCell);
+
+								for (Parametro parametro : requisito.getParametros()) {
+
+									System.out.println("REQUISITO: " + requisito.getNombre());
+									System.out.println("PARAMETRO: " + parametro.getNombre() + "-"
+											+ parametro.getId_parametro() + " CARPETA: " + carpeta2.getNom_carpeta()
+											+ "-"
+											+ carpeta2.getId_carpeta() + " MATERIA: " + materia.getNombre() + "-"
+											+ materia.getId_materia());
+									parametro.getArchivos().clear();
+									List<Archivo> archivos = archivoService.archivoParametro(
+											parametro.getId_parametro(), carpeta2.getId_carpeta(),
+											materia.getId_materia());
+
+									parametro.getArchivos().addAll(archivos);
+
+									System.out.println("TOTAL ARCHIVOS: " + parametro.getArchivos().size());
+
+									PdfPCell titleCell2 = new PdfPCell(new Phrase(parametro.getNombre(), fontSimple9));
+									titleCell2.setVerticalAlignment(Element.ALIGN_MIDDLE);
+									titleCell2.setHorizontalAlignment(Element.ALIGN_CENTER);
+
+									tablarequisito.addCell(titleCell2);
+
+									PdfPCell titleCell3 = new PdfPCell(
+											new Phrase(String.valueOf(parametro.getArchivos().size()), fontSimple9));
+									titleCell3.setVerticalAlignment(Element.ALIGN_MIDDLE);
+									titleCell3.setHorizontalAlignment(Element.ALIGN_CENTER);
+									tablarequisito.addCell(titleCell3);
+
+								}
+
+							}
+							document.add(tablarequisito);
+						}
+						// .setMargins(30f, 20f, 20f, 70f);
+					}
+				}
+
+				emptyParagraph.add(" ");
+				document.add(emptyParagraph);
+
+			}
+
+			document.setMargins(30f, 20f, 20f, 70f);
+			document.newPage();
+
 		}
 
 		// Cerrar el documento

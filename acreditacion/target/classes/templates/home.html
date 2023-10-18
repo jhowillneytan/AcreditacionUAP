@@ -481,7 +481,7 @@
 
 										</div>
 									</div>-->
-									<div class="view-container" th:if="${anterior.nom_carpeta =='FILE DOCENTES'}">
+									<!--<div class="view-container" th:if="${anterior.nom_carpeta =='FILE DOCENTES'}">
 										<p>
 											<a class="btn btn-primary" data-toggle="collapse" href="#formFiltroReport"
 												role="button" aria-expanded="false"
@@ -530,7 +530,7 @@
 												</form>
 											</div>
 										</div>
-									</div>
+									</div>-->
 									<!--<div class="view-container">
 										
 										<div>
@@ -2005,7 +2005,12 @@
 		function cargarPeriodo(id) {
 			//alert('AAAAAAAAAAAAAAA');
 			var selectElement = $('#selectPeriodo');
-
+			selectElement.empty();
+			var option1 = document.createElement('option');
+			option1.value = 0;
+			option1.text = "Seleccionar";
+			option1.selected = true;
+			selectElement.append(option1);
 			$.ajax({
 				type: 'POST',
 				url: '/CargarPeriodo/' + id,
@@ -2030,6 +2035,12 @@
 			//alert('AAAAAAAAAAAAAAA');
 
 			var selectElement = $('#selectDocente');
+			selectElement.empty();
+			var option1 = document.createElement('option');
+			option1.value = 0;
+			option1.text = "Seleccionar";
+			option1.selected = true;
+			selectElement.append(option1);
 
 			$.ajax({
 				type: 'POST',
@@ -2107,8 +2118,45 @@
 					Reporte
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body">
-					<div id="reportePDFMaterias" ></div>
+				<div class="modal-body ">
+					<form action="">
+						<input type="hidden" name="idCarpetaActual" id="idCarpetaActual"
+							th:value="${anterior.id_carpeta}">
+						<div class="row">
+							<div class="col-md-4"> <!-- Primera columna -->
+								<label class="form-label" for="select-country1">Gestion</label>
+								<select class="form-select select2" id="selectGestion" name="selectGestion"
+									onchange="cargarPeriodo(this.value)" required>
+									<option value="0">Seleccionar</option>
+									<option th:each="gestion: ${GestionCarpeta}" th:if="${gestion.estado != 'X'}"
+										th:value="${gestion.id_carpeta}" th:text="${gestion.nom_carpeta}">
+									</option>
+								</select>
+							</div>
+
+							<div class="col-md-4"> <!-- Segunda columna -->
+								<label class="form-label" for="select-country1">Periodo</label>
+								<select class="form-select select2" name="selectPeriodo" id="selectPeriodo"
+									onchange="cargarDocentePeriodo(this.value)" required>
+									<option value="0">Seleccionar</option>
+								</select>
+							</div>
+
+							<div class="col-md-4"> <!-- Tercera columna -->
+								<label class="form-label" for="select-country1">Docente</label>
+								<select class="form-select select2" name="selectDocente" id="selectDocente" required>
+									<option value="0">Seleccionar</option>
+								</select>
+							</div>
+						</div>
+						<div class="row mt-2 d-flex align-items-center justify-content-center">
+
+							<a type="button" style="width: 200px;" class="btn btn-primary"
+								onclick="GenerarReporteMateriaPDF()">Generar</a>
+
+						</div>
+					</form>
+					<div class="mt-2" id="reportePDFMaterias"></div>
 
 				</div>
 			</div>
@@ -2119,29 +2167,38 @@
 
 	<script>
 
-			function GenerarReporteMateriaPDF() {
-				var selectD = $('#selectDocente').val();
-				var selectC = $('#idCarpetaActual').val();
-				var selectP = $('#selectPeriodo').val();
-				var selectG = $('#selectGestion').val();
-				//alert(selectD);
-				$.ajax({
-					type: 'GET',
-					url: '/GenerarReporteMateriaPDF/'+selectD+'/'+selectC+'/'+selectP+'/'+selectG,
-					data: $(this).serialize(),
-					success: function (data) {
-						//alert('AAAAAAAA');
-						$('#reportePDFMaterias').html('<embed class="embed-responsive-item" src="/GenerarReporteMateriaPDF/' + selectD+'/'+selectC+'/'+selectP+'/'+selectG + '" style="width: 100%; height: 500px;" type="application/pdf" >');
-							//$('#reportePDFMaterias').html('<object data="' + data + '" type="application/pdf" width="100%" height="600px"></object>');
-
-						//$('#reporteModal').modal('show');
-					},
-					error: function (xhr, status, error) {
-						console.error('Error al cargar el PDF:', status, error);
-					}
-				});
+		function GenerarReporteMateriaPDF() {
+			var selectD = $('#selectDocente').val();
+			var selectC = $('#idCarpetaActual').val();
+			var selectP = $('#selectPeriodo').val();
+			var selectG = $('#selectGestion').val();
+			var rutaPDF = '';
+			if (selectD > 0 && selectP > 0 && selectG > 0) {
+				rutaPDF = '/GenerarReporteMateriaDocentePDF/' + selectD + '/' + selectC + '/' + selectP + '/' + selectG;
+			} else if (selectP > 0 && selectG > 0) {
+				rutaPDF = '/GenerarReporteMateriaPeriodoPDF/' + selectC + '/' + selectP + '/' + selectG;
+			} else if (selectG > 0) {
+				rutaPDF = '/GenerarReporteMateriaGestionPDF/' + selectC + '/' + selectG;
 			}
-		
+
+			//alert(selectD);
+			$.ajax({
+				type: 'GET',
+				url: rutaPDF,
+				data: $(this).serialize(),
+				success: function (data) {
+					//alert('AAAAAAAA');
+					$('#reportePDFMaterias').html('<embed class="embed-responsive-item" src="' + rutaPDF + '" style="width: 100%; height: 500px;" type="application/pdf" >');
+					//$('#reportePDFMaterias').html('<object data="' + data + '" type="application/pdf" width="100%" height="600px"></object>');
+
+					//$('#reporteModal').modal('show');
+				},
+				error: function (xhr, status, error) {
+					console.error('Error al cargar el PDF:', status, error);
+				}
+			});
+		}
+
 	</script>
 
 </body>

@@ -463,10 +463,7 @@ public class HomeController {
 					System.out.println(string);
 				}
 			} else {
-				redirectAttrs
-						.addFlashAttribute("mensaje", "Es necesario cargar un imagen")
-						.addFlashAttribute("clase", "danger");
-				return "redirect:/home/" + id_carpeta_anterior;
+				carpeta.setRuta_icono("iconoPredeterminadoCarpeta.webp");
 			}
 
 			carpeta.setFecha_registro(new Date());
@@ -493,10 +490,7 @@ public class HomeController {
 					System.out.println(string);
 				}
 			} else {
-				redirectAttrs
-						.addFlashAttribute("mensaje", "Es necesario cargar un imagen")
-						.addFlashAttribute("clase", "danger");
-				return "redirect:/home/";
+				carpeta.setRuta_icono("iconoPredeterminadoCarpeta.webp");
 			}
 			carpeta.setFecha_registro(new Date());
 			carpeta.setEstado("A");

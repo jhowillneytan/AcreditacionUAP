@@ -1,5 +1,8 @@
 package com.uap.acreditacion.controller;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +26,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import com.uap.acreditacion.Config;
+import com.uap.acreditacion.entity.Archivo;
 import com.uap.acreditacion.entity.Carrera;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
@@ -95,10 +99,7 @@ public class PersonaController {
 				System.out.println(string);
 			}
 		} else {
-			flash
-					.addFlashAttribute("mensaje", "Es necesario cargar un imagen")
-					.addFlashAttribute("clase", "danger");
-			return "redirect:/carrera/formulario/";
+			persona.setImagen_persona("FotoPerfilPrederminada.webp");
 		}
 		persona.setFecha_registro(new Date());
 

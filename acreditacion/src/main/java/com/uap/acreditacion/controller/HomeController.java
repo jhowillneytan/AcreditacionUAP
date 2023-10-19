@@ -216,7 +216,7 @@ public class HomeController {
 				List<Carpeta> ListcarpetasPadres = new ArrayList<>();
 				List<Carpeta> carpetasConUsuario = new ArrayList<>();
 
-				List<Carpeta> listFill = carpetaService.findAll();
+				List<Carpeta> listFill = p.getCarrera().getCarpetas();
 				for (Carpeta carpeta : listFill) {
 					if (carpeta.getCarpetaPadre() == null) {
 						ListcarpetasPadres.add(carpeta);
@@ -478,6 +478,7 @@ public class HomeController {
 			// System.out.println("AAAAAAAAAA" + carpeta.getCarpetaPadre().getNom_carpeta()+
 			// usuario.getUsername());
 			// }
+			//carpeta.setCarrera(persona.getCarrera());
 			carpetaService.save(carpeta);
 			redirectAttrs
 					.addFlashAttribute("mensaje", "Carpeta agregado correctamente")
@@ -799,6 +800,7 @@ public class HomeController {
 
 		Archivo archivo = archivoService.findOne(id);
 		String rutaArchivo = projectPath + "/acreditacion/uploads/" + archivo.getFile();
+		
 		try {
 			byte[] fileBytes;
 			try (InputStream inputStream = new FileInputStream(rutaArchivo)) {

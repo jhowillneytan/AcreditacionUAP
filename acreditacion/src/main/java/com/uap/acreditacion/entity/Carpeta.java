@@ -54,6 +54,10 @@ public class Carpeta implements Serializable{
     @JoinColumn(name = "id_carrera")
     private Carrera carrera;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_docente")
+    private Docente docente;
+
 	/*@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_usuario")
     private Usuario usuario;

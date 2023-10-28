@@ -14,5 +14,7 @@ public interface IPersonaService {
 	public Persona findOne(Long id);
 
 	public void delete(Long id);
+
+	public Persona personaCi(String ci);
 	
 }

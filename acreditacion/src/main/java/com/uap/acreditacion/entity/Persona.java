@@ -56,6 +56,9 @@ public class Persona implements Serializable{
 	@OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Usuario usuario;
 
+    @OneToOne(mappedBy = "persona", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Docente docente;
+
    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_tipo_persona")
     private TipoPersona tipoPersona;

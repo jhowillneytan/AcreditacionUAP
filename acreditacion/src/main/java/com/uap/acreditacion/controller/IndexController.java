@@ -4,6 +4,9 @@ import java.security.Principal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +14,11 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 //import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,12 +27,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.uap.acreditacion.Config;
 import com.uap.acreditacion.dao.IPersonaDao;
 import com.uap.acreditacion.dao.IUsuarioDao;
 import com.uap.acreditacion.entity.Cargo;
+import com.uap.acreditacion.entity.Carrera;
+import com.uap.acreditacion.entity.Materia;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.entity.Usuario;
@@ -46,84 +60,121 @@ public class IndexController {
 	private ICargoService iCargoService;
 
 	@Autowired
-	private IUsuarioService iUsuarioService; 
+	private IUsuarioService iUsuarioService;
 
-	@GetMapping({"/login","/"})
-	public String login(@RequestParam(value="error", required=false) String error,
-			@RequestParam(value="logout", required = false) String logout,
-			Model model, Principal principal, RedirectAttributes flash
-			) {
-		 
-		//String username=auth.getName();
-		
-		
-		if(principal != null) {
+	@GetMapping({ "/login", "/" })
+	public String login(@RequestParam(value = "error", required = false) String error,
+			@RequestParam(value = "logout", required = false) String logout,
+			Model model, Principal principal, RedirectAttributes flash) {
+
+		// String username=auth.getName();
+
+		if (principal != null) {
 			flash.addFlashAttribute("info", "Ya ha inciado sesión anteriormente");
 			return "redirect:/home";
 		}
-		
-		if(error != null) {
-			model.addAttribute("error", "Error en el login: Nombre de usuario o contraseña incorrecta, por favor vuelva a intentarlo!");
+
+		if (error != null) {
+			model.addAttribute("error",
+					"Error en el login: Nombre de usuario o contraseña incorrecta, por favor vuelva a intentarlo!");
 		}
-		
-		if(logout != null) {
+
+		if (logout != null) {
 			model.addAttribute("success", "Ha cerrado sesión con éxito!");
 		}
-		
+
 		return "index";
 	}
 
 	@PostMapping("/login")
 	public String login(RedirectAttributes redirectAttrs,
-			@RequestParam(value="username")String username,
-    		@RequestParam(value="password")String password, HttpServletRequest request) {
+			@RequestParam(value = "username") String username,
+			@RequestParam(value = "password") String password, HttpServletRequest request) {
 		HttpSession session = request.getSession(false);
 		session = request.getSession(true);
+		System.out.println("INICIAR SESION");
 
 		Usuario usuario = iUsuarioService.findByUsernamePassword(username, password);
-		//Cargo cargo = iCargoService.findOne(usuario.getPersona().getCargo().getId_cargo());
-		if (usuario!=null) {
+		// Cargo cargo =
+		// iCargoService.findOne(usuario.getPersona().getCargo().getId_cargo());
+		if (usuario != null) {
 			session.setAttribute("persona", usuario.getPersona());
-			//session.setAttribute("carreraSesion", usuario.getPersona().getCarrera());
+			// session.setAttribute("carreraSesion", usuario.getPersona().getCarrera());
 			session.setAttribute("tipo_persona", usuario.getPersona().getTipoPersona());
-			//session.setAttribute("cargoSesion", cargo);
+			// session.setAttribute("cargoSesion", cargo);
 			return "redirect:/home";
-		}else {
+		} else {
 			redirectAttrs
-	        .addFlashAttribute("mensaje", "Error en el login: Nombre de usuario o contraseña incorrecta, por favor vuelva a intentarlo!")
-	        .addFlashAttribute("clase", "light")
-			.addFlashAttribute("sty", "red")
-			.addFlashAttribute("col", "#d09f8373");
+					.addFlashAttribute("mensaje",
+							"Error en el login: Nombre de usuario o contraseña incorrecta, por favor vuelva a intentarlo!")
+					.addFlashAttribute("clase", "light")
+					.addFlashAttribute("sty", "red")
+					.addFlashAttribute("col", "#d09f8373");
 			return "redirect:/login";
 		}
 	}
+
+	@PostMapping("/login2")
+	public String login2(RedirectAttributes redirectAttrs,
+			@RequestParam(value = "username") String username,
+			@RequestParam(value = "password") String password, HttpServletRequest request) {
+		Map<String, Object> requests = new HashMap<String, Object>();
+
+		requests.put("usuario", username);
+		requests.put("clave", password);
+
+		String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+		String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("x-api-key", key);
+
+		HttpEntity<HashMap> req = new HttpEntity(requests, headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<Map> resp = restTemplate.exchange(url, HttpMethod.POST, req, Map.class);
+
+		System.out.println("datos econtrados");
+		System.out.println("Docente: ");
+
+		return "redirect:/login";
+	
+
+	// Después de recibir la respuesta del API
+
+	}
+
 	@GetMapping("/logout")
 	public String logout(HttpServletRequest request, RedirectAttributes redirectAttrs) {
 		HttpSession session = request.getSession();
 		session.invalidate();
 		System.out.println("entrando a cerrar");
 		redirectAttrs
-        .addFlashAttribute("mensaje", "Ha cerrado sesión con éxito!")
-        .addFlashAttribute("clase", "light")
-        .addFlashAttribute("sty", "green")
-		.addFlashAttribute("col", "#8ecdaa73");
+				.addFlashAttribute("mensaje", "Ha cerrado sesión con éxito!")
+				.addFlashAttribute("clase", "light")
+				.addFlashAttribute("sty", "green")
+				.addFlashAttribute("col", "#8ecdaa73");
 		return "redirect:/login";
 	}
-	
-	
+
 	@GetMapping("/mi-perfil/{id_persona}")
-	public String miPerfil(@PathVariable(value="id_persona")Long id_persona, ModelMap model, HttpServletRequest request){
+	public String miPerfil(@PathVariable(value = "id_persona") Long id_persona, ModelMap model,
+			HttpServletRequest request) {
 		if (request.getSession().getAttribute("persona") != null) {
 			Persona p2 = (Persona) request.getSession().getAttribute("persona");
 			Persona p = personaService.findOne(p2.getId_persona());
 			model.addAttribute("personasession", p);
-			model.addAttribute("tipoPersonasession", tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
+			model.addAttribute("tipoPersonasession",
+					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 
-		Persona persona = personaService.findOne(id_persona);
-		model.addAttribute("perfil", persona);
-		
-		model.addAttribute("editMode", "true");
-		return "mi_perfil";
+			Persona persona = personaService.findOne(id_persona);
+			model.addAttribute("perfil", persona);
+
+			model.addAttribute("editMode", "true");
+			return "mi_perfil";
 		} else {
 			return "redirect:/login";
 		}
@@ -131,56 +182,57 @@ public class IndexController {
 
 	@PostMapping("/guardarPefilEditado")
 	public String guardarPefilEditado(ModelMap model, RedirectAttributes redirectAttrs,
-			@RequestParam(value="nombre")String nombre,
-			@RequestParam(value="ap_paterno")String ap_paterno,
-			@RequestParam(value="ap_materno")String ap_materno,
-			@RequestParam(value="ci")String ci,
-			//@RequestParam(value="fecha_registro")String fech_registro,
-			//@RequestParam(value="imagen_personaN")String imagen_personaN,
-			@RequestParam(name="imagen_persona", required = false) MultipartFile file,
-			//@RequestParam(value="estado")String estado,
-			//@RequestParam(value="tipoPersona")TipoPersona tipoPersona,
-			//@RequestParam(value="tipoPersona")Set<TipoPersona> tipoPerson,
-			@RequestParam(value="id_persona")Long id_persona) {
+			@RequestParam(value = "nombre") String nombre,
+			@RequestParam(value = "ap_paterno") String ap_paterno,
+			@RequestParam(value = "ap_materno") String ap_materno,
+			@RequestParam(value = "ci") String ci,
+			// @RequestParam(value="fecha_registro")String fech_registro,
+			// @RequestParam(value="imagen_personaN")String imagen_personaN,
+			@RequestParam(name = "imagen_persona", required = false) MultipartFile file,
+			// @RequestParam(value="estado")String estado,
+			// @RequestParam(value="tipoPersona")TipoPersona tipoPersona,
+			// @RequestParam(value="tipoPersona")Set<TipoPersona> tipoPerson,
+			@RequestParam(value = "id_persona") Long id_persona) {
 
-				System.out.println("METODO MODIFICAR PERFIL");
+		System.out.println("METODO MODIFICAR PERFIL");
 		Persona persona = personaService.findOne(id_persona);
-		
-		System.out.println("ar= "+file);
-		if (!file.isEmpty()) { 
-    		String arch = config.guardarArchivo(file);	
-    		persona.setImagen_persona(arch);
-    		String [] ta = arch.split("\\.");
-    		System.out.println(ta[ta.length-1]);
-			if (!ta[ta.length-1].equals("png")) {
+
+		System.out.println("ar= " + file);
+		if (!file.isEmpty()) {
+			String arch = config.guardarArchivo(file);
+			persona.setImagen_persona(arch);
+			String[] ta = arch.split("\\.");
+			System.out.println(ta[ta.length - 1]);
+			if (!ta[ta.length - 1].equals("png")) {
 				redirectAttrs
-	            .addFlashAttribute("mensaje", "El archivo tiene que ser en formato .png")
-	            .addFlashAttribute("clase", "danger");
-	    		return "redirect:/mi-perfil/"+persona.getId_persona();
-	    	}
-		} else{
-			//persona.setImagen_persona(imagen_personaN);
+						.addFlashAttribute("mensaje", "El archivo tiene que ser en formato .png")
+						.addFlashAttribute("clase", "danger");
+				return "redirect:/mi-perfil/" + persona.getId_persona();
+			}
+		} else {
+			// persona.setImagen_persona(imagen_personaN);
 		}
 		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 		persona.setNombre(nombre);
 		persona.setAp_paterno(ap_paterno);
 		persona.setAp_materno(ap_materno);
 		persona.setCi(ci);
-		/*try {
-		persona.setFecha_registro(dateFormat.parse(fech_registro));	
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-		persona.setEstado(estado);
-		persona.setTipoPersona(tipoPersona);
-		persona.setTipoPerson(tipoPerson);*/
+		/*
+		 * try {
+		 * persona.setFecha_registro(dateFormat.parse(fech_registro));
+		 * } catch (Exception e) {
+		 * // TODO: handle exception
+		 * }
+		 * 
+		 * persona.setEstado(estado);
+		 * persona.setTipoPersona(tipoPersona);
+		 * persona.setTipoPerson(tipoPerson);
+		 */
 		personaService.save(persona);
 		redirectAttrs
-        .addFlashAttribute("mensaje", "Actualizado correctamente")
-        .addFlashAttribute("clase", "success");
+				.addFlashAttribute("mensaje", "Actualizado correctamente")
+				.addFlashAttribute("clase", "success");
 		return "redirect:/home";
 	}
-	
-	
+
 }

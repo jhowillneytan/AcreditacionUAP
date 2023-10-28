@@ -38,5 +38,10 @@ public class PersonaServiceImpl implements IPersonaService{
         // TODO Auto-generated method stub
         personaDao.deleteById(id);
     }
+
+    @Override
+    public Persona personaCi(String ci) {
+        return personaDao.personaCi(ci);
+    }
 	
 }

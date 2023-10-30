@@ -83,6 +83,12 @@
 			<artifactId>itextpdf</artifactId>
 			<version>5.5.13</version>
 		</dependency>
+		<dependency>
+    <groupId>org.json</groupId>
+    <artifactId>json</artifactId>
+    <version>20210307</version> <!-- Asegúrate de usar la versión más reciente disponible -->
+</dependency>
+
 
 	</dependencies>
 

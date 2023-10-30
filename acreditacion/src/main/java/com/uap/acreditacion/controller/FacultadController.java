@@ -1,6 +1,7 @@
 package com.uap.acreditacion.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -143,24 +144,44 @@ public class FacultadController {
                 List<Map<String, String>> dataList = (List<Map<String, String>>) responseMap.get("data");
 
                 if (dataList != null && !dataList.isEmpty()) {
-                    List<String> facultades = new ArrayList<>();
+                    List<String[]> facultades = new ArrayList<>();
                     for (Map<String, String> carreraData : dataList) {
-                        String facultad = carreraData.get("facultad");
+                        String[] facultad = new String[2];
+                        String nombFacultad = carreraData.get("facultad");
+                        String code = String.valueOf(carreraData.get("code_facultad"));
+                        facultad[0] = code;
+                        facultad[1] = nombFacultad;
                         facultades.add(facultad);
                     }
-                    // Utiliza un HashSet para eliminar duplicados
-                    Set<String> facultadesSinDuplicados = new HashSet<>(facultades);
+                    // Crear un conjunto para almacenar valores únicos
+                    Set<String> uniqueFacultades = new HashSet<>();
 
-                    // Convierte el HashSet nuevamente en una lista
-                    facultades.clear(); // Limpia la lista original
-                    facultades.addAll(facultadesSinDuplicados);
+                    // Crear una nueva lista para almacenar elementos únicos
+                    List<String[]> uniqueFacultadesList = new ArrayList<>();
+
+                    // Iterar a través de los elementos de la lista facultades
+                    for (String[] facultad : facultades) {
+                        // Convertir el array en una cadena
+                        String facultadStr = Arrays.toString(facultad);
+
+                        // Verificar si la cadena ya existe en el conjunto
+                        if (uniqueFacultades.add(facultadStr)) {
+                            // Si la cadena es única, agregar el array a la nueva lista
+                            uniqueFacultadesList.add(facultad);
+                        }
+                    }
+
+                    // Reemplazar la lista original con la lista de elementos únicos
+                    facultades = uniqueFacultadesList;
+
                     // Ahora tienes la lista de facultades
-                    for (String facultad : facultades) {
+                    for (String[] facultad : facultades) {
                         Facultad facultad2 = new Facultad();
-                        facultad2.setNom_facultad(facultad);
+                        facultad2.setNom_facultad(facultad[1]);
                         facultad2.setFecha_registro(new Date());
-                        facultad2.setDescripcion(facultad);
+                        facultad2.setDescripcion(facultad[1]);
                         facultad2.setEstado("A");
+                        facultad2.setCode_facultad(Integer.parseInt(facultad[0]));
                         facultadService.save(facultad2);
                         System.out.println("Facultad: " + facultad);
                     }

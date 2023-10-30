@@ -1,19 +1,27 @@
 package com.uap.acreditacion.controller;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
@@ -23,9 +31,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import org.dom4j.DocumentException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +49,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -254,6 +266,7 @@ public class HomeController {
 			System.out.println("***********TIPO PERSONA: " + tipoPersona.getId_tipo_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersona);
+			model.addAttribute("ListaCarreras", carreraService.findAll());
 			// model.addAttribute("requisitos", requisitoService.findAll());
 			model.addAttribute("materia", new Materia());
 			model.addAttribute("opcionHome", "true");
@@ -395,6 +408,7 @@ public class HomeController {
 			model.addAttribute("materia", new Materia());
 			model.addAttribute("materias", carpetaService.findOne(id_carpeta).getMaterias());
 			model.addAttribute("opcionHome", "true");
+			model.addAttribute("ListaCarreras", carreraService.findAll());
 			return "home";
 		} else {
 			return "redirect:/login";
@@ -475,7 +489,7 @@ public class HomeController {
 			// System.out.println("AAAAAAAAAA" + carpeta.getCarpetaPadre().getNom_carpeta()+
 			// usuario.getUsername());
 			// }
-			//carpeta.setCarrera(persona.getCarrera());
+			// carpeta.setCarrera(persona.getCarrera());
 			carpetaService.save(carpeta);
 			redirectAttrs
 					.addFlashAttribute("mensaje", "Carpeta agregado correctamente")
@@ -794,7 +808,7 @@ public class HomeController {
 
 		Archivo archivo = archivoService.findOne(id);
 		String rutaArchivo = projectPath + "/acreditacion/uploads/" + archivo.getFile();
-		
+
 		try {
 			byte[] fileBytes;
 			try (InputStream inputStream = new FileInputStream(rutaArchivo)) {
@@ -2418,5 +2432,153 @@ public class HomeController {
 		cell.setVerticalAlignment(Element.ALIGN_MIDDLE);
 		// Otras configuraciones de celda
 	}
+
+	// ---------------------- CONSULTA API --------------------
+
+	@PostMapping("/consultaApiDocenteRD")
+	public ResponseEntity<String[]> consultaApiDocenteRD(
+			@RequestParam(value = "idPadre") Long id_carpeta_anterior,
+			@RequestParam(value = "codigoDocente") String codigoDocente,
+			@RequestParam(value = "carrera") Long id_carrera,
+			@RequestParam(value = "gestion") String gestion,
+			@RequestParam(value = "periodo") String periodo) {
+
+		Carrera carrera = carreraService.findOne(id_carrera);
+		System.out.println("codeCarrer: " + carrera.getCode_carrera());
+
+		String numero = gestion.replaceAll("[^0-9]", "");
+		int numeroGestion = Integer.parseInt(numero);
+		System.out.println("gestion: " + numeroGestion);
+
+		String numero2 = periodo.replaceAll("[^0-9]", "");
+		int numeroPeriodo = Integer.parseInt(numero2);
+		System.out.println("periodo: " + numeroPeriodo);
+		System.out.println("rd: " + codigoDocente);
+
+		Map<String, Object> requests = new HashMap<String, Object>();
+		requests.put("rd", codigoDocente);
+		requests.put("periodo", numeroPeriodo);
+		requests.put("gestion", numeroGestion);
+		requests.put("code_carrera", carrera.getCode_carrera());
+
+		String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+		String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("x-api-key", key);
+
+		HttpEntity<HashMap> req = new HttpEntity(requests, headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<Map> resp = restTemplate.exchange(url, HttpMethod.POST, req, Map.class);
+
+		if (resp.getStatusCode() == HttpStatus.OK) {
+			Map<String, Object> responseBody = resp.getBody();
+			// Aquí puedes procesar los datos de responseBody
+			System.out.println("RESPUESTA DE LA API: ");
+			System.out.println(responseBody);
+		} else {
+			System.out.println("Error en la solicitud. Código de respuesta: " + resp.getStatusCodeValue());
+		}
+
+		String[] materiaArray = new String[2];
+		return ResponseEntity.ok(materiaArray);
+	}
+	/*
+	 * @PostMapping("/consultaApiDocenteRD")
+	 * public ResponseEntity<String[]> consultaApiDocenteRD(
+	 * 
+	 * @RequestParam(value = "idPadre") Long id_carpeta_anterior,
+	 * 
+	 * @RequestParam(value = "codigoDocente") String codigoDocente,
+	 * 
+	 * @RequestParam(value = "carrera") Long id_carrera,
+	 * 
+	 * @RequestParam(value = "gestion") String gestion,
+	 * 
+	 * @RequestParam(value = "periodo") String periodo) {
+	 * 
+	 * Carrera carrera = carreraService.findOne(id_carrera);
+	 * System.out.println("codeCarrer: " + carrera.getCode_carrera());
+	 * 
+	 * String numero = gestion.replaceAll("[^0-9]", "");
+	 * int numeroGestion = Integer.parseInt(numero);
+	 * System.out.println("gestion: " + numeroGestion);
+	 * 
+	 * String numero2 = periodo.replaceAll("[^0-9]", "");
+	 * int numeroPeriodo = Integer.parseInt(numero2);
+	 * System.out.println("periodo: " + numeroPeriodo);
+	 * System.out.println("rd: " + codigoDocente);
+	 * 
+	 * try {
+	 * // URL de la API
+	 * String url =
+	 * "http://181.115.188.250:9993/v1/service/api/89b5b361047f40edb5d75dce872e8bf1";
+	 * 
+	 * // Clave de autorización
+	 * String key =
+	 * "46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
+	 * 
+	 * // Parámetros de la solicitud
+	 * JSONObject requestData = new JSONObject();
+	 * 
+	 * 
+	 * // Establecer la conexión
+	 * URL obj = new URL(url);
+	 * HttpURLConnection con = (HttpURLConnection) obj.openConnection();
+	 * 
+	 * // Configurar la solicitud HTTP como POST
+	 * con.setRequestMethod("GET");
+	 * 
+	 * // Configurar la cabecera de autorización
+	 * con.setRequestProperty("x-api-key", key);
+	 * 
+	 * // Habilitar el envío y recepción de datos JSON
+	 * con.setRequestProperty("Content-Type", "application/json");
+	 * con.setDoOutput(true);
+	 * 
+	 * // Enviar los datos de la solicitud
+	 * try (OutputStream os = con.getOutputStream()) {
+	 * byte[] input = requestData.toString().getBytes("utf-8");
+	 * os.write(input, 0, input.length);
+	 * }
+	 * 
+	 * int responseCode = con.getResponseCode();
+	 * 
+	 * if (responseCode == 200) {
+	 * // Procesar la respuesta si es exitosa
+	 * try (BufferedReader in = new BufferedReader(new
+	 * InputStreamReader(con.getInputStream()))) {
+	 * String inputLine;
+	 * StringBuilder response = new StringBuilder();
+	 * while ((inputLine = in.readLine()) != null) {
+	 * response.append(inputLine);
+	 * }
+	 * 
+	 * // Parsear la respuesta JSON
+	 * JSONObject jsonResponse = new JSONObject(response.toString());
+	 * System.out.println("RESULTADOS DE LA API");
+	 * // Obtener los valores de las variables
+	 * 
+	 * System.out.println(jsonResponse.toString());
+	 * }
+	 * } else {
+	 * // Manejar errores aquí si es necesario
+	 * System.out.println("Error en la solicitud. Código de respuesta: " +
+	 * responseCode);
+	 * }
+	 * 
+	 * } catch (Exception e) {
+	 * // Manejar excepciones aquí si es necesario
+	 * e.printStackTrace();
+	 * }
+	 * 
+	 * String[] materiaArray = new String[2];
+	 * return ResponseEntity.ok(materiaArray);
+	 * }
+	 */
 
 }

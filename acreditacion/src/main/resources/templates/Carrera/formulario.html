@@ -74,7 +74,8 @@
 									<table id="example" class="table" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th>NRO</th>
+                                                <th>#</th>
+												<th>CODE</th>
                                                 <th>CARRERA</th>
                                                 <th>FACULTAD</th>
                                                 <th>OPERACIONES</th>
@@ -83,6 +84,7 @@
                                         <tbody>
                                             <tr th:each="c,cont : ${carreras}" th:if="${c.estado != 'X'}">
                                                 <td th:text="${cont.index + 1}"></td>
+												<td th:text="${c.code_carrera}"></td>
                                                 <td th:text="${c.nom_carrera}"></td>
                                                 <td th:text="${c.facultad.nom_facultad}"></td>
                                                 <td>

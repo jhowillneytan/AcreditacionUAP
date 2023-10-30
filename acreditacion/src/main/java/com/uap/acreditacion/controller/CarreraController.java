@@ -218,7 +218,8 @@ public class CarreraController {
                     for (Map<String, String> carreraData : dataList) {
                         String facultad = carreraData.get("facultad");
                         String carrera = carreraData.get("carrera");
-
+                        String code = String.valueOf(carreraData.get("code"));
+                        String code_facultad = String.valueOf(carreraData.get("code_facultad"));
                         // Verificamos si la facultad ya está en el mapa, si no, la agregamos
                         if (!facultadesCarreras.containsKey(facultad)) {
                             facultadesCarreras.put(facultad, new ArrayList<>());
@@ -226,26 +227,23 @@ public class CarreraController {
 
                         // Agregamos la carrera a la lista de carreras de la facultad
                         facultadesCarreras.get(facultad).add(carrera);
-                    }
 
-                    // Ahora tenemos un mapa de facultades y sus carreras asociadas
-                    for (String facultad : facultadesCarreras.keySet()) {
-                        System.out.println("Facultad: " + facultad);
-                        List<String> carreras = facultadesCarreras.get(facultad);
+                        // Crear una instancia de Carrera y establecer los valores
                         for (Facultad facultad2 : facultads) {
-                            if (facultad2.getNom_facultad().equals(facultad)) {
-                                for (String carrera : carreras) {
-                                    Carrera carrera2 = new Carrera();
-                                    carrera2.setNom_carrera(carrera);
-                                    carrera2.setFacultad(facultad2);
-                                    carrera2.setFecha_registro(new Date());
-                                    carrera2.setDescripcion(carrera);
-                                    carreraService.save(carrera2);
-                                    System.out.println("  Carrera: " + carrera);
-                                }
+                            if (facultad2.getCode_facultad() == Integer.parseInt(code_facultad)) {
+                                Carrera nuevaCarrera = new Carrera();
+                                nuevaCarrera.setCode_carrera(Integer.parseInt(code));
+                                nuevaCarrera.setNom_carrera(carrera);
+                                nuevaCarrera.setFacultad(facultad2);
+                                nuevaCarrera.setFecha_registro(new Date());
+                                nuevaCarrera.setDescripcion(carrera);
+
+                                // Guardar la nueva carrera en la base de datos
+                                carreraService.save(nuevaCarrera);
                             }
                         }
 
+                        System.out.println("  Carrera: " + carrera);
                     }
                 } else {
                     System.out.println("No se encontraron datos de facultades.");

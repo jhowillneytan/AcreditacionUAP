@@ -65,7 +65,8 @@
                                     <table id="example" class="table" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th>NRO</th>
+                                                <th>#</th>
+                                                <th>CODE</th>
                                                 <th>FACULTAD</th>
                                                 <th>DESCRIPCION</th>
                                                 <th>FECHA REGISTRO</th>
@@ -75,6 +76,7 @@
                                         <tbody>
                                             <tr th:each="f,cont : ${facultads}" th:if="${f.estado != 'X'}">
                                                 <td th:text="${cont.index + 1}"></td>
+                                                <td th:text="${f.code_facultad}"></td>
                                                 <td th:text="${f.nom_facultad}"></td>
                                                 <td th:text="${f.descripcion}"></td>
                                                 <td th:text="${f.fecha_registro}"></td>

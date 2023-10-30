@@ -26,15 +26,14 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Carrera implements Serializable{
-    
-    /**
-	 * 
-	 */
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_carrera;
+
+    private int code_carrera;
 
     private String nom_carrera;
 

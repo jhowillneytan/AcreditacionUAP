@@ -53,6 +53,15 @@
 															class="align-middle">Carpeta</span>
 													</div>
 												</div>
+												<div th:if="${anterior != null}">
+													<div class="dropdown-item" data-bs-toggle="modal"
+														data-bs-target="#new-folderDocente-modal">
+														<div class="mb-0">
+															<i data-feather="folder" class="me-25"></i> <span
+																class="align-middle">Carpeta Docente</span>
+														</div>
+													</div>
+												</div>
 												<div class="dropdown-item" data-bs-toggle="modal" th:if="${editMode}"
 													data-bs-target="#new-archivo-modal">
 													<div class="mb-0">
@@ -1141,7 +1150,92 @@
 							</div>
 						</div>
 
+						<div class="modal fade" id="new-folderDocente-modal" th:if="${anterior.carpetaPadre != null}">
+							<div class="modal-dialog modal-dialog-centered">
+								<div class="modal-content">
+									<div class="modal-header">
+										<h5 class="modal-title">Nueva Carpeta Docente</h5>
+										<button type="button" class="btn-close" data-bs-dismiss="modal"
+											aria-label="Close"></button>
+									</div>
+									<div class="modal-body">
+										<form th:action="@{/consultaApiDocenteRD}" id="formularioRD">
+											<input type="hidden" name="idPadre" th:value="${anterior.id_carpeta}">
+											<input type="hidden" name="gestion"
+												th:value="${anterior.carpetaPadre.nom_carpeta}">
+											<input type="hidden" name="periodo" th:value="${anterior.nom_carpeta}">
+											<label class="form-label" for="basic-addon-name">Carrera</label>
+											<select class="select2" name="carrera">
+												<option value="0">Seleccionar</option>
+												<option th:each="carrera: ${ListaCarreras}"
+													th:value="${carrera.id_carrera}"
+													th:text="${carrera.nom_carrera}"></option>
+											</select>
+											<label class="form-label" for="basic-addon-name">Codigo
+												Docente(rd)</label>
+											<div class="input-group">
+												<input type="text" class="form-control" required
+													placeholder="Codigo Docente(rd)" name="codigoDocente"
+													onkeyup="javascript:this.value=this.value.toUpperCase();"
+													id="referenciaCarpeta" />
+												<div class="input-group-append">
+													<button class="btn btn-primary" type="submit"
+														style="height: 100%;">Enviar</button>
+												</div>
+											</div>
+										</form>
+									</div>
+									<div id="formularioCarpetaDocenteRD">
+										<form th:action="${editModee} ?@{/renombrar-carpeta} :@{/guardar-carpeta}"
+											class="desahabilitado" th:object="${carpeta}" method="post"
+											enctype="multipart/form-data">
+											<input type="hidden" class="form-control" th:name="auxiliar"
+												th:if="${editMode}" th:value="${anterior.id_carpeta}"
+												placeholder="Untitled folder" />
+											<div class="modal-body">
+												<label class="form-label" for="basic-addon-name">Referencia</label>
+												<input type="text" class="form-control " required
+													th:field="${carpeta.nom_carpeta}" placeholder="referencia"
+													onkeyup="javascript:this.value=this.value.toUpperCase();"
+													id="referenciaCarpeta" />
+											</div>
+											<div class="modal-body">
+												<label class="form-label" for="basic-addon-name">Nombre</label>
+												<input type="text" class="form-control" required
+													th:field="${carpeta.descripcion}" placeholder="nombre"
+													onkeyup="javascript:this.value=this.value.toUpperCase();"
+													id="nombreCarpeta" />
+											</div>
+											<div th:if="${anterior !=null}">
+												<div th:if="${anterior.carpetaPadre !=null}">
+													<div
+														th:if="${anterior.carpetaPadre.carpetaPadre !=null && anterior.carpetaPadre.carpetaPadre == 'FILE DOCENTES'}">
+													</div>
+												</div>
+											</div>
+											<div class="modal-body">
+												<label class="form-label" for="basic-addon-name">Icono de
+													carpeta(opcional)</label>
+												<input type="file" class="form-control" name="ruta_icon"
+													placeholder="imagen.png" id="ImagenDocente" accept="image/*" />
+												<div id="alertaImgC"></div>
+											</div>
 
+											<div class="modal-footer">
+												<input type="submit" class="btn btn-primary me-1" value="Crear">
+												<button type="button" class="btn btn-outline-secondary"
+													data-bs-dismiss="modal">Cancelar</button>
+											</div>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						<style>
+							.desahabilitado {
+								display: none;
+							}
+						</style>
 						<!-- Create New Folder Modal Starts-->
 						<div class="modal fade" id="new-folder-modal">
 							<div class="modal-dialog modal-dialog-centered">
@@ -1170,15 +1264,16 @@
 												onkeyup="javascript:this.value=this.value.toUpperCase();"
 												id="nombreCarpeta" />
 										</div>
-										<div class="modal-body">
+										<!--<div class="modal-body">
 											<label class="form-label" for="basic-addon-name">Solo aplicar esta opcion
 												cuando se necesite contenido a las materias de un docente</label>
 											<input type="checkbox" class="form-check-label" onchange="carpetaMateria()"
 												id="checkMateriaCarpeta"><br>
 
-										</div>
+										</div>-->
 										<div class="modal-body">
-											<label class="form-label" for="basic-addon-name">Icono de carpeta(opcional)</label>
+											<label class="form-label" for="basic-addon-name">Icono de
+												carpeta(opcional)</label>
 											<input type="file" class="form-control" name="ruta_icon"
 												placeholder="imagen.png" id="Imagen" accept="image/*" />
 											<div id="alertaImgC"></div>
@@ -1804,6 +1899,14 @@
 			childTemplate: '<div class="col-4 col-md-3 pl-0"></div>',
 			imageClass: 'img-fluid mt-3 rounded'
 		});
+		$('#ImagenDocente').bs_dropzone({
+			preview: true,
+			accepted: ['jpg', 'jpeg', 'png'],
+			dropzoneTemplate: '<div class="bs-dropzone"><div class="bs-dropzone-area"></div><div class="bs-dropzone-message"></div><div class="bs-dropzone-preview mt-0"></div></div>',
+			parentTemplate: '<div class="row ml-0 justify-content-center align-items-center"></div>',
+			childTemplate: '<div class="col-4 col-md-3 pl-0"></div>',
+			imageClass: 'img-fluid mt-3 rounded'
+		});
 		$('#imagenModC').bs_dropzone({
 			preview: true,
 			accepted: ['jpg', 'jpeg', 'png'],
@@ -2160,7 +2263,7 @@
 			} else if (selectG = 0) {
 				rutaPDF = ''
 			}
-			
+
 			$('#reportePDFMaterias').html('<div class="text-center">' +
 				'<div class="spinner-border" role="status" id="loadingSpinner">' +
 				'<span class="sr-only">Loading...</span>' +
@@ -2194,7 +2297,30 @@
 		}
 
 	</script>
+	<script>
+		// Manejar el evento de envío del formulario
+		$("#formularioRD").submit(function (event) {
+			event.preventDefault(); // Previene el envío del formulario por defecto
 
+			// Obtiene los datos del formulario
+			var formData = $(this).serialize();
+
+			// Realiza la solicitud AJAX
+			$.ajax({
+				type: "POST", // Puedes usar "GET" o "POST" según tus necesidades
+				url: $(this).attr("action"), // Reemplaza con la URL correcta
+				data: formData,
+				success: function (response) {
+					// Maneja la respuesta de la solicitud AJAX aquí
+					console.log(response);
+				},
+				error: function () {
+					// Maneja errores si la solicitud AJAX falla
+					console.error("Error en la solicitud AJAX");
+				}
+			});
+		});
+	</script>
 </body>
 
 </html>

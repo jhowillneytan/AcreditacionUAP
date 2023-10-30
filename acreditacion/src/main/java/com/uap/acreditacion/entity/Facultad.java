@@ -31,6 +31,8 @@ public class Facultad implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_facultad;
 
+    private int code_facultad;
+
     private String nom_facultad;
 
     private String descripcion;

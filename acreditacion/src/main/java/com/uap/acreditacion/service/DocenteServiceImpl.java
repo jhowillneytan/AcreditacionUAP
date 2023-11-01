@@ -3,10 +3,12 @@ package com.uap.acreditacion.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.uap.acreditacion.dao.IDocenteDao;
 import com.uap.acreditacion.entity.Docente;
 
+@Service
 public class DocenteServiceImpl implements IDocenteService{
 
     @Autowired
@@ -31,6 +33,11 @@ public class DocenteServiceImpl implements IDocenteService{
     public void delete(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
+    }
+
+    @Override
+    public Docente docenteRD(String rd) {
+        return docenteDao.docenteRD(rd);
     }
     
 }

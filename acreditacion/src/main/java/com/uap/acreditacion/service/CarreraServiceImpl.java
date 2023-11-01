@@ -37,5 +37,15 @@ public class CarreraServiceImpl implements ICarreraService{
         // TODO Auto-generated method stub
         carreraDao.deleteById(id);
     }
+
+    @Override
+    public Carrera carreraPorCode(int code) {
+        return carreraDao.carreraPorCode(code);
+    }
+
+    @Override
+    public Carrera carreraPorNombre(String nombreCarrera) {
+        return carreraDao.carreraPorNombre(nombreCarrera);
+    }
     
 }

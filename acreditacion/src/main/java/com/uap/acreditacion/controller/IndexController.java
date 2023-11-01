@@ -38,11 +38,13 @@ import com.uap.acreditacion.dao.IPersonaDao;
 import com.uap.acreditacion.dao.IUsuarioDao;
 import com.uap.acreditacion.entity.Cargo;
 import com.uap.acreditacion.entity.Carrera;
+import com.uap.acreditacion.entity.Docente;
 import com.uap.acreditacion.entity.Materia;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.entity.Usuario;
 import com.uap.acreditacion.service.ICargoService;
+import com.uap.acreditacion.service.IDocenteService;
 import com.uap.acreditacion.service.IPersonaService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 import com.uap.acreditacion.service.IUsuarioService;
@@ -61,6 +63,9 @@ public class IndexController {
 
 	@Autowired
 	private IUsuarioService iUsuarioService;
+
+	@Autowired
+	private IDocenteService docenteService;
 
 	@GetMapping({ "/login", "/" })
 	public String login(@RequestParam(value = "error", required = false) String error,
@@ -116,35 +121,41 @@ public class IndexController {
 
 	@PostMapping("/login2")
 	public String login2(RedirectAttributes redirectAttrs,
-			@RequestParam(value = "username") String username,
-			@RequestParam(value = "password") String password, HttpServletRequest request) {
-		Map<String, Object> requests = new HashMap<String, Object>();
+			@RequestParam(value = "rd") String rd,
+			@RequestParam(value = "ci") String ci, HttpServletRequest request) {
 
-		requests.put("usuario", username);
-		requests.put("clave", password);
+		HttpSession session = request.getSession(false);
 
-		String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
-		String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
-
-		HttpHeaders headers = new HttpHeaders();
-
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("x-api-key", key);
-
-		HttpEntity<HashMap> req = new HttpEntity(requests, headers);
-
-		RestTemplate restTemplate = new RestTemplate();
-
-		ResponseEntity<Map> resp = restTemplate.exchange(url, HttpMethod.POST, req, Map.class);
-
-		System.out.println("datos econtrados");
-		System.out.println("Docente: ");
-
-		return "redirect:/login";
-	
-
-	// Después de recibir la respuesta del API
-
+		System.out.println("INICIAR SESION2");
+		Docente docente = docenteService.docenteRD(rd);
+		// Cargo cargo =
+		// iCargoService.findOne(usuario.getPersona().getCargo().getId_cargo());
+		if (docente != null) {
+			if (docente.getPersona().getCi().equals(ci)) {
+				session = request.getSession(true);
+				session.setAttribute("persona", docente.getPersona());
+				// session.setAttribute("carreraSesion", usuario.getPersona().getCarrera());
+				session.setAttribute("tipo_persona", docente.getPersona().getTipoPersona());
+				// session.setAttribute("cargoSesion", cargo);
+				return "redirect:/home";
+			} else {
+				redirectAttrs
+					.addFlashAttribute("mensaje",
+							"Error en el login: C.I. incorrecta, por favor vuelva a intentarlo!")
+					.addFlashAttribute("clase", "light")
+					.addFlashAttribute("sty", "red")
+					.addFlashAttribute("col", "#d09f8373");
+			return "redirect:/login";
+			}
+		} else {
+			redirectAttrs
+					.addFlashAttribute("mensaje",
+							"Error en el login: Codigo Docente(RD) incorrecta, por favor vuelva a intentarlo!")
+					.addFlashAttribute("clase", "light")
+					.addFlashAttribute("sty", "red")
+					.addFlashAttribute("col", "#d09f8373");
+			return "redirect:/login";
+		}
 	}
 
 	@GetMapping("/logout")

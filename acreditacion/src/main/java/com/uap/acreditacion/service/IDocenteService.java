@@ -13,4 +13,6 @@ public interface IDocenteService {
 	public Docente findOne(Long id);
  
 	public void delete(Long id);
+
+	public Docente docenteRD(String rd);
 }

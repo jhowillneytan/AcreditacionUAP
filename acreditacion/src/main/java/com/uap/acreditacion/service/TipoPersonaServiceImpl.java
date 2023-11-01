@@ -36,5 +36,10 @@ public class TipoPersonaServiceImpl implements ITipoPersonaService{
         // TODO Auto-generated method stub
         tipoPersonaDao.deleteById(id);
     }
+
+    @Override
+    public TipoPersona tipoPersonaNombre(String nombre) {
+        return tipoPersonaDao.tipoPersonaNombre(nombre);
+    }
     
 }

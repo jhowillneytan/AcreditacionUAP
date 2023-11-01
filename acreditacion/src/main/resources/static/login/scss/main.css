@@ -56,15 +56,15 @@ body .login-form {
   top: 20%;
   left: 50%;
   transform: translate(-50%);
-  padding: 80px 40px;
+  /*padding: 80px 40px;*/
   background: rgba(0, 0, 0, 0.3);
-  border-radius: 40px;
+  border-radius: 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
 }
-body .login-form .profile-pic {
+/*body .login-form .profile-pic {
   border-radius: 50%;
   border: 3px solid #fa97ab;
   height: 120px;
@@ -74,7 +74,48 @@ body .login-form .profile-pic {
   left: 50%;
   transform: translate(-50%);
   background: url(../img/profilepic.jpg);
+}*/
+/*----------BOTO MENU     */
+.menuSelect {
+  position: absolute;
+  top: 0;
+  padding: 5px;
+  text-align: center;
+  width: 100%;
+  color: #fff;
 }
+
+.menu-item {
+  text-decoration: none;
+  color: #fff;
+  padding: 10px 20px;
+  margin: 0 -2px; /* Alinea los botones juntos y compensa el borde */
+  border: 1px solid #fff;
+  border-radius: 20px;
+  transition: background-color 0.3s, color 0.3s;
+  flex: 1;
+}
+
+.docente {
+  border-top-left-radius: 20px;
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.administrativo {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 0;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.menu-item:hover {
+  background-color: #fff;
+  color: #2600ff;
+}
+/*-----------*/
+
 body .login-form i {
   position: absolute;
   padding: 10px;
@@ -155,7 +196,7 @@ body .login-form .login-btn:focus {
   background-position: right;
 }
 body .login-form .bottom-text {
-  margin-top: 1rem;
+
   text-align: center;
   font-size: 1rem;
   position: relative;
@@ -170,3 +211,12 @@ body .login-form .bottom-text a {
   font-size: 1.5rem;
   text-decoration: underline;
 }/*# sourceMappingURL=main.css.map */
+
+body .login-form .bottom-subtmit {
+  text-align: center;
+  font-size: 1rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

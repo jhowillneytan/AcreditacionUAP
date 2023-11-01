@@ -37,5 +37,10 @@ public class PuestoServiceImpl implements IPuestoService{
         // TODO Auto-generated method stub
         puestoDao.deleteById(id);
     }
+
+    @Override
+    public Puesto puestoNombre(String nombre) {
+        return puestoDao.puestoNombre(nombre);
+    }
     
 }

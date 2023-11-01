@@ -12,4 +12,6 @@ public interface IMateriaService {
     public Materia findOne(Long id);
 
     public void delete(Long id);
+
+    public Materia materiaNombre(String nombre);
 }

@@ -54,11 +54,16 @@
 													</div>
 												</div>
 												<div th:if="${anterior != null}">
-													<div class="dropdown-item" data-bs-toggle="modal"
-														data-bs-target="#new-folderDocente-modal">
-														<div class="mb-0">
-															<i data-feather="folder" class="me-25"></i> <span
-																class="align-middle">Carpeta Docente</span>
+													<div th:if="${anterior.carpetaPadre != null}">
+														<div th:if="${anterior.carpetaPadre.carpetaPadre != null}">
+															<div class="dropdown-item" data-bs-toggle="modal"
+															th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta == 'FILE DOCENTES'}"
+																data-bs-target="#new-folderDocente-modal">
+																<div class="mb-0">
+																	<i data-feather="folder" class="me-25"></i> <span
+																		class="align-middle">Carpeta Docente</span>
+																</div>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -1159,18 +1164,19 @@
 											aria-label="Close"></button>
 									</div>
 									<div class="modal-body">
-										<form th:action="@{/consultaApiDocenteRD}" id="formularioRD">
+										<form th:action="@{/consultaApiDocenteRD}" id="formularioRD" method="POST">
 											<input type="hidden" name="idPadre" th:value="${anterior.id_carpeta}">
 											<input type="hidden" name="gestion"
 												th:value="${anterior.carpetaPadre.nom_carpeta}">
 											<input type="hidden" name="periodo" th:value="${anterior.nom_carpeta}">
 											<label class="form-label" for="basic-addon-name">Carrera</label>
-											<select class="select2" name="carrera">
+											<input type="hidden" name="carrera" th:value="${personasession.carrera.id_carrera}">
+											<!--<select class="select2" name="carrera">
 												<option value="0">Seleccionar</option>
 												<option th:each="carrera: ${ListaCarreras}"
-													th:value="${carrera.id_carrera}"
-													th:text="${carrera.nom_carrera}"></option>
-											</select>
+													th:value="${carrera.id_carrera}" th:text="${carrera.nom_carrera}">
+												</option>
+											</select>-->
 											<label class="form-label" for="basic-addon-name">Codigo
 												Docente(rd)</label>
 											<div class="input-group">
@@ -2298,7 +2304,7 @@
 
 	</script>
 	<script>
-		// Manejar el evento de envío del formulario
+		/*// Manejar el evento de envío del formulario
 		$("#formularioRD").submit(function (event) {
 			event.preventDefault(); // Previene el envío del formulario por defecto
 
@@ -2319,7 +2325,7 @@
 					console.error("Error en la solicitud AJAX");
 				}
 			});
-		});
+		});*/
 	</script>
 </body>
 

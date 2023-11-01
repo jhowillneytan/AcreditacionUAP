@@ -14,4 +14,8 @@ public interface ICarreraService {
  
 	public void delete(Long id);
 
+	public Carrera carreraPorCode(int code);
+
+	public Carrera carreraPorNombre(String nombreCarrera);
+
 }

@@ -13,5 +13,7 @@ public interface ICargoService {
 	public Cargo findOne(Long id);
 
 	public void delete(Long id);
+
+	public Cargo cargoNombre(String nombre);
  
 }

@@ -14,4 +14,6 @@ public interface IFacultadService {
 	
 	public void delete(Long id);
 
+	public Facultad facultadPorNombre(String nombreFacultad);
+
 }

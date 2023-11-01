@@ -14,4 +14,6 @@ public interface ITipoPersonaService {
 	
 	public void delete(Long id);
 
+	public TipoPersona tipoPersonaNombre(String nombre);
+
 }

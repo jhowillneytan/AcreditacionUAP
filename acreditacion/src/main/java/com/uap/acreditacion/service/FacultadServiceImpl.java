@@ -37,5 +37,10 @@ public class FacultadServiceImpl implements IFacultadService{
         // TODO Auto-generated method stub
         facultadDao.deleteById(id);
     }
+
+    @Override
+    public Facultad facultadPorNombre(String nombreFacultad) {
+        return facultadDao.facultadPorNombre(nombreFacultad);
+    }
     
 }

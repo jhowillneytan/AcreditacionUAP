@@ -37,5 +37,10 @@ public class CargoServiceImpl implements ICargoService{
         // TODO Auto-generated method stub
         cargoDao.deleteById(id);
     }
+
+    @Override
+    public Cargo cargoNombre(String nombre) {
+        return cargoDao.cargoNombre(nombre);
+    }
     
 }

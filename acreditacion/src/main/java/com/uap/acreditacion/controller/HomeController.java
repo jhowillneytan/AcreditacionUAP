@@ -220,11 +220,12 @@ public class HomeController {
 							usuarioActual);
 					carpetasConUsuario.addAll(carpetasEncontradas);
 				}
-
+				
 				// Ahora carpetasConUsuario contiene todas las carpetas que tienen al usuario
-				// actual
+				// actual 
 
-				model.addAttribute("carpetas", carpetasConUsuario);
+				//model.addAttribute("carpetas", carpetasConUsuario);
+				model.addAttribute("carpetas", p.getDocente().getCarpetas());
 				model.addAttribute("menus", carpetasConUsuario);
 				System.out.println("***********METODOD HOME");
 
@@ -2570,9 +2571,10 @@ public class HomeController {
 						Carpeta carpeta = new Carpeta();
 						carpeta.setRuta_icono("iconoPredeterminadoCarpeta.webp");
 						carpeta.setNom_carpeta(nombreCompleto);
-						carpeta.setDescripcion(carpetaService.findOne(id_carpeta_anterior).getNom_carpeta());
+						carpeta.setDescripcion(gestion+" - "+periodo);
 						carpeta.setCarpetaPadre(carpetaService.findOne(id_carpeta_anterior));
 						carpeta.setEstado("A");
+						carpeta.setDocente(docente);
 						carpeta.setFecha_registro(new Date());
 						Set<Usuario> usuarios = new HashSet<>();
 						usuarios.add(usuarioP);
@@ -2613,20 +2615,21 @@ public class HomeController {
 							materiaService.save(materia);
 						}
 
-					}
-					if (personaService.personaCi(ci) != null) {
-						Persona persona = personaService.personaCi(ci);
+					} else {
+						Docente docente = personaService.personaCi(ci).getDocente();
 
 						// CARPETA PRINCIPAL DOCENTE
 						System.out.println("CREANDO CARPETA..");
 						Carpeta carpeta = new Carpeta();
 						carpeta.setRuta_icono("iconoPredeterminadoCarpeta.webp");
 						carpeta.setNom_carpeta(nombreCompleto);
-						carpeta.setDescripcion(nombreCompleto);
+						carpeta.setDescripcion(gestion+" - "+periodo);
 						carpeta.setCarpetaPadre(carpetaService.findOne(id_carpeta_anterior));
 						carpeta.setEstado("A");
+						carpeta.setDocente(docente);
 						carpeta.setFecha_registro(new Date());
 						Set<Usuario> usuarios = new HashSet<>();
+						usuarios.add(personaService.personaCi(ci).getUsuario());
 						for (Usuario usuario : carpetaService.findOne(id_carpeta_anterior).getCarpetaPadre()
 								.getUsuarios()) {
 							usuarios.add(usuario);
@@ -2652,6 +2655,7 @@ public class HomeController {
 						// MATERIA
 						System.out.println("CARGANDO MATERIAS..");
 						for (String asignatura : asignaturas) {
+							
 							System.out.println("MATERIA:" + asignatura);
 							Materia materia = new Materia();
 							materia.setEstado("A");

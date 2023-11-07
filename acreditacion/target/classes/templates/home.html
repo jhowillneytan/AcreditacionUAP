@@ -1157,95 +1157,100 @@
 						<div th:if="${anterior != null}">
 							<div th:if="${anterior.carpetaPadre != null}">
 								<div th:if="${anterior.carpetaPadre.carpetaPadre != null}">
-									<div class="modal fade" id="new-folderDocente-modal">
-										<div class="modal-dialog modal-dialog-centered">
-											<div class="modal-content">
-												<div class="modal-header">
-													<h5 class="modal-title">Nueva Carpeta Docente</h5>
-													<button type="button" class="btn-close" data-bs-dismiss="modal"
-														aria-label="Close"></button>
-												</div>
-												<div class="modal-body">
-													<form th:action="@{/consultaApiDocenteRD}" id="formularioRD"
-														method="POST">
-														<input type="hidden" name="idPadre"
-															th:value="${anterior.id_carpeta}">
-														<input type="hidden" name="gestion"
-															th:value="${anterior.carpetaPadre.nom_carpeta}">
-														<input type="hidden" name="periodo"
-															th:value="${anterior.nom_carpeta}">
-														<label class="form-label" for="basic-addon-name">Carrera</label>
-														<input type="hidden" name="carrera"
-															th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta !=null}"
-															th:value="${anterior.carpetaPadre.carpetaPadre.carrera.id_carrera}">
-														<!--<select class="select2" name="carrera">
-															<option value="0">Seleccionar</option>
-															<option th:each="carrera: ${ListaCarreras}"
-																th:value="${carrera.id_carrera}" th:text="${carrera.nom_carrera}">
-															</option>
-														</select>-->
-														<label class="form-label" for="basic-addon-name">Codigo
-															Docente(rd)</label>
-														<div class="input-group">
-															<input type="text" class="form-control" required
-																placeholder="Codigo Docente(rd)" name="codigoDocente"
-																onkeyup="javascript:this.value=this.value.toUpperCase();"
-																id="referenciaCarpeta" />
-															<div class="input-group-append">
-																<button class="btn btn-primary" type="submit"
-																	style="height: 100%;">Enviar</button>
-															</div>
-														</div>
-													</form>
-												</div>
-												<div id="formularioCarpetaDocenteRD">
-													<form
-														th:action="${editModee} ?@{/renombrar-carpeta} :@{/guardar-carpeta}"
-														class="desahabilitado" th:object="${carpeta}" method="post"
-														enctype="multipart/form-data">
-														<input type="hidden" class="form-control" th:name="auxiliar"
-															th:if="${editMode}" th:value="${anterior.id_carpeta}"
-															placeholder="Untitled folder" />
-														<div class="modal-body">
+									<div th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta == 'FILE DOCENTES'}">
+										<div class="modal fade" id="new-folderDocente-modal">
+											<div class="modal-dialog modal-dialog-centered">
+												<div class="modal-content">
+													<div class="modal-header">
+														<h5 class="modal-title">Nueva Carpeta Docente</h5>
+														<button type="button" class="btn-close" data-bs-dismiss="modal"
+															aria-label="Close"></button>
+													</div>
+													<div class="modal-body">
+														<form th:action="@{/consultaApiDocenteRD}" id="formularioRD"
+															method="POST">
+															<input type="hidden" name="idPadre"
+																th:value="${anterior.id_carpeta}">
+															<input type="hidden" name="gestion"
+																th:value="${anterior.carpetaPadre.nom_carpeta}">
+															<input type="hidden" name="periodo"
+																th:value="${anterior.nom_carpeta}">
 															<label class="form-label"
-																for="basic-addon-name">Referencia</label>
-															<input type="text" class="form-control " required
-																th:field="${carpeta.nom_carpeta}"
-																placeholder="referencia"
-																onkeyup="javascript:this.value=this.value.toUpperCase();"
-																id="referenciaCarpeta" />
-														</div>
-														<div class="modal-body">
-															<label class="form-label"
-																for="basic-addon-name">Nombre</label>
-															<input type="text" class="form-control" required
-																th:field="${carpeta.descripcion}" placeholder="nombre"
-																onkeyup="javascript:this.value=this.value.toUpperCase();"
-																id="nombreCarpeta" />
-														</div>
-														<div th:if="${anterior !=null}">
-															<div th:if="${anterior.carpetaPadre !=null}">
-																<div
-																	th:if="${anterior.carpetaPadre.carpetaPadre !=null && anterior.carpetaPadre.carpetaPadre == 'FILE DOCENTES'}">
+																for="basic-addon-name">Carrera</label>
+															<input type="hidden" name="carrera"
+																th:value="${anterior.carpetaPadre.carpetaPadre.carrera.id_carrera}">
+															<!--<select class="select2" name="carrera">
+																<option value="0">Seleccionar</option>
+																<option th:each="carrera: ${ListaCarreras}"
+																	th:value="${carrera.id_carrera}" th:text="${carrera.nom_carrera}">
+																</option>
+															</select>-->
+															<label class="form-label" for="basic-addon-name">Codigo
+																Docente(rd)</label>
+															<div class="input-group">
+																<input type="text" class="form-control" required
+																	placeholder="Codigo Docente(rd)"
+																	name="codigoDocente"
+																	onkeyup="javascript:this.value=this.value.toUpperCase();"
+																	id="referenciaCarpeta" />
+																<div class="input-group-append">
+																	<button class="btn btn-primary" type="submit"
+																		style="height: 100%;">Enviar</button>
 																</div>
 															</div>
-														</div>
-														<div class="modal-body">
-															<label class="form-label" for="basic-addon-name">Icono de
-																carpeta(opcional)</label>
-															<input type="file" class="form-control" name="ruta_icon"
-																placeholder="imagen.png" id="ImagenDocente"
-																accept="image/*" />
-															<div id="alertaImgC"></div>
-														</div>
+														</form>
+													</div>
+													<div id="formularioCarpetaDocenteRD">
+														<form
+															th:action="${editModee} ?@{/renombrar-carpeta} :@{/guardar-carpeta}"
+															class="desahabilitado" th:object="${carpeta}" method="post"
+															enctype="multipart/form-data">
+															<input type="hidden" class="form-control" th:name="auxiliar"
+																th:if="${editMode}" th:value="${anterior.id_carpeta}"
+																placeholder="Untitled folder" />
+															<div class="modal-body">
+																<label class="form-label"
+																	for="basic-addon-name">Referencia</label>
+																<input type="text" class="form-control " required
+																	th:field="${carpeta.nom_carpeta}"
+																	placeholder="referencia"
+																	onkeyup="javascript:this.value=this.value.toUpperCase();"
+																	id="referenciaCarpeta" />
+															</div>
+															<div class="modal-body">
+																<label class="form-label"
+																	for="basic-addon-name">Nombre</label>
+																<input type="text" class="form-control" required
+																	th:field="${carpeta.descripcion}"
+																	placeholder="nombre"
+																	onkeyup="javascript:this.value=this.value.toUpperCase();"
+																	id="nombreCarpeta" />
+															</div>
+															<div th:if="${anterior !=null}">
+																<div th:if="${anterior.carpetaPadre !=null}">
+																	<div
+																		th:if="${anterior.carpetaPadre.carpetaPadre !=null && anterior.carpetaPadre.carpetaPadre == 'FILE DOCENTES'}">
+																	</div>
+																</div>
+															</div>
+															<div class="modal-body">
+																<label class="form-label" for="basic-addon-name">Icono
+																	de
+																	carpeta(opcional)</label>
+																<input type="file" class="form-control" name="ruta_icon"
+																	placeholder="imagen.png" id="ImagenDocente"
+																	accept="image/*" />
+																<div id="alertaImgC"></div>
+															</div>
 
-														<div class="modal-footer">
-															<input type="submit" class="btn btn-primary me-1"
-																value="Crear">
-															<button type="button" class="btn btn-outline-secondary"
-																data-bs-dismiss="modal">Cancelar</button>
-														</div>
-													</form>
+															<div class="modal-footer">
+																<input type="submit" class="btn btn-primary me-1"
+																	value="Crear">
+																<button type="button" class="btn btn-outline-secondary"
+																	data-bs-dismiss="modal">Cancelar</button>
+															</div>
+														</form>
+													</div>
 												</div>
 											</div>
 										</div>
@@ -2231,8 +2236,9 @@
 								<select class="form-select select2" id="selectGestion" name="selectGestion"
 									onchange="cargarPeriodo(this.value)" required>
 									<option value="0">Seleccionar</option>
-									<option th:each="gestion: ${anterior.carpetasHijos}" th:if="${gestion.estado != 'X'}"
-										th:value="${gestion.id_carpeta}" th:text="${gestion.nom_carpeta}">
+									<option th:each="gestion: ${anterior.carpetasHijos}"
+										th:if="${gestion.estado != 'X'}" th:value="${gestion.id_carpeta}"
+										th:text="${gestion.nom_carpeta}">
 									</option>
 								</select>
 							</div>

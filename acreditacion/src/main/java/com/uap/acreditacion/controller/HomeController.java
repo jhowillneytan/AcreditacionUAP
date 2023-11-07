@@ -172,8 +172,8 @@ public class HomeController {
 						Listcarpetas.add(listFill.get(i));
 					}
 				}
-
-				model.addAttribute("carpetas", Listcarpetas);
+				
+				model.addAttribute("carpetas", p.getCarrera().getCarpetas());
 				model.addAttribute("menus", Listcarpetas);
 				System.out.println("***********METODOD HOME");
 
@@ -220,11 +220,11 @@ public class HomeController {
 							usuarioActual);
 					carpetasConUsuario.addAll(carpetasEncontradas);
 				}
-				
-				// Ahora carpetasConUsuario contiene todas las carpetas que tienen al usuario
-				// actual 
 
-				//model.addAttribute("carpetas", carpetasConUsuario);
+				// Ahora carpetasConUsuario contiene todas las carpetas que tienen al usuario
+				// actual
+
+				// model.addAttribute("carpetas", carpetasConUsuario);
 				model.addAttribute("carpetas", p.getDocente().getCarpetas());
 				model.addAttribute("menus", carpetasConUsuario);
 				System.out.println("***********METODOD HOME");
@@ -417,7 +417,7 @@ public class HomeController {
 				}
 
 			}
-
+			
 			model.addAttribute("usuarios", usuarioService.findAll());
 			model.addAttribute("list", list);
 			model.addAttribute("requisitosList", requisitoService.findAll());
@@ -1654,6 +1654,8 @@ public class HomeController {
 			@PathVariable(value = "id_carpetaP", required = false) Long id_carpetaP,
 			@PathVariable(value = "id_carpetaG", required = false) Long id_carpetaG)
 			throws DocumentException, MalformedURLException, IOException, com.itextpdf.text.DocumentException {
+		Persona p2 = (Persona) request.getSession().getAttribute("persona");
+			Persona p = personaService.findOne(p2.getId_persona());
 
 		Carpeta carpetaDoc = carpetaService.findOne(id_carpetaD);
 		// model.addAttribute("carpetaDocente", carpetaDoc);
@@ -2498,7 +2500,10 @@ public class HomeController {
 
 			// Obtener los valores de "paterno", "ci", "fecha_nacimiento", etc., del objeto
 			// "data"
+
 			if (data != null) {
+
+				String nombCarrera = (String) data.get("carrera");
 				String paterno = (String) data.get("paterno");
 				String ci = (String) data.get("ci");
 				String nombre = (String) data.get("nombre");
@@ -2513,166 +2518,175 @@ public class HomeController {
 				 * correos.add(asignaturaData.get("asignatura"));
 				 * }
 				 */
+
 				String celular = (String) data.get("celular");
 				List<String> asignaturas = new ArrayList<>();
 				List<Map<String, String>> asignaturasData = (List<Map<String, String>>) data.get("asignaturas");
 				for (Map<String, String> asignaturaData : asignaturasData) {
 					asignaturas.add(asignaturaData.get("asignatura"));
 				}
+
 				String nombreCompleto = nombre + " " + paterno + " " + materno;
-				String nombCarrera = (String) data.get("carrera");
-				int contador = 0;
-				Carpeta carpetaPadre = carpetaService.findOne(id_carpeta_anterior);
-				for (Carpeta carpeta2 : carpetaPadre.getCarpetasHijos()) {
-					if (carpeta2.getNom_carpeta().equals(nombreCompleto)) {
-						contador = 1;
+				if (nombCarrera.equals(carreraService.findOne(id_carrera).getNom_carrera())) {
+					int contador = 0;
+					Carpeta carpetaPadre = carpetaService.findOne(id_carpeta_anterior);
+					for (Carpeta carpeta2 : carpetaPadre.getCarpetasHijos()) {
+						if (carpeta2.getNom_carpeta().equals(nombreCompleto)) {
+							contador = 1;
+						}
 					}
-				}
-				if (contador == 0) {
-					if (personaService.personaCi(ci) == null) {
-						// PERSONA DOCENTE
-						System.out.println("REGISTRANDO PERSONA..");
-						Persona persona = new Persona();
-						persona.setNombre(nombre);
-						persona.setAp_paterno(paterno);
-						persona.setAp_materno(materno);
-						persona.setCi(ci);
-						// System.out.println("CORREO 1: "+correos.get(0));
-						persona.setEmail(correos.get(0));
-						persona.setCarrera(carrera);
-						System.out.println("Carrera: " + carrera.getNom_carrera());
-						Cargo cargo = cargoService.cargoNombre("Docente");
-						Puesto puesto = puestoService.puestoNombre("Docente");
-						TipoPersona tipoPersona = tipoPersonaService.tipoPersonaNombre("Docente");
-						persona.setCargo(cargo);
-						persona.setPuesto(puesto);
-						persona.setTipoPersona(tipoPersona);
-						persona.setFecha_registro(new Date());
-						persona.setEstado("A");
-						persona.setImagen_persona("FotoPerfilPrederminada.webp");
-						personaService.save(persona);
+					if (contador == 0) {
+						if (personaService.personaCi(ci) == null) {
+							// PERSONA DOCENTE
+							System.out.println("REGISTRANDO PERSONA..");
+							Persona persona = new Persona();
+							persona.setNombre(nombre);
+							persona.setAp_paterno(paterno);
+							persona.setAp_materno(materno);
+							persona.setCi(ci);
+							// System.out.println("CORREO 1: "+correos.get(0));
+							persona.setEmail(correos.get(0));
+							persona.setCarrera(carrera);
+							System.out.println("Carrera: " + carrera.getNom_carrera());
+							Cargo cargo = cargoService.cargoNombre("Docente");
+							Puesto puesto = puestoService.puestoNombre("Docente");
+							TipoPersona tipoPersona = tipoPersonaService.tipoPersonaNombre("Docente");
+							persona.setCargo(cargo);
+							persona.setPuesto(puesto);
+							persona.setTipoPersona(tipoPersona);
+							persona.setFecha_registro(new Date());
+							persona.setEstado("A");
+							persona.setImagen_persona("FotoPerfilPrederminada.webp");
+							personaService.save(persona);
 
-						System.out.println("REGISTRANDO DOCENTE..");
-						Docente docente = new Docente();
-						docente.setRd(String.valueOf(rd));
-						docente.setPersona(persona);
-						docenteService.save(docente);
+							System.out.println("REGISTRANDO DOCENTE..");
+							Docente docente = new Docente();
+							docente.setRd(String.valueOf(rd));
+							docente.setPersona(persona);
+							docenteService.save(docente);
 
-						System.out.println("REGISTRANDO USUARIO..");
-						Usuario usuarioP = new Usuario();
-						usuarioP.setUsername(nombre);
-						usuarioP.setPassword("123456");
-						usuarioP.setEstado("A");
-						usuarioP.setPersona(persona);
-						usuarioService.save(usuarioP);
+							System.out.println("REGISTRANDO USUARIO..");
+							Usuario usuarioP = new Usuario();
+							usuarioP.setUsername(nombre);
+							usuarioP.setPassword("123456");
+							usuarioP.setEstado("A");
+							usuarioP.setPersona(persona);
+							usuarioService.save(usuarioP);
 
-						// CARPETA PRINCIPAL DOCENTE
-						System.out.println("CREANDO CARPETA..");
-						Carpeta carpeta = new Carpeta();
-						carpeta.setRuta_icono("iconoPredeterminadoCarpeta.webp");
-						carpeta.setNom_carpeta(nombreCompleto);
-						carpeta.setDescripcion(gestion+" - "+periodo);
-						carpeta.setCarpetaPadre(carpetaService.findOne(id_carpeta_anterior));
-						carpeta.setEstado("A");
-						carpeta.setDocente(docente);
-						carpeta.setFecha_registro(new Date());
-						Set<Usuario> usuarios = new HashSet<>();
-						usuarios.add(usuarioP);
-						for (Usuario usuario : carpetaService.findOne(id_carpeta_anterior).getCarpetaPadre()
-								.getUsuarios()) {
-							usuarios.add(usuario);
+							// CARPETA PRINCIPAL DOCENTE
+							System.out.println("CREANDO CARPETA..");
+							Carpeta carpeta = new Carpeta();
+							carpeta.setRuta_icono("iconoPredeterminadoCarpeta.webp");
+							carpeta.setNom_carpeta(nombreCompleto);
+							carpeta.setDescripcion(gestion + " - " + periodo);
+							carpeta.setCarpetaPadre(carpetaService.findOne(id_carpeta_anterior));
+							carpeta.setEstado("A");
+							carpeta.setDocente(docente);
+							carpeta.setFecha_registro(new Date());
+							Set<Usuario> usuarios = new HashSet<>();
+							usuarios.add(usuarioP);
+							for (Usuario usuario : carpetaService.findOne(id_carpeta_anterior).getCarpetaPadre()
+									.getUsuarios()) {
+								usuarios.add(usuario);
+							}
+							carpeta.setUsuarios(usuarios);
+							carpetaService.save(carpeta);
+
+							// CARPETA MATERIAS
+							Carpeta carpetaMateria = new Carpeta();
+							carpetaMateria.setRuta_icono("iconoPredeterminadoCarpeta.webp");
+							carpetaMateria.setNom_carpeta("MATERIAS");
+							carpetaMateria.setDescripcion("MATERIAS");
+							carpetaMateria.setCarpetaPadre(carpeta);
+							carpetaMateria.setEstado("A");
+							carpetaMateria.setFecha_registro(new Date());
+							Set<Usuario> usuarios2 = new HashSet<>();
+							for (Usuario usuario2 : carpeta.getCarpetaPadre().getUsuarios()) {
+								usuarios2.add(usuario2);
+							}
+							carpetaMateria.setUsuarios(usuarios);
+							carpetaService.save(carpetaMateria);
+
+							// MATERIA
+							System.out.println("CARGANDO MATERIAS..");
+							for (String asignatura : asignaturas) {
+								System.out.println("MATERIA:" + asignatura);
+								Materia materia = new Materia();
+								materia.setEstado("A");
+								materia.setNombre(asignatura);
+								materia.setCarpeta(carpetaMateria);
+								// REQUISITOS
+								System.out.println("CARGANDO REQUISITOS..");
+								Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
+								materia.setRequisitos(requisitos);
+								materiaService.save(materia);
+							}
+
+						} else {
+							Docente docente = personaService.personaCi(ci).getDocente();
+
+							// CARPETA PRINCIPAL DOCENTE
+							System.out.println("CREANDO CARPETA..");
+							Carpeta carpeta = new Carpeta();
+							carpeta.setRuta_icono("iconoPredeterminadoCarpeta.webp");
+							carpeta.setNom_carpeta(nombreCompleto);
+							carpeta.setDescripcion(gestion + " - " + periodo);
+							carpeta.setCarpetaPadre(carpetaService.findOne(id_carpeta_anterior));
+							carpeta.setEstado("A");
+							carpeta.setDocente(docente);
+							carpeta.setFecha_registro(new Date());
+							Set<Usuario> usuarios = new HashSet<>();
+							usuarios.add(personaService.personaCi(ci).getUsuario());
+							for (Usuario usuario : carpetaService.findOne(id_carpeta_anterior).getCarpetaPadre()
+									.getUsuarios()) {
+								usuarios.add(usuario);
+							}
+							carpeta.setUsuarios(usuarios);
+							carpetaService.save(carpeta);
+
+							// CARPETA MATERIAS
+							Carpeta carpetaMateria = new Carpeta();
+							carpetaMateria.setRuta_icono("iconoPredeterminadoCarpeta.webp");
+							carpetaMateria.setNom_carpeta("MATERIAS");
+							carpetaMateria.setDescripcion("MATERIAS");
+							carpetaMateria.setCarpetaPadre(carpeta);
+							carpetaMateria.setEstado("A");
+							carpetaMateria.setFecha_registro(new Date());
+							Set<Usuario> usuarios2 = new HashSet<>();
+							for (Usuario usuario2 : carpeta.getCarpetaPadre().getUsuarios()) {
+								usuarios2.add(usuario2);
+							}
+							carpetaMateria.setUsuarios(usuarios);
+							carpetaService.save(carpetaMateria);
+
+							// MATERIA
+							System.out.println("CARGANDO MATERIAS..");
+							for (String asignatura : asignaturas) {
+
+								System.out.println("MATERIA:" + asignatura);
+								Materia materia = new Materia();
+								materia.setEstado("A");
+								materia.setNombre(asignatura);
+								materia.setCarpeta(carpetaMateria);
+								// REQUISITOS
+								System.out.println("CARGANDO REQUISITOS..");
+								Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
+								materia.setRequisitos(requisitos);
+								materiaService.save(materia);
+							}
 						}
-						carpeta.setUsuarios(usuarios);
-						carpetaService.save(carpeta);
-
-						// CARPETA MATERIAS
-						Carpeta carpetaMateria = new Carpeta();
-						carpetaMateria.setRuta_icono("iconoPredeterminadoCarpeta.webp");
-						carpetaMateria.setNom_carpeta("MATERIAS");
-						carpetaMateria.setDescripcion("MATERIAS");
-						carpetaMateria.setCarpetaPadre(carpeta);
-						carpetaMateria.setEstado("A");
-						carpetaMateria.setFecha_registro(new Date());
-						Set<Usuario> usuarios2 = new HashSet<>();
-						for (Usuario usuario2 : carpeta.getCarpetaPadre().getUsuarios()) {
-							usuarios2.add(usuario2);
-						}
-						carpetaMateria.setUsuarios(usuarios);
-						carpetaService.save(carpetaMateria);
-
-						// MATERIA
-						System.out.println("CARGANDO MATERIAS..");
-						for (String asignatura : asignaturas) {
-							System.out.println("MATERIA:" + asignatura);
-							Materia materia = new Materia();
-							materia.setEstado("A");
-							materia.setNombre(asignatura);
-							materia.setCarpeta(carpetaMateria);
-							// REQUISITOS
-							System.out.println("CARGANDO REQUISITOS..");
-							Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
-							materia.setRequisitos(requisitos);
-							materiaService.save(materia);
-						}
-
 					} else {
-						Docente docente = personaService.personaCi(ci).getDocente();
-
-						// CARPETA PRINCIPAL DOCENTE
-						System.out.println("CREANDO CARPETA..");
-						Carpeta carpeta = new Carpeta();
-						carpeta.setRuta_icono("iconoPredeterminadoCarpeta.webp");
-						carpeta.setNom_carpeta(nombreCompleto);
-						carpeta.setDescripcion(gestion+" - "+periodo);
-						carpeta.setCarpetaPadre(carpetaService.findOne(id_carpeta_anterior));
-						carpeta.setEstado("A");
-						carpeta.setDocente(docente);
-						carpeta.setFecha_registro(new Date());
-						Set<Usuario> usuarios = new HashSet<>();
-						usuarios.add(personaService.personaCi(ci).getUsuario());
-						for (Usuario usuario : carpetaService.findOne(id_carpeta_anterior).getCarpetaPadre()
-								.getUsuarios()) {
-							usuarios.add(usuario);
-						}
-						carpeta.setUsuarios(usuarios);
-						carpetaService.save(carpeta);
-
-						// CARPETA MATERIAS
-						Carpeta carpetaMateria = new Carpeta();
-						carpetaMateria.setRuta_icono("iconoPredeterminadoCarpeta.webp");
-						carpetaMateria.setNom_carpeta("MATERIAS");
-						carpetaMateria.setDescripcion("MATERIAS");
-						carpetaMateria.setCarpetaPadre(carpeta);
-						carpetaMateria.setEstado("A");
-						carpetaMateria.setFecha_registro(new Date());
-						Set<Usuario> usuarios2 = new HashSet<>();
-						for (Usuario usuario2 : carpeta.getCarpetaPadre().getUsuarios()) {
-							usuarios2.add(usuario2);
-						}
-						carpetaMateria.setUsuarios(usuarios);
-						carpetaService.save(carpetaMateria);
-
-						// MATERIA
-						System.out.println("CARGANDO MATERIAS..");
-						for (String asignatura : asignaturas) {
-							
-							System.out.println("MATERIA:" + asignatura);
-							Materia materia = new Materia();
-							materia.setEstado("A");
-							materia.setNombre(asignatura);
-							materia.setCarpeta(carpetaMateria);
-							// REQUISITOS
-							System.out.println("CARGANDO REQUISITOS..");
-							Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
-							materia.setRequisitos(requisitos);
-							materiaService.save(materia);
-						}
+						redirectAttrs
+								.addFlashAttribute("mensaje", "Ya existe una carpeta de este docente en este Periodo")
+								.addFlashAttribute("clase", "danger");
+						return "redirect:/home/" + id_carpeta_anterior;
 					}
 				} else {
-					redirectAttrs
-							.addFlashAttribute("mensaje", "Ya existe una carpeta de este docente en este Periodo")
-							.addFlashAttribute("clase", "danger");
-					return "redirect:/home/" + id_carpeta_anterior;
+					System.out.println("RESPUESTA DE LA API: " + nombreCompleto);
+				redirectAttrs
+						.addFlashAttribute("mensaje", "No crear carpeta para este docente, pertenece a otra carrera")
+						.addFlashAttribute("clase", "danger");
+				return "redirect:/home/" + id_carpeta_anterior;
 				}
 
 				System.out.println("RESPUESTA DE LA API: " + nombreCompleto);
@@ -2680,6 +2694,7 @@ public class HomeController {
 						.addFlashAttribute("mensaje", "Carpeta y Registros Creados Correctamente")
 						.addFlashAttribute("clase", "success");
 				return "redirect:/home/" + id_carpeta_anterior;
+
 			}
 			if (data == null) {
 				String mensaje = (String) responseBody.get("mensaje");

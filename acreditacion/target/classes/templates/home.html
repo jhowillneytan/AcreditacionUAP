@@ -57,7 +57,7 @@
 													<div th:if="${anterior.carpetaPadre != null}">
 														<div th:if="${anterior.carpetaPadre.carpetaPadre != null}">
 															<div class="dropdown-item" data-bs-toggle="modal"
-																th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta == 'FILE DOCENTES'}"
+																th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta == 'EVALUACION DOCENTE'}"
 																data-bs-target="#new-folderDocente-modal">
 																<div class="mb-0">
 																	<i data-feather="folder" class="me-25"></i> <span
@@ -1157,7 +1157,7 @@
 						<div th:if="${anterior != null}">
 							<div th:if="${anterior.carpetaPadre != null}">
 								<div th:if="${anterior.carpetaPadre.carpetaPadre != null}">
-									<div th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta == 'FILE DOCENTES'}">
+									<div th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta == 'EVALUACION DOCENTE'}">
 										<div class="modal fade" id="new-folderDocente-modal">
 											<div class="modal-dialog modal-dialog-centered">
 												<div class="modal-content">
@@ -1229,7 +1229,7 @@
 															<div th:if="${anterior !=null}">
 																<div th:if="${anterior.carpetaPadre !=null}">
 																	<div
-																		th:if="${anterior.carpetaPadre.carpetaPadre !=null && anterior.carpetaPadre.carpetaPadre == 'FILE DOCENTES'}">
+																		th:if="${anterior.carpetaPadre.carpetaPadre !=null && anterior.carpetaPadre.carpetaPadre == 'EVALUACION DOCENTE'}">
 																	</div>
 																</div>
 															</div>

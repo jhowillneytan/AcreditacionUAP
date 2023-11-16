@@ -183,24 +183,24 @@
                      linear-gradient(to right, rgb(45, 9, 224),  rgba(204, 22, 22));
     text-align: center; 
 ">
-    <ul class="nav navbar-nav flex-row">
-        <li class="nav-item me-auto">
-            <a class="navbar-brand" th:href="@{/home}">
-                <span class="brand-logo"></span>
-                <h2 class="brand-text"
-                    style="color: rgb(255, 255, 255); word-wrap: break-word; max-width: 200px; margin: 0 auto;"
-                    th:text="${personasession.carrera.nom_carrera}"></h2>
-            </a>
-        </li>
-        <li class="nav-item nav-toggle">
-            <a class="nav-link modern-nav-toggle pe-0" data-bs-toggle="collapse">
-                <i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i>
-                <i class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary"
-                    data-feather="disc" data-ticon="disc"></i>
-            </a>
-        </li>
-    </ul>
-</div>
+            <ul class="nav navbar-nav flex-row">
+                <li class="nav-item me-auto">
+                    <a class="navbar-brand" th:href="@{/home}">
+                        <span class="brand-logo"></span>
+                        <h2 class="brand-text"
+                            style="color: rgb(255, 255, 255); word-wrap: break-word; max-width: 200px; margin: 0 auto;"
+                            th:text="${personasession.carrera.nom_carrera}"></h2>
+                    </a>
+                </li>
+                <li class="nav-item nav-toggle">
+                    <a class="nav-link modern-nav-toggle pe-0" data-bs-toggle="collapse">
+                        <i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i>
+                        <i class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary"
+                            data-feather="disc" data-ticon="disc"></i>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
         <!--<div class="shadow-bottom"></div>-->
         <div class="main-menu-content" style="background-color: rgb(4, 0, 243);">

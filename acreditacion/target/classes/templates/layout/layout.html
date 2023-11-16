@@ -56,7 +56,7 @@
     <link rel="stylesheet" href="../../../../css/bs-dropzone.min.css">
     <link rel="stylesheet" href="../../../../dist/css/bootstrap.min.css">
     <!--<link rel="stylesheet" th:href="@{/dist/css/bootstrap.vertical-tabs.css}">-->
-    
+
 </head>
 <!-- END: Head-->
 
@@ -144,7 +144,7 @@
     <!-- BEGIN: Main Menu-->
     <div th:fragment="ladera" class="main-menu menu-fixed menu-light menu-accordion menu-shadow"
         data-scroll-to-active="true">
-        <div class="navbar-header" style="
+        <!--<div class="navbar-header" style="
         height: 64px;
         background-image: url(firefox.png), url(bubbles.png), linear-gradient(to right, rgb(204, 22, 22), rgb(204, 22, 22));
         background-repeat: no-repeat, no-repeat, no-repeat;
@@ -157,7 +157,8 @@
                 <li class="nav-item me-auto">
                     <a class="navbar-brand" th:href="@{/home}"><span class="brand-logo">
                         </span>
-                        <h2 class="brand-text" style="color: rgb(255, 255, 255)"
+                        <h2 class="brand-text"
+                            style="color: rgb(255, 255, 255); word-wrap: break-word; text-align: center; max-width: 200px; margin: 0 auto;"
                             th:text="${personasession.carrera.nom_carrera}"></h2>
                     </a>
                 </li>
@@ -170,7 +171,37 @@
                 </li>
 
             </ul>
-        </div>
+        </div>-->
+        <div class="navbar-header" style="
+    height: 64px;
+    background-image: url(firefox.png), url(bubbles.png), linear-gradient(to right, rgb(204, 22, 22), rgb(204, 22, 22));
+    background-repeat: no-repeat, no-repeat, no-repeat;
+    background-position: bottom right, left, right;
+    background: -moz-linear-gradient(to right, rgba(45, 9, 224), rgba(204, 22, 22)), 
+                    -webkit-gradient(to right, rgba(45, 9, 224), rgba(204, 22, 22)), 
+                 -ms-linear-gradient(to right, rgba(45, 9, 224), rgba(204, 22, 22)), 
+                     linear-gradient(to right, rgb(45, 9, 224),  rgba(204, 22, 22));
+    text-align: center; 
+">
+    <ul class="nav navbar-nav flex-row">
+        <li class="nav-item me-auto">
+            <a class="navbar-brand" th:href="@{/home}">
+                <span class="brand-logo"></span>
+                <h2 class="brand-text"
+                    style="color: rgb(255, 255, 255); word-wrap: break-word; max-width: 200px; margin: 0 auto;"
+                    th:text="${personasession.carrera.nom_carrera}"></h2>
+            </a>
+        </li>
+        <li class="nav-item nav-toggle">
+            <a class="nav-link modern-nav-toggle pe-0" data-bs-toggle="collapse">
+                <i class="d-block d-xl-none text-primary toggle-icon font-medium-4" data-feather="x"></i>
+                <i class="d-none d-xl-block collapse-toggle-icon font-medium-4  text-primary"
+                    data-feather="disc" data-ticon="disc"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
         <!--<div class="shadow-bottom"></div>-->
         <div class="main-menu-content" style="background-color: rgb(4, 0, 243);">
             <!--<img th:src="'/acreditacion/uploads/'+${personasession.carrera.file}" alt="" height="300px" width="300px">-->
@@ -187,16 +218,17 @@
                 <!-- filter:alpha(opacity=10); opacity:0.5;  -->
 
                 <li th:class="${opcionHome}? 'nav-item active':'nav-item'">
-                    <a class="d-flex align-items-center" th:href="@{/home}" style="color: aliceblue; " ><i
+                    <a class="d-flex align-items-center" th:href="@{/home}" style="color: aliceblue; "><i
                             data-feather="home"></i><span class="menu-title text-truncate" data-i18n="File Manager"
                             style="color: aliceblue;">PRINCIPAL</span></a>
                 </li>
 
                 <li class=" nav-item">
                     <a class="d-flex align-items-center" href="#" onclick="botonSubMenu(event)"
-                        style="color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;"><i data-feather="layout" style="color: aliceblue; ">
-                        </i><span class="menu-title text-truncate"
-                            data-i18n="Form Layouts" style="color: aliceblue;">INSTITUCIONAL</span></a>
+                        style="color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;"><i
+                            data-feather="layout" style="color: aliceblue; ">
+                        </i><span class="menu-title text-truncate" data-i18n="Form Layouts"
+                            style="color: aliceblue;">INSTITUCIONAL</span></a>
                     <ul class="menu-content">
                         <li><a class="d-flex align-items-center" style="color: aliceblue; "
                                 href="https://uap.edu.bo/ingenieria-industrial/"><i
@@ -205,10 +237,10 @@
                         </li>
                     </ul>
                 </li>
-                <li class=" nav-item" 
+                <li class=" nav-item"
                     th:if="${tipoPersonasession.nom_tipo_persona=='Director'} or ${tipoPersonasession.nom_tipo_persona=='Administrador'}">
-                    <a class="d-flex align-items-center" href="" onclick="botonSubMenu(event)" 
-                    th:style="${subMenuSeleccionado}? 'color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px; background-color: rgb(91, 67, 230);' :'color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;'"><i
+                    <a class="d-flex align-items-center" href="" onclick="botonSubMenu(event)"
+                        th:style="${subMenuSeleccionado}? 'color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px; background-color: rgb(91, 67, 230);' :'color: aliceblue; transition: background-color 0.6s, color 0.6s; border-radius: 3px;'"><i
                             data-feather="copy" style="color: aliceblue; "></i><span class="menu-title text-truncate"
                             data-i18n="Form Elements" style="color: alice blue;">ELEMENTOS</span></a>
                     <ul class="menu-content">
@@ -259,7 +291,7 @@
                                     style="color: aliceblue;">Carrera</span>
                             </a>
                         </li>
-                        
+
                         <li th:class="${opcionUsuario}? 'active':''"
                             th:if="${tipoPersonasession.nom_tipo_persona=='Administrador' or tipoPersonasession.nom_tipo_persona=='Director'}">
                             <a class="d-flex align-items-center" th:href="@{/form-usuario}" style="color: aliceblue;"><i
@@ -270,22 +302,20 @@
                         </li>
                         <li th:class="${opcionParametro}? 'active':''"
                             th:if="${tipoPersonasession.nom_tipo_persona=='Administrador'}">
-                            <a class="d-flex align-items-center" th:href="@{/form-parametro}"
-                                style="color: aliceblue;">
+                            <a class="d-flex align-items-center" th:href="@{/form-parametro}" style="color: aliceblue;">
                                 <i data-feather="check-circle"></i>
                                 <span class="menu-item text-truncate" data-i18n="Quill Editor"
                                     style="color: aliceblue;">Parametro</span>
                             </a>
                         </li>
-                        
+
                     </ul>
                 </li>
                 <th:block th:if="${opcionHome}">
                     <li class="nav-item" th:if="${anterior.nom_carpeta =='EVALUACION DOCENTE'}">
-                        <a class="d-flex align-items-center" data-bs-toggle="modal"
-                        data-bs-target="#reporteModal" style="color: aliceblue; " ><i
-                        class="fa fa-file"></i><span class="menu-item text-truncate" data-i18n="File Manager"
-                                style="color: aliceblue;">Reportes</span></a>
+                        <a class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#reporteModal"
+                            style="color: aliceblue; "><i class="fa fa-file"></i><span class="menu-item text-truncate"
+                                data-i18n="File Manager" style="color: aliceblue;">Reportes</span></a>
                     </li>
                 </th:block>
             </ul>
@@ -299,7 +329,7 @@
     <!-- END: Content-->
 
     <div class="sidenav-overlay"></div>
-    <div class="drag-target" ></div>
+    <div class="drag-target"></div>
 
     <!-- BEGIN: Footer-->
     <footer th:fragment="pie" class="footer footer-static footer-light">
@@ -325,7 +355,7 @@
         <script src="../../../app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js"></script>
         <script src="../../../app-assets/js/scripts/forms/form-validation.js"></script>
 
-            
+
         <!--<script src="../../../app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
         <script src="../../../app-assets/vendors/js/tables/datatable/datatables1.10.25.js"></script>-->
         <script src="../../../app-assets/vendors/js/tables/datatable/dataTables.bootstrap5.min.js"></script>
@@ -351,11 +381,11 @@
                 var boton = event.target;
 
                 if (boton.style.backgroundColor === '' || boton.style.backgroundColor === 'rgb(4, 0, 243)') {
-                    
+
                     boton.style.backgroundColor = 'rgb(91, 67, 230)';
                     boton.style.color = 'aliceblue';
                 } else {
-                    
+
                     boton.style.backgroundColor = 'rgb(4, 0, 243)';
                     boton.style.color = 'aliceblue';
                 }

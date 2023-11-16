@@ -16,10 +16,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.uap.acreditacion.entity.Docente;
 import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.entity.Usuario;
 import com.uap.acreditacion.service.EmailServiceImpl;
+import com.uap.acreditacion.service.IDocenteService;
 import com.uap.acreditacion.service.IPersonaService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 import com.uap.acreditacion.service.IUsuarioService;
@@ -41,6 +43,9 @@ public class UsuarioController {
 	@Autowired
 	private EmailServiceImpl emailServiceImpl;
 
+	@Autowired
+	private IDocenteService docenteService;
+
 	@GetMapping("/form-usuario")
 	public String formUsuario(ModelMap model, HttpServletRequest request) {
 		if (request.getSession().getAttribute("persona") != null) {
@@ -49,22 +54,34 @@ public class UsuarioController {
 			Calendar cal = Calendar.getInstance();
 			int year = cal.get(Calendar.YEAR);
 			List<Usuario> listUsuarios = iUsuarioService.findAll();
-			/*List<Usuario> listUsuarios = new ArrayList<>();
-			for (Persona persona : p.getCarrera().getPersonas()) {
-				listUsuarios.add(persona.getUsuario());
-			}*/
+			/*
+			 * List<Usuario> listUsuarios = new ArrayList<>();
+			 * for (Persona persona : p.getCarrera().getPersonas()) {
+			 * listUsuarios.add(persona.getUsuario());
+			 * }
+			 */
 			TipoPersona tipoPersona = tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona());
 			model.addAttribute("personasession", p);
 			model.addAttribute("tipoPersonasession", tipoPersona);
 			model.addAttribute("usuario", new Usuario());
+
 			if (tipoPersona.getNom_tipo_persona().equals("Administrador")) {
+				model.addAttribute("docentes", docenteService.findAll());
 				model.addAttribute("usuarios", iUsuarioService.findAll());
 				model.addAttribute("personasUser", iPersonaService.findAll());
 			} else {
+				List<Persona> Listpersona = p.getCarrera().getPersonas();
+				List<Docente> docentes = new ArrayList<>();
+				for (Persona persona : Listpersona) {
+					if (persona.getDocente() != null) {
+						docentes.add(persona.getDocente());
+					}
+				}
 				model.addAttribute("usuarios", listUsuarios);
 				model.addAttribute("personasUser", p.getCarrera().getPersonas());
+				model.addAttribute("docentes", docentes);
 			}
- 
+
 			// model.addAttribute("carpetas", carpetaService.findAll());
 			model.addAttribute("ExisteArchivo", "true");
 			// model.addAttribute("personasUser",p.getCarrera().getPersonas());
@@ -84,10 +101,12 @@ public class UsuarioController {
 			usuario.setEstado("A");
 
 			iUsuarioService.save(usuario);
-			String mensaje = "\n" + 
-					"Tu Usuario es: " + usuario.getUsername() + "\n Contrasena es: " + usuario.getPassword()+"\n " + 
+			String mensaje = "\n" +
+					"Tu Usuario es: " + usuario.getUsername() + "\n Contrasena es: " + usuario.getPassword() + "\n " +
 					"Link: http://virtual.uap.edu.bo:8383/login";
-			emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(), "Bienvenido al Sistema de Acreditacion Señor: "+usuario.getPersona().getNombre()+" "+usuario.getPersona().getAp_paterno(),
+			emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(),
+					"Bienvenido al Sistema de Acreditacion Señor: " + usuario.getPersona().getNombre() + " "
+							+ usuario.getPersona().getAp_paterno(),
 					mensaje);
 
 			return "redirect:/form-usuario";
@@ -116,10 +135,12 @@ public class UsuarioController {
 				model.addAttribute("personasUser", iPersonaService.findAll());
 			} else {
 				List<Usuario> listUsuarios = iUsuarioService.findAll();
-				/*List<Usuario> listUsuarios = new ArrayList<>();
-				for (Persona persona : p.getCarrera().getPersonas()) {
-					listUsuarios.add(persona.getUsuario());
-				}*/
+				/*
+				 * List<Usuario> listUsuarios = new ArrayList<>();
+				 * for (Persona persona : p.getCarrera().getPersonas()) {
+				 * listUsuarios.add(persona.getUsuario());
+				 * }
+				 */
 				model.addAttribute("usuarios", listUsuarios);
 				model.addAttribute("personasUser", p.getCarrera().getPersonas());
 			}
@@ -133,11 +154,12 @@ public class UsuarioController {
 	}
 
 	@PostMapping("/ModificarUsuario")
-	public String ModificarUsuario(ModelMap model, HttpServletRequest request, @Validated Usuario usuario) throws MessagingException {
+	public String ModificarUsuario(ModelMap model, HttpServletRequest request, @Validated Usuario usuario)
+			throws MessagingException {
 		if (request.getSession().getAttribute("persona") != null) {
 			Usuario usuario2 = iUsuarioService.findOne(usuario.getId_usuario());
 			usuario.setEstado(usuario2.getEstado());
-			//usuario.setPersona(usuario2.getPersona());
+			// usuario.setPersona(usuario2.getPersona());
 			iUsuarioService.save(usuario);
 
 			return "redirect:/form-usuario";
@@ -162,8 +184,8 @@ public class UsuarioController {
 	@PostMapping("/BuscarUsuario/")
 	public ResponseEntity<String> BuscarUsuario(@Validated Usuario usuario) {
 		String mensaje = "";
-		//Usuario usuario2 = iUsuarioService.findByUsername(usuario.getUsername());
-		
+		// Usuario usuario2 = iUsuarioService.findByUsername(usuario.getUsername());
+
 		if (iUsuarioService.findByUsername(usuario.getUsername()) == null) {
 			mensaje = "registra";
 		} else {

@@ -68,59 +68,126 @@
 									</div>
 									<div class="mb-1">
 										<a th:class="${editMode}?'btn btn-secondary'" th:href="@{/form-usuario}"
-										th:text="${editMode}?'Cancelar'"></a>
-									<input type="submit" class="btn btn-primary"
-										th:value="${editMode}?'Actualizar':'Agregar'" />
+											th:text="${editMode}?'Cancelar'"></a>
+										<input type="submit" class="btn btn-primary"
+											th:value="${editMode}?'Actualizar':'Agregar'" />
 									</div>
 								</form>
 							</div>
 						</div>
 					</div>
 					<div class="col-md-8 col-12">
-						<div class="card">
-							<div class="card-body">
-								<div class="table-responsive">
-									<table id="example" class="table" style="width:100%">
-										<thead>
-											<tr>
-												<th></th>
-												<th>Nombre de usuario</th>
-												<th>Contrasena</th>
-												<th>Persona</th>
-												<!--<th>Estado</th>-->
-												<th>Acciones</th>
-											</tr>
-										</thead>
-										<tbody>
-											<tr th:each="users, rowStat: ${usuarios}" th:if="${users.estado != 'X'}">
-												<td th:text="${rowStat.count}"></td>
-												<td th:text="${users.username}"></td>
-												<td th:text="${users.password}"></td>
-												<td
-													th:text="${users.persona.nombre}+' '+${users.persona.ap_paterno}+' Rol:'+${users.persona.tipoPersona.nom_tipo_persona}">
-												</td>
-												<!--<td th:text="${users.estado = 'A'}? 'Activo': 'Inactivo'"></td>-->
-												<td>
-													<a th:href="@{'/ModUsuario/' + ${users.id_usuario}}"><button
-															class="btn btn-outline-primary"><i
-																class="fas fa-edit"></i></button></a>
-													<a th:href="@{'/EliminarUsuario/' + ${users.id_usuario}}"><button
-															class="btn btn-outline-danger"><i
-																class="fa fa-trash"></i></button></a>
-												</td>
-											</tr>
-										</tbody>
-										<tfoot>
-											<tr>
-												<th></th>
-												<th>Nombre de usuario</th>
-												<th>Contrasena</th>
-												<th>Persona</th>
-												<!--<th>Estado</th>-->
-												<th>Acciones</th>
-											</tr>
-										</tfoot>
-									</table>
+						<ul class="nav nav-tabs justify-content-center" id="myTab" role="tablist">
+							<li class="nav-item" role="presentation">
+								<button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+									data-bs-target="#usuarios" type="button" role="tab" aria-controls="home"
+									aria-selected="true">Usuarios</button>
+							</li>
+							<li class="nav-item" role="presentation">
+								<button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+									data-bs-target="#usuariosDocente" type="button" role="tab" aria-controls="profile"
+									aria-selected="false">Usuario Docente</button>
+							</li>
+						</ul>
+						<div class="tab-content" id="myTabContent">
+							<div class="tab-pane fade active show" id="usuarios" role="tabpanel"
+								aria-labelledby="home-tab">
+								<div class="card">
+									<div class="card-header">
+										<h3>Usuario Simples</h3>
+									</div>
+									<div class="card-body">
+										<div class="table-responsive">
+											<table id="example" class="table" style="width:100%">
+												<thead>
+													<tr>
+														<th>#</th>
+														<th>Nombre de usuario</th>
+														<th>Contrasena</th>
+														<th>Persona</th>
+														<!--<th>Estado</th>-->
+														<th>Acciones</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="users, rowStat: ${usuarios}"
+														th:if="${users.estado != 'X'}">
+														<td th:text="${rowStat.count}"></td>
+														<td th:text="${users.username}"></td>
+														<td th:text="${users.password}"></td>
+														<td
+															th:text="${users.persona.nombre}+' '+${users.persona.ap_paterno}+' Rol:'+${users.persona.tipoPersona.nom_tipo_persona}">
+														</td>
+														<!--<td th:text="${users.estado = 'A'}? 'Activo': 'Inactivo'"></td>-->
+														<td>
+															<a th:href="@{'/ModUsuario/' + ${users.id_usuario}}"><button
+																	class="btn btn-outline-primary"><i
+																		class="fas fa-edit"></i></button></a>
+															<a th:href="@{'/EliminarUsuario/' + ${users.id_usuario}}"><button
+																	class="btn btn-outline-danger"><i
+																		class="fa fa-trash"></i></button></a>
+														</td>
+													</tr>
+												</tbody>
+												<tfoot>
+													<tr>
+														<th>#</th>
+														<th>Nombre de usuario</th>
+														<th>Contrasena</th>
+														<th>Persona</th>
+														<!--<th>Estado</th>-->
+														<th>Acciones</th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="tab-pane fade" id="usuariosDocente" role="tabpanel"
+								aria-labelledby="profile-tab">
+								<div class="card">
+									<div class="card-header">
+										<h3>Usuario Docente</h3>
+									</div>
+									<div class="card-body">
+										<div class="table-responsive">
+											<table id="example2" class="table" style="width:100%">
+												<thead>
+													<tr>
+														<th>#</th>
+														<th>Nombre Completo</th>
+														<th>C.I.</th>
+														<th>Codigo Docente(RD)</th>
+														<th>Imagen</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr th:each="docente, rowStat: ${docentes}">
+														<td th:text="${rowStat.count}"></td>
+														<td
+															th:text="${docente.persona.nombre}+' '+${docente.persona.ap_paterno}+' '+${docente.persona.ap_materno}">
+														</td>
+														<td th:text="${docente.persona.ci}"></td>
+														<td th:text="${docente.rd}"></td>
+														<td><img class="round"
+																th:src="'/acreditacion/uploads/'+${docente.persona.imagen_persona}"
+																alt="avatar" height="40" width="40">
+														</td>
+													</tr>
+												</tbody>
+												<tfoot>
+													<tr>
+														<th>#</th>
+														<th>Nombre Completo</th>
+														<th>C.I.</th>
+														<th>Codigo Docente(RD)</th>
+														<th>Imagen</th>
+													</tr>
+												</tfoot>
+											</table>
+										</div>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -157,12 +224,12 @@
 	<script>
 		$(document).ready(function () {
 			var table = $('#example').DataTable({
-				lengthChange: false,
-				buttons: ['copy', 'excel', 'pdf', 'print']
+				lengthChange: false
 			});
 
-			table.buttons().container()
-				.appendTo('#example_wrapper .col-md-6:eq(0)');
+			var table2 = $('#example2').DataTable({
+				lengthChange: false
+			});
 
 			$("#formularioUsuario").submit(function (event) {
 				event.preventDefault();
@@ -172,13 +239,13 @@
 				$.ajax({
 					type: "POST",
 					url: '/BuscarUsuario/',
-					data: formData,  
+					data: formData,
 					contentType: "application/x-www-form-urlencoded",
 					success: function (response) {
 						var mensaje = response;
 						//alert(mensaje);
 						if (mensaje == "registra") {
-							 form.submit();
+							form.submit();
 						} else {
 							Swal.fire({
 								icon: 'error',

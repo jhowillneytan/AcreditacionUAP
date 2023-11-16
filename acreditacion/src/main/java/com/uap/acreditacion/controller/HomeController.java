@@ -2462,7 +2462,7 @@ public class HomeController {
 			@RequestParam(value = "periodo") String periodo) {
 
 		Carrera carrera = carreraService.findOne(id_carrera);
-		System.out.println("codeCarrer: " + carrera.getCode_carrera());
+		System.out.println("codeCarrer: " + carrera.getId_carrera());
 
 		String numero = gestion.replaceAll("[^0-9]", "");
 		int numeroGestion = Integer.parseInt(numero);
@@ -2477,7 +2477,7 @@ public class HomeController {
 		requests.put("rd", codigoDocente);
 		requests.put("periodo", numeroPeriodo);
 		requests.put("gestion", numeroGestion);
-		requests.put("code_carrera", carrera.getCode_carrera());
+		requests.put("code_carrera", carrera.getId_carrera());
 
 		String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
 		String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";

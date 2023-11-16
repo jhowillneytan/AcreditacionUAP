@@ -24,12 +24,12 @@
 
 
 				<div class="row">
-					<div class="col-md-4 col-12">
+					<div class="col-12">
 						<div class="card">
-							<div class="card-header">
+							<div class="card-header" th:if="${edit != null}">
                                 <h4 class="card-title">FORMULARIO CARRERA</h4>
                             </div>
-                            <div class="card-body">
+                            <div class="card-body" th:if="${edit != null}">
                                     <form th:action="${editMode}? @{/carrera/GuardarCambiosCarrera} : @{/carrera/RegistrarCarrera}" method="post" enctype="multipart/form-data">
                                         <input type="hidden" th:field="${carrera.id_carrera}">                                        
                                         <div class="row">
@@ -59,15 +59,16 @@
                                             </div>
                                             <div class="mb-1 col-md-6">
 												<input type="submit" class="btn btn-primary" value="ENVIAR">
-                    
+												<a th:class="${edit}?'btn btn-secondary'" th:href="@{'/carrera/formulario'}" th:text="${edit}?'CANCELAR'"></a>
                                             </div>                                            
                                         </div>
                                 </form>
-								<a class="btn btn-outline-primary" href="/carrera/cargarCarreras">Cargar Carreras</a>
+								
                             </div>
+							<a class="btn btn-outline-primary" href="/carrera/cargarCarreras">Actualizar Carreras</a>
 						</div>
 					</div>
-					<div class="col-md-8 col-12">
+					<div class="col-12">
 						<div class="card">
 							<div class="card-body">
 								<div class="table-responsive">
@@ -84,7 +85,7 @@
                                         <tbody>
                                             <tr th:each="c,cont : ${carreras}" th:if="${c.estado != 'X'}">
                                                 <td th:text="${cont.index + 1}"></td>
-												<td th:text="${c.code_carrera}"></td>
+												<td th:text="${c.id_carrera}"></td>
                                                 <td th:text="${c.nom_carrera}"></td>
                                                 <td th:text="${c.facultad.nom_facultad}"></td>
                                                 <td>

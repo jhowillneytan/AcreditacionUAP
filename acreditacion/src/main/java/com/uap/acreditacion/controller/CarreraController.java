@@ -212,8 +212,6 @@ public class CarreraController {
                 List<Map<String, String>> dataList = (List<Map<String, String>>) responseMap.get("data");
 
                 if (dataList != null && !dataList.isEmpty()) {
-                    // Utilizamos un mapa para mapear facultades a listas de carreras
-                    Map<String, List<String>> facultadesCarreras = new HashMap<>();
 
                     for (Map<String, String> carreraData : dataList) {
                         String facultad = carreraData.get("facultad");
@@ -221,26 +219,29 @@ public class CarreraController {
                         String code = String.valueOf(carreraData.get("code"));
                         String code_facultad = String.valueOf(carreraData.get("code_facultad"));
                         // Verificamos si la facultad ya está en el mapa, si no, la agregamos
-                        if (!facultadesCarreras.containsKey(facultad)) {
-                            facultadesCarreras.put(facultad, new ArrayList<>());
-                        }
-
-                        // Agregamos la carrera a la lista de carreras de la facultad
-                        facultadesCarreras.get(facultad).add(carrera);
-
                         // Crear una instancia de Carrera y establecer los valores
-                        for (Facultad facultad2 : facultads) {
-                            if (facultad2.getCode_facultad() == Integer.parseInt(code_facultad)) {
-                                Carrera nuevaCarrera = new Carrera();
-                                nuevaCarrera.setCode_carrera(Integer.parseInt(code));
-                                nuevaCarrera.setNom_carrera(carrera);
-                                nuevaCarrera.setFacultad(facultad2);
-                                nuevaCarrera.setFecha_registro(new Date());
-                                nuevaCarrera.setDescripcion(carrera);
+                        
+                        if (carreraService.findOne(Long.parseLong(code)) == null) {
+                            Carrera nuevaCarrera = new Carrera();
+                            Facultad facultad2 = facultadService.findOne(Long.valueOf(Integer.parseInt(code_facultad)));
+                            nuevaCarrera.setId_carrera(Long.parseLong(code));
+                            nuevaCarrera.setNom_carrera(carrera);
+                            nuevaCarrera.setEstado("A");
+                            nuevaCarrera.setFacultad(facultad2);
+                            nuevaCarrera.setFecha_registro(new Date());
+                            nuevaCarrera.setDescripcion(carrera);
 
-                                // Guardar la nueva carrera en la base de datos
-                                carreraService.save(nuevaCarrera);
-                            }
+                            // Guardar la nueva carrera en la base de datos
+                            carreraService.save(nuevaCarrera);
+                        } else {
+                            Facultad facultad2 = facultadService.findOne(Long.valueOf(Integer.parseInt(code_facultad)));
+                            Carrera nuevaCarrera = carreraService.findOne(Long.parseLong(code));
+                            nuevaCarrera.setNom_carrera(carrera);
+                            nuevaCarrera.setFacultad(facultad2);
+                            nuevaCarrera.setDescripcion(carrera);
+
+                            // Guardar la nueva carrera en la base de datos
+                            carreraService.save(nuevaCarrera);
                         }
 
                         System.out.println("  Carrera: " + carrera);
@@ -255,9 +256,9 @@ public class CarreraController {
             System.out.println("La solicitud al API no fue exitosa (código de estado: " + resp.getStatusCode() + ")");
         }
 
-        System.out.println("SE CARGO LAS MATERIAS ");
+        System.out.println("SE CARGO LAS CARRERAS ");
 
-        return "redirect:/facultad/formulario";
+        return "redirect:/carrera/formulario";
     }
 
 }

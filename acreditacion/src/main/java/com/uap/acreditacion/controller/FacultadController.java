@@ -88,6 +88,7 @@ public class FacultadController {
             if (success != null) {
                 model.addAttribute("success", success);
             }
+            model.addAttribute("edit", "true");
             model.addAttribute("opcionFacultad", "true");
             model.addAttribute("subMenuSeleccionado", "true");
             return "Facultad/formulario";
@@ -120,7 +121,7 @@ public class FacultadController {
     }
 
     @GetMapping("/cargarFacultades")
-    public String cargarFacultades(HttpServletRequest request) {
+    public String cargarFacultades(HttpServletRequest request, RedirectAttributes flash) {
         Map<String, Object> requests = new HashMap<String, Object>();
 
         String url = "http://181.115.188.250:9993/v1/service/api/89b5b361047f40edb5d75dce872e8bf1";
@@ -176,14 +177,25 @@ public class FacultadController {
 
                     // Ahora tienes la lista de facultades
                     for (String[] facultad : facultades) {
-                        Facultad facultad2 = new Facultad();
-                        facultad2.setNom_facultad(facultad[1]);
-                        facultad2.setFecha_registro(new Date());
-                        facultad2.setDescripcion(facultad[1]);
-                        facultad2.setEstado("A");
-                        facultad2.setCode_facultad(Integer.parseInt(facultad[0]));
-                        facultadService.save(facultad2);
-                        System.out.println("Facultad: " + facultad);
+                        String code = String.valueOf(facultad[0]);
+                        if (facultadService.findOne(Long.valueOf(code)) == null) {
+                            Facultad facultad2 = new Facultad();
+                            facultad2.setNom_facultad(facultad[1]);
+                            facultad2.setFecha_registro(new Date());
+                            facultad2.setDescripcion(facultad[1]);
+                            facultad2.setEstado("A");
+                            facultad2.setId_facultad(Long.valueOf(Integer.parseInt(facultad[0])));
+                            facultadService.save(facultad2);
+                            
+                        } else{
+                            Facultad facultad2 = facultadService.findOne(Long.valueOf(Integer.parseInt(facultad[0])));
+                            facultad2.setNom_facultad(facultad[1]);
+                            facultad2.setDescripcion(facultad[1]);
+                            facultadService.save(facultad2);
+                            
+                        }
+                        System.out.println("Facultad: " + facultad[1]);
+                        System.out.println("Code: " + facultad[0]);
                     }
                 } else {
                     System.out.println("No se encontraron datos de facultades.");
@@ -195,8 +207,8 @@ public class FacultadController {
             System.out.println("La solicitud al API no fue exitosa (código de estado: " + resp.getStatusCode() + ")");
         }
 
-        System.out.println("SE CARGO LAS MATERIAS ");
-
+        System.out.println("SE CARGO LAS FACULTADES ");
+        flash.addAttribute("success", "Facultades Actualizadas con Exito!");
         return "redirect:/facultad/formulario";
     }
 

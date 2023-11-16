@@ -16,15 +16,19 @@
         
         <div class="content-body">
             <!-- Validation -->
+            <!-- Validation -->
+			<div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+            th:text="${mensaje}" class="alert">
+        </div>
             <section class="bs-validation">
                 <div class="row">
                     <!-- Bootstrap Validation -->
                     <div class="col-md-12 col-12">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header"th:if="${edit != null}">
                                 <h4 class="card-title">FORMULARIO FACULTAD</h4>
                             </div>
-                            <div class="card-body">                                
+                            <div class="card-body" th:if="${edit != null}">                                
                                     <form  action="../../../../facultad/formulario" method="post" novalidate>
                                         <input type="hidden" th:field="${facultad.id_facultad}">                                        
                                         <div class="row">                                        
@@ -43,11 +47,13 @@
                                             </div>
                                             <div class="mb-1 col-md-6">
                                                 <button type="submit" class="btn btn-primary">ENVIAR</button>
+                                                <a th:class="${edit}?'btn btn-secondary'" th:href="@{'/facultad/formulario'}" th:text="${edit}?'CANCELAR'"></a>
                                             </div>                                            
                                         </div>
                                 </form>
-                                <a class="btn btn-outline-primary" href="/facultad/cargarFacultades">Cargar Facultades</a>
+                                
                             </div>
+                            <a class="btn btn-outline-primary" href="/facultad/cargarFacultades">Actualizar Facultades</a>
                         </div>
                     </div>
                     <!-- /Bootstrap Validation -->
@@ -76,7 +82,7 @@
                                         <tbody>
                                             <tr th:each="f,cont : ${facultads}" th:if="${f.estado != 'X'}">
                                                 <td th:text="${cont.index + 1}"></td>
-                                                <td th:text="${f.code_facultad}"></td>
+                                                <td th:text="${f.id_facultad}"></td>
                                                 <td th:text="${f.nom_facultad}"></td>
                                                 <td th:text="${f.descripcion}"></td>
                                                 <td th:text="${f.fecha_registro}"></td>

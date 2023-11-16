@@ -178,8 +178,16 @@ public class CarreraController {
             @RequestParam(value = "Logo") MultipartFile file) {
         Carrera carrera2 = carreraService.findOne(carrera.getId_carrera());
         carrera.setEstado("A");
+        carrera.setFecha_registro(carrera2.getFecha_registro());
         if (file.isEmpty()) {
             carrera.setFile(carrera2.getFile());
+        } else {
+            String arch = config.guardarArchivo(file);
+            carrera.setFile(arch);
+            String[] ta = arch.split("\\.");
+            for (String string : ta) {
+                System.out.println(string);
+            }
         }
         carreraService.save(carrera);
         flash.addAttribute("success", "Se ha guardado los cambios!");

@@ -7,7 +7,7 @@
 
 <body class="vertical-layout vertical-menu-modern content-left-sidebar navbar-floating footer-static" data-open="click"
 	data-menu="vertical-menu-modern" data-col="content-left-sidebar">
- 
+
 	<nav th:replace="layout/layout :: cabecera"></nav>
 
 	<div th:replace="layout/layout :: ladera"></div>
@@ -27,45 +27,60 @@
 					<div class="col-12">
 						<div class="card">
 							<div class="card-header" th:if="${edit != null}">
-                                <h4 class="card-title">FORMULARIO CARRERA</h4>
-                            </div>
-                            <div class="card-body" th:if="${edit != null}">
-                                    <form th:action="${editMode}? @{/carrera/GuardarCambiosCarrera} : @{/carrera/RegistrarCarrera}" method="post" enctype="multipart/form-data">
-                                        <input type="hidden" th:field="${carrera.id_carrera}">                                        
-                                        <div class="row">
-                                            
-                                            <div class="mb-1 col-md-6">
-                                                <label class="form-label" for="basic-addon-name">CARRERA</label>
-                                                <input type="text" class="form-control" placeholder="Introdusca carrera" th:field="${carrera.nom_carrera}" required />
-                                                <div class="valid-feedback">Datos Validos en el Campo!</div>
-                                                <div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
-                                            </div>
-                                            
-                                            <div class="mb-1 col-md-6">
-                                                <label class="form-label" for="basic-addon-name">FACULTAD</label>
+								<h4 class="card-title">FORMULARIO CARRERA</h4>
+							</div>
+							<div class="card-body" th:if="${edit != null}">
+								<form
+									th:action="${editMode}? @{/carrera/GuardarCambiosCarrera} : @{/carrera/RegistrarCarrera}"
+									method="post" enctype="multipart/form-data">
+									<input type="hidden" th:field="${carrera.id_carrera}">
+									<div class="row">
+										<div class="col-md-6">
+											<div class="mb-1">
+												<label class="form-label" for="basic-addon-name">CARRERA</label>
+												<input type="text" class="form-control" placeholder="Introdusca carrera"
+													th:field="${carrera.nom_carrera}" required />
+												<div class="valid-feedback">Datos Validos en el Campo!</div>
+												<div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
+											</div>
 
-                                                <select class="form-control" th:field="${carrera.facultad}">
-                                                    <option th:each="f : ${facultads}" th:value="${f.id_facultad}" th:text="${f.nom_facultad}" th:if="${f.estado != 'X'}"></option>
-                                                </select>
+											<div class="mb-1">
+												<label class="form-label" for="basic-addon-name">FACULTAD</label>
 
-                                                <div class="valid-feedback">Datos Validos en el Campo!</div>
-                                                <div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
-                                            </div>                                           
-                                            <div class="mb-1 col-md-6">
-                                                <label class="form-label" for="basic-addon-name">Logo carrera</label>
-                                                <input type="file" class="form-control" placeholder="Introdusca un logo" name="Logo" required />
-                                                <div class="valid-feedback">Datos Validos en el Campo!</div>
-                                                <div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
-                                            </div>
-                                            <div class="mb-1 col-md-6">
+												<select class="form-control" th:field="${carrera.facultad}">
+													<option th:each="f : ${facultads}" th:value="${f.id_facultad}"
+														th:text="${f.nom_facultad}" th:if="${f.estado != 'X'}"></option>
+												</select>
+
+												<div class="valid-feedback">Datos Validos en el Campo!</div>
+												<div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
+											</div>
+											<div class="mb-1">
+												<label class="form-label" for="basic-addon-name">Logo carrera</label>
+												<input type="file" class="form-control" placeholder="Introdusca un logo"
+													name="Logo" required />
+												<div class="valid-feedback">Datos Validos en el Campo!</div>
+												<div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
+											</div>
+											<div class="mb-1">
 												<input type="submit" class="btn btn-primary" value="ENVIAR">
-												<a th:class="${edit}?'btn btn-secondary'" th:href="@{'/carrera/formulario'}" th:text="${edit}?'CANCELAR'"></a>
-                                            </div>                                            
-                                        </div>
-                                </form>
-								
-                            </div>
-							<a class="btn btn-outline-primary" href="/carrera/cargarCarreras">Actualizar Carreras</a>
+												<a th:class="${edit}?'btn btn-secondary'"
+													th:href="@{'/carrera/formulario'}" th:text="${edit}?'CANCELAR'"></a>
+											</div>
+										</div>
+										<div class="col-md-6" >
+											<label class="form-label">Logo Actual</label>
+											<div class="mb-1">
+												<img th:src="@{'/acreditacion/uploads/' + ${carrera.file}}" alt=""
+												class="rounded float-start">
+											</div>
+										</div>
+									</div>
+								</form>
+
+							</div>
+							<a class="btn btn-outline-primary" href="/carrera/cargarCarreras"
+								th:if="${edit == null}">Actualizar Carreras</a>
 						</div>
 					</div>
 					<div class="col-12">
@@ -73,28 +88,32 @@
 							<div class="card-body">
 								<div class="table-responsive">
 									<table id="example" class="table" style="width:100%">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
+										<thead>
+											<tr>
+												<th>#</th>
 												<th>CODE</th>
-                                                <th>CARRERA</th>
-                                                <th>FACULTAD</th>
-                                                <th>OPERACIONES</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr th:each="c,cont : ${carreras}" th:if="${c.estado != 'X'}">
-                                                <td th:text="${cont.index + 1}"></td>
+												<th>CARRERA</th>
+												<th>FACULTAD</th>
+												<th>OPERACIONES</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr th:each="c,cont : ${carreras}" th:if="${c.estado != 'X'}">
+												<td th:text="${cont.index + 1}"></td>
 												<td th:text="${c.id_carrera}"></td>
-                                                <td th:text="${c.nom_carrera}"></td>
-                                                <td th:text="${c.facultad.nom_facultad}"></td>
-                                                <td>
-                                                    <a th:href="@{'/carrera/editar-carrera/' + ${c.id_carrera}}"><button class="btn btn-outline-primary"><i class="fas fa-edit"></i></button></a>
-                                        			<a th:href="@{'/carrera/eliminar-carrera/' + ${c.id_carrera}}"><button class="btn btn-outline-danger"><i class="fa fa-trash"></i></button></a>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+												<td th:text="${c.nom_carrera}"></td>
+												<td th:text="${c.facultad.nom_facultad}"></td>
+												<td>
+													<a th:href="@{'/carrera/editar-carrera/' + ${c.id_carrera}}"><button
+															class="btn btn-outline-primary"><i
+																class="fas fa-edit"></i></button></a>
+													<a th:href="@{'/carrera/eliminar-carrera/' + ${c.id_carrera}}"><button
+															class="btn btn-outline-danger"><i
+																class="fa fa-trash"></i></button></a>
+												</td>
+											</tr>
+										</tbody>
+									</table>
 								</div>
 							</div>
 						</div>

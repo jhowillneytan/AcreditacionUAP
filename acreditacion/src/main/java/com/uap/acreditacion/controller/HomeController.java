@@ -412,7 +412,7 @@ public class HomeController {
 			}
 			List<Carpeta> carp = carpeta.getCarpetasHijos();
 			for (Carpeta carpeta2 : carp) {
-				if (carpeta2.getNom_carpeta().equals("FILE DOCENTES")) {
+				if (carpeta2.getNom_carpeta().equals("EVALUACION DOCENTE")) {
 					model.addAttribute("GestionCarpeta", carpeta2.getCarpetasHijos());
 				}
 
@@ -1556,7 +1556,7 @@ public class HomeController {
 			}
 			List<Carpeta> carp = carpeta.getCarpetasHijos();
 			for (Carpeta carpeta2 : carp) {
-				if (carpeta2.getNom_carpeta().equals("FILE DOCENTES")) {
+				if (carpeta2.getNom_carpeta().equals("EVALUACION DOCENTE")) {
 					model.addAttribute("GestionCarpeta", carpeta2.getCarpetasHijos());
 				}
 
@@ -2520,10 +2520,11 @@ public class HomeController {
 				 */
 
 				String celular = (String) data.get("celular");
-				List<String> asignaturas = new ArrayList<>();
+				List<String[]> asignaturas = new ArrayList<>();
 				List<Map<String, String>> asignaturasData = (List<Map<String, String>>) data.get("asignaturas");
 				for (Map<String, String> asignaturaData : asignaturasData) {
-					asignaturas.add(asignaturaData.get("asignatura"));
+					String[] asig = {asignaturaData.get("asignatura"), asignaturaData.get("plan"), asignaturaData.get("tipo_evaluacion")};
+					asignaturas.add(asig);
 				}
 
 				String nombreCompleto = nombre + " " + paterno + " " + materno;
@@ -2609,11 +2610,13 @@ public class HomeController {
 
 							// MATERIA
 							System.out.println("CARGANDO MATERIAS..");
-							for (String asignatura : asignaturas) {
+							for (String[] asignatura : asignaturas) {
 								System.out.println("MATERIA:" + asignatura);
 								Materia materia = new Materia();
 								materia.setEstado("A");
-								materia.setNombre(asignatura);
+								materia.setNombre(asignatura[0]);
+								materia.setPlan(asignatura[1]);
+								materia.setEvaluacion(asignatura[2]);
 								materia.setCarpeta(carpetaMateria);
 								// REQUISITOS
 								System.out.println("CARGANDO REQUISITOS..");
@@ -2661,12 +2664,14 @@ public class HomeController {
 
 							// MATERIA
 							System.out.println("CARGANDO MATERIAS..");
-							for (String asignatura : asignaturas) {
+							for (String[] asignatura : asignaturas) {
 
 								System.out.println("MATERIA:" + asignatura);
 								Materia materia = new Materia();
 								materia.setEstado("A");
-								materia.setNombre(asignatura);
+								materia.setNombre(asignatura[0]);
+								materia.setPlan(asignatura[1]);
+								materia.setEvaluacion(asignatura[2]);
 								materia.setCarpeta(carpetaMateria);
 								// REQUISITOS
 								System.out.println("CARGANDO REQUISITOS..");

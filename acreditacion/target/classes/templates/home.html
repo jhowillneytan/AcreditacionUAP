@@ -204,11 +204,15 @@
 								</div>
 								<div th:if="${anterior!=null && anterior.nom_carpeta=='MATERIAS'}">
 									<ul class="nav nav-tabs">
-										<li class="nav-item" th:each="materia: ${materias}">
+										<li class="nav-item text-center" th:each="materia: ${materias}" >
 											<a th:class="${opcionMSelect == materia.id_materia}? 'nav-link active': 'nav-link '"
 												aria-current="page"
-												th:href="@{'/RequisitosMateria/'+${anterior.id_carpeta}+'/'+${materia.id_materia}+'/'}"
-												th:text="${materia.nombre}"></a>
+												th:href="@{'/RequisitosMateria/'+${anterior.id_carpeta}+'/'+${materia.id_materia}+'/'}">
+												<p th:text="${materia.nombre}+' - '+${materia.plan}" class="mt-0"></p>
+												<span class="position-absolute bottom-0 start-50 translate-middle badge bg-light text-dark"
+												th:text="'('+${materia.evaluacion} + ')'">
+												</span>
+											</a>
 										</li>
 									</ul>
 									<div class="view-container">

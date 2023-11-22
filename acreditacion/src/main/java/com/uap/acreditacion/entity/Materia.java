@@ -35,11 +35,12 @@ public class Materia implements Serializable{
     private Long id_materia;
     private String nombre;
     private String estado;
+    private String plan;
+    private String evaluacion;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_carpeta")
     private Carpeta carpeta;
-    
 
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToMany(fetch = FetchType.LAZY)

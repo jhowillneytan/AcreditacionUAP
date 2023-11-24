@@ -2565,14 +2565,14 @@ public class HomeController {
 							docente.setRd(String.valueOf(rd));
 							docente.setPersona(persona);
 							docenteService.save(docente);
-
+							/*
 							System.out.println("REGISTRANDO USUARIO..");
 							Usuario usuarioP = new Usuario();
 							usuarioP.setUsername(nombre);
 							usuarioP.setPassword("123456");
 							usuarioP.setEstado("A");
 							usuarioP.setPersona(persona);
-							usuarioService.save(usuarioP);
+							usuarioService.save(usuarioP);*/
 
 							// CARPETA PRINCIPAL DOCENTE
 							System.out.println("CREANDO CARPETA..");
@@ -2585,7 +2585,7 @@ public class HomeController {
 							carpeta.setDocente(docente);
 							carpeta.setFecha_registro(new Date());
 							Set<Usuario> usuarios = new HashSet<>();
-							usuarios.add(usuarioP);
+							//usuarios.add(usuarioP);
 							for (Usuario usuario : carpetaService.findOne(id_carpeta_anterior).getCarpetaPadre()
 									.getUsuarios()) {
 								usuarios.add(usuario);

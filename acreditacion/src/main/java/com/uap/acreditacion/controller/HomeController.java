@@ -172,7 +172,7 @@ public class HomeController {
 						Listcarpetas.add(listFill.get(i));
 					}
 				}
-				
+
 				model.addAttribute("carpetas", p.getCarrera().getCarpetas());
 				model.addAttribute("menus", Listcarpetas);
 				System.out.println("***********METODOD HOME");
@@ -417,7 +417,7 @@ public class HomeController {
 				}
 
 			}
-			
+
 			model.addAttribute("usuarios", usuarioService.findAll());
 			model.addAttribute("list", list);
 			model.addAttribute("requisitosList", requisitoService.findAll());
@@ -434,7 +434,9 @@ public class HomeController {
 	@PostMapping("/guardar-carpeta")
 	public String guardar(RedirectAttributes redirectAttrs, @Validated Carpeta carpeta,
 			@RequestParam(name = "ruta_icon", required = false) MultipartFile ruta_icon,
-			@RequestParam(value = "auxiliar", required = false) Long id_carpeta_anterior, HttpServletRequest request) {
+			@RequestParam(value = "auxiliar", required = false) Long id_carpeta_anterior,
+			@RequestParam(value = "gestion", required = false) String gestionCarp,
+			@RequestParam(value = "periodo", required = false) String periodoCarp, HttpServletRequest request) {
 
 		/*
 		 * if (carpeta.getNom_carpeta() == null || carpeta.getNom_carpeta() == "" ||
@@ -458,6 +460,10 @@ public class HomeController {
 		 * }
 		 */
 
+		if (gestionCarp != null) {
+			carpeta.setNom_carpeta("GESTION " + gestionCarp);
+			carpeta.setDescripcion("GESTION " + gestionCarp);
+		}
 		if (id_carpeta_anterior == null) {
 			carpeta.setCarrera(persona.getCarrera());
 		}
@@ -507,6 +513,22 @@ public class HomeController {
 			// }
 			// carpeta.setCarrera(persona.getCarrera());
 			carpetaService.save(carpeta);
+			if (gestionCarp != null) {
+				//List<Carpeta> lisCarpetas = new ArrayList<>();
+				for (int index = 0; index < 2; index++) {
+					Carpeta carpeta2 = new Carpeta();
+					carpeta2.setNom_carpeta("PERIODO " + (index + 1));
+					carpeta2.setDescripcion("PERIODO " + (index + 1));
+					Set<Usuario> usuarios = new HashSet<>();
+					usuarios.add(persona.getUsuario());
+					carpeta2.setUsuarios(usuarios);
+					carpeta2.setRuta_icono("iconoPredeterminadoCarpeta.webp");
+					carpeta2.setFecha_registro(new Date());
+					carpeta2.setEstado("A");
+					carpeta2.setCarpetaPadre(carpeta);
+					carpetaService.save(carpeta2);
+				}
+			}
 			redirectAttrs
 					.addFlashAttribute("mensaje", "Carpeta agregado correctamente")
 					.addFlashAttribute("clase", "success");
@@ -1655,7 +1677,7 @@ public class HomeController {
 			@PathVariable(value = "id_carpetaG", required = false) Long id_carpetaG)
 			throws DocumentException, MalformedURLException, IOException, com.itextpdf.text.DocumentException {
 		Persona p2 = (Persona) request.getSession().getAttribute("persona");
-			Persona p = personaService.findOne(p2.getId_persona());
+		Persona p = personaService.findOne(p2.getId_persona());
 
 		Carpeta carpetaDoc = carpetaService.findOne(id_carpetaD);
 		// model.addAttribute("carpetaDocente", carpetaDoc);
@@ -2523,7 +2545,8 @@ public class HomeController {
 				List<String[]> asignaturas = new ArrayList<>();
 				List<Map<String, String>> asignaturasData = (List<Map<String, String>>) data.get("asignaturas");
 				for (Map<String, String> asignaturaData : asignaturasData) {
-					String[] asig = {asignaturaData.get("asignatura"), asignaturaData.get("plan"), asignaturaData.get("tipo_evaluacion")};
+					String[] asig = { asignaturaData.get("asignatura"), asignaturaData.get("plan"),
+							asignaturaData.get("tipo_evaluacion") };
 					asignaturas.add(asig);
 				}
 
@@ -2566,13 +2589,14 @@ public class HomeController {
 							docente.setPersona(persona);
 							docenteService.save(docente);
 							/*
-							System.out.println("REGISTRANDO USUARIO..");
-							Usuario usuarioP = new Usuario();
-							usuarioP.setUsername(nombre);
-							usuarioP.setPassword("123456");
-							usuarioP.setEstado("A");
-							usuarioP.setPersona(persona);
-							usuarioService.save(usuarioP);*/
+							 * System.out.println("REGISTRANDO USUARIO..");
+							 * Usuario usuarioP = new Usuario();
+							 * usuarioP.setUsername(nombre);
+							 * usuarioP.setPassword("123456");
+							 * usuarioP.setEstado("A");
+							 * usuarioP.setPersona(persona);
+							 * usuarioService.save(usuarioP);
+							 */
 
 							// CARPETA PRINCIPAL DOCENTE
 							System.out.println("CREANDO CARPETA..");
@@ -2585,7 +2609,7 @@ public class HomeController {
 							carpeta.setDocente(docente);
 							carpeta.setFecha_registro(new Date());
 							Set<Usuario> usuarios = new HashSet<>();
-							//usuarios.add(usuarioP);
+							// usuarios.add(usuarioP);
 							for (Usuario usuario : carpetaService.findOne(id_carpeta_anterior).getCarpetaPadre()
 									.getUsuarios()) {
 								usuarios.add(usuario);
@@ -2688,10 +2712,11 @@ public class HomeController {
 					}
 				} else {
 					System.out.println("RESPUESTA DE LA API: " + nombreCompleto);
-				redirectAttrs
-						.addFlashAttribute("mensaje", "No crear carpeta para este docente, pertenece a otra carrera")
-						.addFlashAttribute("clase", "danger");
-				return "redirect:/home/" + id_carpeta_anterior;
+					redirectAttrs
+							.addFlashAttribute("mensaje",
+									"No crear carpeta para este docente, pertenece a otra carrera")
+							.addFlashAttribute("clase", "danger");
+					return "redirect:/home/" + id_carpeta_anterior;
 				}
 
 				System.out.println("RESPUESTA DE LA API: " + nombreCompleto);

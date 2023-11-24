@@ -37,7 +37,7 @@
 							<div class="file-manager-content-header d-flex justify-content-between align-items-center ">
 								<div class="d-flex align-items-center">
 									<div class="dropdown dropdown-actions"
-										th:if="${tipoPersonasession.nom_tipo_persona == 'Administrador' or tipoPersonasession.nom_tipo_persona == 'Director'}">
+										th:if="${tipoPersonasession.nom_tipo_persona == 'Administrador' or tipoPersonasession.nom_tipo_persona == 'Director' and anterior.nom_carpeta!='MATERIAS'}">
 										<!--style="background: linear-gradient(#28c76f, #28c76f);"-->
 										<button class="btn btn-primary add-file-btn text-center w-100" type="button"
 											id="addNewFile" data-bs-toggle="dropdown" aria-haspopup="true"
@@ -45,14 +45,21 @@
 											<span class="align-middle">Nuevo</span>
 										</button>
 										<div class="dropdown-menu" aria-labelledby="addNewFile">
-											<div th:if="${anterior.nom_carpeta!='MATERIAS'}">
-												<div class="dropdown-item" data-bs-toggle="modal"
-													data-bs-target="#new-folder-modal">
-													<div class="mb-0">
-														<i data-feather="folder" class="me-25"></i> <span
-															class="align-middle">Carpeta</span>
+											<div>
+												<div>
+													<div>
+														<div>
+															<div class="dropdown-item" data-bs-toggle="modal"
+																data-bs-target="#new-folder-modal">
+																<div class="mb-0">
+																	<i data-feather="folder" class="me-25"></i> <span
+																		class="align-middle">Carpeta</span>
+																</div>
+															</div>
+														</div>
 													</div>
 												</div>
+
 												<div th:if="${anterior != null}">
 													<div th:if="${anterior.carpetaPadre != null}">
 														<div th:if="${anterior.carpetaPadre.carpetaPadre != null}">
@@ -67,22 +74,22 @@
 														</div>
 													</div>
 												</div>
-												<div class="dropdown-item" data-bs-toggle="modal" th:if="${editMode}"
-													data-bs-target="#new-archivo-modal">
+												<div class="dropdown-item" data-bs-toggle="modal"
+												th:if="${anterior.id_carpeta != null and anterior.nom_carpeta != 'EVALUACION DOCENTE'}" data-bs-target="#new-archivo-modal">
 													<div class="mb-0">
 														<i data-feather="file" class="me-25"></i> <span
 															class="align-middle">Archivo</span>
 													</div>
 												</div>
 											</div>
-											<div class="dropdown-item" data-bs-toggle="modal"
+											<!--<div class="dropdown-item" data-bs-toggle="modal"
 												th:if="${anterior.nom_carpeta=='MATERIAS'}"
 												data-bs-target="#new-materia-modal">
 												<div class="mb-0">
 													<i data-feather="file" class="me-25"></i> <span
 														class="align-middle">Materia</span>
 												</div>
-											</div>
+											</div>-->
 										</div>
 									</div>
 									<div class="sidebar-toggle d-block d-xl-none float-start align-middle ms-1">
@@ -204,13 +211,14 @@
 								</div>
 								<div th:if="${anterior!=null && anterior.nom_carpeta=='MATERIAS'}">
 									<ul class="nav nav-tabs">
-										<li class="nav-item text-center" th:each="materia: ${materias}" >
+										<li class="nav-item text-center" th:each="materia: ${materias}">
 											<a th:class="${opcionMSelect == materia.id_materia}? 'nav-link active': 'nav-link '"
 												aria-current="page"
 												th:href="@{'/RequisitosMateria/'+${anterior.id_carpeta}+'/'+${materia.id_materia}+'/'}">
 												<p th:text="${materia.nombre}+' - '+${materia.plan}" class="mt-0"></p>
-												<span class="position-absolute bottom-0 start-50 translate-middle badge bg-light text-dark"
-												th:text="'('+${materia.evaluacion} + ')'">
+												<span
+													class="position-absolute bottom-0 start-50 translate-middle badge bg-light text-dark"
+													th:text="'('+${materia.evaluacion} + ')'">
 												</span>
 											</a>
 										</li>
@@ -1161,7 +1169,8 @@
 						<div th:if="${anterior != null}">
 							<div th:if="${anterior.carpetaPadre != null}">
 								<div th:if="${anterior.carpetaPadre.carpetaPadre != null}">
-									<div th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta == 'EVALUACION DOCENTE'}">
+									<div
+										th:if="${anterior.carpetaPadre.carpetaPadre.nom_carpeta == 'EVALUACION DOCENTE'}">
 										<div class="modal fade" id="new-folderDocente-modal">
 											<div class="modal-dialog modal-dialog-centered">
 												<div class="modal-content">
@@ -1273,7 +1282,8 @@
 							<div class="modal-dialog modal-dialog-centered">
 								<div class="modal-content">
 									<form th:action="${editModee} ?@{/renombrar-carpeta} :@{/guardar-carpeta}"
-										th:object="${carpeta}" method="post" enctype="multipart/form-data">
+										th:if="${anterior.nom_carpeta != 'EVALUACION DOCENTE'}" th:object="${carpeta}"
+										method="post" enctype="multipart/form-data">
 										<input type="hidden" class="form-control" th:name="auxiliar" th:if="${editMode}"
 											th:value="${anterior.id_carpeta}" placeholder="Untitled folder" />
 										<!--<input type="hidden" th:each="usuario: ${personasession.usuario}" th:value="${usuario}" th:field="${carpeta.usuarios}">-->
@@ -1303,6 +1313,43 @@
 												id="checkMateriaCarpeta"><br>
 
 										</div>-->
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Icono de
+												carpeta(opcional)</label>
+											<input type="file" class="form-control" name="ruta_icon"
+												placeholder="imagen.png" id="Imagen" accept="image/*" />
+											<div id="alertaImgC"></div>
+
+										</div>
+
+										<div class="modal-footer">
+											<button type="submit" class="btn btn-primary me-1">Crear</button>
+											<button type="button" class="btn btn-outline-secondary"
+												data-bs-dismiss="modal">Cancelar</button>
+										</div>
+									</form>
+									<form th:action="${editModee} ?@{/renombrar-carpeta} :@{/guardar-carpeta}"
+										th:if="${anterior.nom_carpeta == 'EVALUACION DOCENTE'}" th:object="${carpeta}"
+										method="post" enctype="multipart/form-data">
+										<input type="hidden" class="form-control" th:name="auxiliar" th:if="${editMode}"
+											th:value="${anterior.id_carpeta}" placeholder="Untitled folder" />
+										<!--<input type="hidden" th:each="usuario: ${personasession.usuario}" th:value="${usuario}" th:field="${carpeta.usuarios}">-->
+										<div class="modal-header">
+											<h5 class="modal-title">Nueva Carpeta de Gestion</h5>
+											<button type="button" class="btn-close" data-bs-dismiss="modal"
+												aria-label="Close"></button>
+										</div>
+										<div class="modal-body">
+											<label class="form-label" for="basic-addon-name">Inserte solo
+												Numeros</label>
+											<div class="input-group mb-3">
+												<label class="input-group-text" for="referenciaCarpeta">Gestion</label>
+												<input type="text" class="form-control" required maxlength="4"
+													oninput="javascript: if (this.value.length > this.maxLength) this.value = this.value.slice(0, this.maxLength);"
+													onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+													id="referenciaCarpeta" name="gestion" />
+											</div>
+										</div>
 										<div class="modal-body">
 											<label class="form-label" for="basic-addon-name">Icono de
 												carpeta(opcional)</label>

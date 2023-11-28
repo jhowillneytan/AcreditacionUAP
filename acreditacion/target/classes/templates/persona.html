@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr" xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/layout :: head">
+</head>
+
+<body class="vertical-layout vertical-menu-modern content-left-sidebar navbar-floating footer-static" data-open="click"
+	data-menu="vertical-menu-modern" data-col="content-left-sidebar">
+
+	<nav th:replace="layout/layout :: cabecera"></nav>
+
+	<div th:replace="layout/layout :: ladera"></div>
+
+	<div class="app-content content file-manager-application">
+
+		<div class="content-body">
+			<!-- Validation -->
+			<div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+				th:text="${mensaje}" class="alert">
+			</div>
+			<section class="bs-validation">
+				<div class="row">
+					<div class="col-md-12 col-12">
+						<div class="card">
+							<div class="card-header">
+								<h4 class="card-title">Formulario</h4>
+							</div>
+							<div class="card-body">
+								<form
+									th:action="${editMode}? @{/persona/ModificarPersona} :@{/persona/RegistrarPersona}"
+									method="post" enctype="multipart/form-data">
+									<input class="form-control" type="hidden" th:field="${persona.id_persona}"
+										th:if="${editMode}">
+									<input class="form-control" type="hidden" th:field="${persona.estado}"
+										th:if="${editMode}">
+									
+									
+									<div class="row">
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="basic-addon-name">Nombres</label>
+
+											<input type="text" class="form-control" placeholder="Nombre"
+												th:field="${persona.nombre}" required/>
+											<div class="valid-feedback">Correcto!</div>
+											<div class="invalid-feedback">Favor ingresar datos Correctos.</div>
+										</div>
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="basic-addon-name">Ap paterno</label>
+											<input type="text" class="form-control" placeholder="ap paterno"
+												th:field="${persona.ap_paterno}" required/>
+											<div class="valid-feedback">Correcto!</div>
+											<div class="invalid-feedback">Favor ingresar datos Correctos.</div>
+										</div>
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="basic-addon-name">Ap materno</label>
+											<input type="text" class="form-control" placeholder="ap materno"
+												th:field="${persona.ap_materno}" required/>
+											<div class="valid-feedback">Correcto!</div>
+											<div class="invalid-feedback">Favor ingresar datos Correctos.</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="basic-addon-name">C.I.</label>
+
+											<input type="number" class="form-control" placeholder="Ci"
+												th:field="${persona.ci}" required/>
+											<div class="valid-feedback">Correcto!</div>
+											<div class="invalid-feedback">Favor ingresar una Ci.</div>
+										</div>
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="basic-addon-name">Email</label>
+
+											<input type="email" class="form-control" placeholder="email@gmail.com"
+												th:field="${persona.email}" required/>
+											<div class="valid-feedback">Correcto!</div>
+											<div class="invalid-feedback">Favor ingresar una email</div>
+										</div>
+										<!--<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="bsDob">Fecha registro</label> 
+											<input type="date" class="form-control picker" th:field="${persona.fecha_registro}" required="required"/>
+											<div class="valid-feedback">Correcto!</div>
+											<div class="invalid-feedback">Favor ingresar fecha.</div>
+										</div>-->
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="select-country1">Tipo Persona</label>
+											<select class="form-select" th:field="${persona.tipoPersona}" required>
+												<option th:value="${editMode}? ${persona.tipoPersona}: ''"
+												th:text="${editMode}? ${persona.tipoPersona.nom_tipo_persona}: 'Seleccionar'"></option>
+												<option th:each="tp: ${listaTipoPersonas}"
+													th:value="${tp.id_tipo_persona}" th:text="${tp.nom_tipo_persona}">
+												</option>
+											</select>
+										</div>
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="select-country1">Carrera</label>
+											<select class="form-select" th:field="${persona.carrera}" required>
+												<option th:value="${editMode}? ${persona.carrera}: ''"
+												th:text="${editMode}? ${persona.carrera.nom_carrera}: 'Seleccionar'"></option>
+												<option th:each="ca: ${listaCarreras}" th:value="${ca.id_carrera}"
+													th:text="${ca.nom_carrera}"></option>
+											</select>
+										</div>
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="select-country1">Cargo</label>
+											<select class="form-select" th:field="${persona.cargo}" required>
+												<option th:value="${editMode}? ${persona.cargo}: ''"
+												th:text="${editMode}? ${persona.cargo.nom_cargo}: 'Seleccionar'"></option>
+												<option th:each="car: ${listaCargos}" th:value="${car.id_cargo}"
+													th:text="${car.nom_cargo}"></option>
+											</select>
+										</div>
+										<div class="col-md-4 col-12 mb-1">
+											<label class="form-label" for="select-country1">Puesto</label>
+											<select class="form-select" th:field="${persona.puesto}" required>
+												<option th:value="${editMode}? ${persona.puesto}: ''"
+												th:text="${editMode}? ${persona.puesto.nom_puesto}: 'Seleccionar'"></option>
+												<option th:each="p: ${listaPuesto}" th:value="${p.id_puesto}"
+													th:text="${p.nom_puesto}"></option>
+											</select>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-8 col-12 mb-1">
+											<label for="customFile1" class="form-label">Imagen Perfil</label>
+											<input class="form-control" type="file" name="Foto" />
+										</div>
+									</div>
+									<a th:class="${editMode}?'btn btn-secondary'"
+										th:href="@{'/persona/cancelar-editar-persona'}"
+										th:text="${editMode}?'Cancelar'"></a>
+									<input type="submit" class="btn btn-primary"
+										th:value="${editMode}?'Actualizar':'Agregar'" />
+								</form>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+			</section>
+			<section id="responsive-datatable">
+				<div class="row">
+					<div class="col-12">
+						<div class="card">
+							<div class="card-body">
+								<div class="table-responsive">
+									<table id="example" class="table" style="width:100%">
+										<thead>
+											<tr>
+												<th>Nombre</th>
+												<th>Paterno</th>
+												<th>Materno</th>
+												<th>Ci</th>
+												<th>Fecha registro</th>
+												<th>Tipo persona</th>
+												<th>Imagen</th>
+												<!--<th>Estado</th>-->
+												<th>Otros</th>
+											</tr>
+										</thead>
+										<tbody>
+
+											<tr th:each="persona: ${listaPersonas}" th:if="${persona.estado != 'X'}">
+												<td th:text="${persona.nombre}"></td>
+												<td th:text="${persona.ap_paterno}"></td>
+												<td th:text="${persona.ap_materno}"></td>
+												<td th:text="${persona.ci}"></td>
+												<td th:text="${persona.fecha_registro}"></td>
+												<td th:text="${persona.tipoPersona.nom_tipo_persona}"></td>
+												<td><img class="round" th:src="'/acreditacion/uploads/'+${persona.imagen_persona}"
+														alt="avatar" height="40" width="40"></td>
+												<!--<td th:text="${persona.estado}"></td>-->
+												<td>
+													<a th:href="@{'/persona/editar-persona/' + ${persona.id_persona}}"><button
+															class="btn btn-outline-primary"><i
+																class="fas fa-edit"></i></button></a>
+													<a
+														th:href="@{'/persona/eliminar-persona/' + ${persona.id_persona}}"><button
+															class="btn btn-outline-danger"><i
+																class="fa fa-trash"></i></button></a>
+												</td>
+											</tr>
+										</tbody>
+										<tfoot>
+											<tr>
+												<th>Nombre</th>
+												<th>Paterno</th>
+												<th>Materno</th>
+												<th>Ci</th>
+												<th>Fecha registro</th>
+												<th>Tipo persona</th>
+												<th>Imagen</th>
+												<!--<th>Estado</th>-->
+												<th>Otros</th>
+											</tr>
+										</tfoot>
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- /Validation -->
+
+		</div>
+
+
+	</div>
+
+	<footer th:replace="layout/layout :: pie"></footer>
+
+	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.bootstrap4.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.3/jszip.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script>
+
+
+	<script>
+		$(document).ready(function () {
+			var table = $('#example').DataTable({
+				lengthChange: false,
+				buttons: ['copy', 'excel', 'pdf', 'print']
+			});
+
+			table.buttons().container()
+				.appendTo('#example_wrapper .col-md-6:eq(0)');
+		});
+	</script>
+</body>
+
+</html>

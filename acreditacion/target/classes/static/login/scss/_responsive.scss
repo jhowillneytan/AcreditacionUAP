@@ -1,0 +1,41 @@
+@include media-md {
+
+  // Decrease font size of the time
+  .time-display {
+    // Smaller font
+    font-size: 3rem;
+
+    .date-text {
+      font-size: 1rem;
+    }
+  }
+
+  .login-form {
+    min-width: 100vw;
+    top: 25% !important;
+  }
+
+}
+
+@include media-lg {
+
+  .time-display {
+
+    // Move the time-display to bottom left on big screens
+    position: absolute;
+    bottom: 0;
+
+    // Bigger font
+    font-size: 4rem;
+
+    .date-text {
+      font-size: 2rem;
+    }
+
+  }
+
+  .login-form {
+    min-width: 25vw;
+  }
+
+}

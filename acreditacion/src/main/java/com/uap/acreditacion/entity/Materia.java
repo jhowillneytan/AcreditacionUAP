@@ -1,6 +1,7 @@
 package com.uap.acreditacion.entity;
 
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -34,6 +35,7 @@ public class Materia implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_materia;
     private String nombre;
+    private String sigla;
     private String estado;
     private String plan;
     private String evaluacion;
@@ -48,6 +50,9 @@ public class Materia implements Serializable{
     joinColumns=@JoinColumn(name = "id_materia"),
     inverseJoinColumns = @JoinColumn(name = "id_requisito"))
     private Set<Requisito> requisitos;
+
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "asignaturas", fetch = FetchType.LAZY)
+    private Set<Estudiante> estudiantes = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "materia")
     private List<Archivo> archivos;

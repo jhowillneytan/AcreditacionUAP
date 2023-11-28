@@ -40,5 +40,10 @@ public class MateriaServiceImpl implements IMateriaService{
     public Materia materiaNombre(String nombre) {
         return materiaDao.materiaNombre(nombre);
     }
+
+    @Override
+    public Materia materiaSigla(String sigla) {
+        return materiaDao.materiaSigla(sigla);
+    }
     
 }

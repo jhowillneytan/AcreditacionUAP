@@ -14,4 +14,6 @@ public interface IMateriaService {
     public void delete(Long id);
 
     public Materia materiaNombre(String nombre);
+
+    public Materia materiaSigla(String sigla);
 }

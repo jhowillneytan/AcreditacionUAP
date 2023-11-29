@@ -514,7 +514,7 @@ public class HomeController {
 			// carpeta.setCarrera(persona.getCarrera());
 			carpetaService.save(carpeta);
 			if (gestionCarp != null) {
-				//List<Carpeta> lisCarpetas = new ArrayList<>();
+				// List<Carpeta> lisCarpetas = new ArrayList<>();
 				for (int index = 0; index < 2; index++) {
 					Carpeta carpeta2 = new Carpeta();
 					carpeta2.setNom_carpeta("PERIODO " + (index + 1));
@@ -2546,7 +2546,8 @@ public class HomeController {
 				List<Map<String, String>> asignaturasData = (List<Map<String, String>>) data.get("asignaturas");
 				for (Map<String, String> asignaturaData : asignaturasData) {
 					String[] asig = { asignaturaData.get("asignatura"), asignaturaData.get("plan"),
-							asignaturaData.get("tipo_evaluacion") };
+							asignaturaData.get("tipo_evaluacion"), asignaturaData.get("sigla"),
+							asignaturaData.get("grupo") };
 					asignaturas.add(asig);
 				}
 
@@ -2634,20 +2635,42 @@ public class HomeController {
 
 							// MATERIA
 							System.out.println("CARGANDO MATERIAS..");
+							Set<Materia> materias = new HashSet<>();
 							for (String[] asignatura : asignaturas) {
-								System.out.println("MATERIA:" + asignatura);
-								Materia materia = new Materia();
-								materia.setEstado("A");
-								materia.setNombre(asignatura[0]);
-								materia.setPlan(asignatura[1]);
-								materia.setEvaluacion(asignatura[2]);
-								materia.setCarpeta(carpetaMateria);
-								// REQUISITOS
-								System.out.println("CARGANDO REQUISITOS..");
-								Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
-								materia.setRequisitos(requisitos);
-								materiaService.save(materia);
+								if (materiaService.materiaSigla(asignatura[3]) == null) {
+									System.out.println("MATERIA:" + asignatura);
+									Materia materia = new Materia();
+									materia.setEstado("A");
+									materia.setNombre(asignatura[0]);
+									materia.setPlan(asignatura[1]);
+									materia.setEvaluacion(asignatura[2]);
+									materia.setSigla(asignatura[3]);
+									materia.setCarpeta(carpetaMateria);
+									// REQUISITOS
+									System.out.println("CARGANDO REQUISITOS..");
+									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
+									materia.setRequisitos(requisitos);
+									materiaService.save(materia);
+									materias.add(materia);
+								} else {
+									System.out.println("MATERIA:" + asignatura);
+									Materia materia = materiaService.materiaSigla(asignatura[3]);
+									materia.setEstado("A");
+									materia.setNombre(asignatura[0]);
+									materia.setPlan(asignatura[1]);
+									materia.setEvaluacion(asignatura[2]);
+									materia.setSigla(asignatura[3]);
+									materia.setCarpeta(carpetaMateria);
+									// REQUISITOS
+									System.out.println("CARGANDO REQUISITOS..");
+									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
+									materia.setRequisitos(requisitos);
+									materiaService.save(materia);
+									materias.add(materia);
+								}
+
 							}
+							docente.setAsignatura(materias);
 
 						} else {
 							Docente docente = personaService.personaCi(ci).getDocente();
@@ -2672,6 +2695,7 @@ public class HomeController {
 							carpetaService.save(carpeta);
 
 							// CARPETA MATERIAS
+
 							Carpeta carpetaMateria = new Carpeta();
 							carpetaMateria.setRuta_icono("iconoPredeterminadoCarpeta.webp");
 							carpetaMateria.setNom_carpeta("MATERIAS");
@@ -2688,21 +2712,42 @@ public class HomeController {
 
 							// MATERIA
 							System.out.println("CARGANDO MATERIAS..");
+							Set<Materia> materias = new HashSet<>();
 							for (String[] asignatura : asignaturas) {
+								if (materiaService.materiaSigla(asignatura[3]) == null) {
+									System.out.println("MATERIA:" + asignatura);
+									Materia materia = new Materia();
+									materia.setEstado("A");
+									materia.setNombre(asignatura[0]);
+									materia.setPlan(asignatura[1]);
+									materia.setEvaluacion(asignatura[2]);
+									materia.setSigla(asignatura[3]);
+									materia.setCarpeta(carpetaMateria);
+									// REQUISITOS
+									System.out.println("CARGANDO REQUISITOS..");
+									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
+									materia.setRequisitos(requisitos);
+									materiaService.save(materia);
+									materias.add(materia);
+								} else {
+									System.out.println("MATERIA:" + asignatura);
+									Materia materia = materiaService.materiaSigla(asignatura[3]);
+									materia.setEstado("A");
+									materia.setNombre(asignatura[0]);
+									materia.setPlan(asignatura[1]);
+									materia.setEvaluacion(asignatura[2]);
+									materia.setSigla(asignatura[3]);
+									materia.setCarpeta(carpetaMateria);
+									// REQUISITOS
+									System.out.println("CARGANDO REQUISITOS..");
+									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
+									materia.setRequisitos(requisitos);
+									materiaService.save(materia);
+									materias.add(materia);
+								}
 
-								System.out.println("MATERIA:" + asignatura);
-								Materia materia = new Materia();
-								materia.setEstado("A");
-								materia.setNombre(asignatura[0]);
-								materia.setPlan(asignatura[1]);
-								materia.setEvaluacion(asignatura[2]);
-								materia.setCarpeta(carpetaMateria);
-								// REQUISITOS
-								System.out.println("CARGANDO REQUISITOS..");
-								Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
-								materia.setRequisitos(requisitos);
-								materiaService.save(materia);
 							}
+							docente.setAsignatura(materias);
 						}
 					} else {
 						redirectAttrs

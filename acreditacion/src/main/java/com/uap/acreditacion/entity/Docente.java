@@ -19,6 +19,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -39,14 +41,12 @@ public class Docente implements Serializable{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "docente")
     private List<Carpeta> carpetas;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "acre_docente")
-    private List<DocenteMateria> docente_materia;
-
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "docente_materia",
-        joinColumns = @JoinColumn(name = "id_docente"),
-        inverseJoinColumns = @JoinColumn(name = "id_materia"))
-    private Set<Materia> materias = new HashSet<>();
+    joinColumns = @JoinColumn(name = "id_docente"),
+    inverseJoinColumns = @JoinColumn(name = "id_materia"))
+    private Set<Materia> asignatura;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_persona")

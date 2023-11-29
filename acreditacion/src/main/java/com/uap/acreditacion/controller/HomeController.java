@@ -2671,7 +2671,7 @@ public class HomeController {
 
 							}
 							docente.setAsignatura(materias);
-
+							docenteService.save(docente);
 						} else {
 							Docente docente = personaService.personaCi(ci).getDocente();
 
@@ -2745,9 +2745,9 @@ public class HomeController {
 									materiaService.save(materia);
 									materias.add(materia);
 								}
-
 							}
 							docente.setAsignatura(materias);
+							docenteService.save(docente);
 						}
 					} else {
 						redirectAttrs

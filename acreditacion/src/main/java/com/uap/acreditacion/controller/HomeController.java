@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
+import org.apache.tomcat.jni.OS;
 import org.dom4j.DocumentException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -2589,15 +2590,6 @@ public class HomeController {
 							docente.setRd(String.valueOf(rd));
 							docente.setPersona(persona);
 							docenteService.save(docente);
-							/*
-							 * System.out.println("REGISTRANDO USUARIO..");
-							 * Usuario usuarioP = new Usuario();
-							 * usuarioP.setUsername(nombre);
-							 * usuarioP.setPassword("123456");
-							 * usuarioP.setEstado("A");
-							 * usuarioP.setPersona(persona);
-							 * usuarioService.save(usuarioP);
-							 */
 
 							// CARPETA PRINCIPAL DOCENTE
 							System.out.println("CREANDO CARPETA..");
@@ -2635,7 +2627,7 @@ public class HomeController {
 
 							// MATERIA
 							System.out.println("CARGANDO MATERIAS..");
-							Set<Materia> materias = new HashSet<>();
+							// Set<Materia> materias = new HashSet<>();
 							for (String[] asignatura : asignaturas) {
 								if (materiaService.materiaSigla(asignatura[3]) == null) {
 									System.out.println("MATERIA:" + asignatura);
@@ -2650,8 +2642,22 @@ public class HomeController {
 									System.out.println("CARGANDO REQUISITOS..");
 									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
 									materia.setRequisitos(requisitos);
+
+									// Inicializar el conjunto de asignaturas si es nulo
+									if (docente.getAsignatura() == null) {
+										docente.setAsignatura(new HashSet<>());
+									}
+
+									// Inicializar el conjunto de docentes si es nulo
+									if (materia.getDocentes() == null) {
+										materia.setDocentes(new HashSet<>());
+									}
+									materia.getDocentes().add(docente);
+									// materia.setDocentes(docentes);
 									materiaService.save(materia);
-									materias.add(materia);
+									// materias.add(materia);
+									docente.getAsignatura().add(materia);
+									docenteService.save(docente);
 								} else {
 									System.out.println("MATERIA:" + asignatura);
 									Materia materia = materiaService.materiaSigla(asignatura[3]);
@@ -2665,13 +2671,28 @@ public class HomeController {
 									System.out.println("CARGANDO REQUISITOS..");
 									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
 									materia.setRequisitos(requisitos);
+									// Set<Docente> docentes = new HashSet<>();
+									// docentes.add(docente);
+									// Inicializar el conjunto de asignaturas si es nulo
+									if (docente.getAsignatura() == null) {
+										docente.setAsignatura(new HashSet<>());
+									}
+
+									// Inicializar el conjunto de docentes si es nulo
+									if (materia.getDocentes() == null) {
+										materia.setDocentes(new HashSet<>());
+									}
+									materia.getDocentes().add(docente);
+									// materia.setDocentes(docentes);
 									materiaService.save(materia);
-									materias.add(materia);
+									// materias.add(materia);
+									docente.getAsignatura().add(materia);
+									docenteService.save(docente);
 								}
 
 							}
-							docente.setAsignatura(materias);
-							docenteService.save(docente);
+							// docente.setAsignatura(materias);
+							// docenteService.save(docente);
 						} else {
 							Docente docente = personaService.personaCi(ci).getDocente();
 
@@ -2684,6 +2705,7 @@ public class HomeController {
 							carpeta.setCarpetaPadre(carpetaService.findOne(id_carpeta_anterior));
 							carpeta.setEstado("A");
 							carpeta.setDocente(docente);
+							System.out.println("Docente:" + docente.getRd());
 							carpeta.setFecha_registro(new Date());
 							Set<Usuario> usuarios = new HashSet<>();
 							usuarios.add(personaService.personaCi(ci).getUsuario());
@@ -2712,8 +2734,9 @@ public class HomeController {
 
 							// MATERIA
 							System.out.println("CARGANDO MATERIAS..");
-							Set<Materia> materias = new HashSet<>();
+							// Set<Materia> materias = new HashSet<>();
 							for (String[] asignatura : asignaturas) {
+								System.out.println("MATERIA AAAAAA");
 								if (materiaService.materiaSigla(asignatura[3]) == null) {
 									System.out.println("MATERIA:" + asignatura);
 									Materia materia = new Materia();
@@ -2727,8 +2750,23 @@ public class HomeController {
 									System.out.println("CARGANDO REQUISITOS..");
 									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
 									materia.setRequisitos(requisitos);
+
+									// Inicializar el conjunto de asignaturas si es nulo
+									if (docente.getAsignatura() == null) {
+										docente.setAsignatura(new HashSet<>());
+									}
+
+									// Inicializar el conjunto de docentes si es nulo
+									if (materia.getDocentes() == null) {
+										materia.setDocentes(new HashSet<>());
+									}
+									// CARGANDO TABLA INTERMEDIA
+									materia.getDocentes().add(docente);
+									// materia.setDocentes(docentes);
 									materiaService.save(materia);
-									materias.add(materia);
+									// materias.add(materia);
+									docente.getAsignatura().add(materia);
+									docenteService.save(docente);
 								} else {
 									System.out.println("MATERIA:" + asignatura);
 									Materia materia = materiaService.materiaSigla(asignatura[3]);
@@ -2742,12 +2780,26 @@ public class HomeController {
 									System.out.println("CARGANDO REQUISITOS..");
 									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
 									materia.setRequisitos(requisitos);
+
+									// Inicializar el conjunto de asignaturas si es nulo
+									if (docente.getAsignatura() == null) {
+										docente.setAsignatura(new HashSet<>());
+									}
+
+									// Inicializar el conjunto de docentes si es nulo
+									if (materia.getDocentes() == null) {
+										materia.setDocentes(new HashSet<>());
+									}
+									materia.getDocentes().add(docente);
+									// materia.setDocentes(docentes);
 									materiaService.save(materia);
-									materias.add(materia);
+									// materias.add(materia);
+									docente.getAsignatura().add(materia);
+									docenteService.save(docente);
 								}
 							}
-							docente.setAsignatura(materias);
-							docenteService.save(docente);
+							// docente.setAsignatura(materias);
+							// docenteService.save(docente);
 						}
 					} else {
 						redirectAttrs

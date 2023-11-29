@@ -57,4 +57,6 @@ public class Materia implements Serializable{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "materia")
     private List<Archivo> archivos;
 
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "materia")
+    private List<DocenteMateria> docente_materia;
 }

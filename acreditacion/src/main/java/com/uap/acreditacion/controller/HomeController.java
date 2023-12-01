@@ -3137,6 +3137,7 @@ public class HomeController {
 							Docente docente = new Docente();
 							docente.setRd(String.valueOf(rd));
 							docente.setPersona(persona);
+							docente.setFecha_registro(new Date());
 							docenteService.save(docente);
 
 							// CARPETA PRINCIPAL DOCENTE
@@ -3186,6 +3187,7 @@ public class HomeController {
 									materia.setEvaluacion(asignatura[2]);
 									materia.setSigla(asignatura[3]);
 									materia.setCarpeta(carpetaMateria);
+									materia.setFecha_registro(new Date());
 									// REQUISITOS
 									System.out.println("CARGANDO REQUISITOS..");
 									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());
@@ -3294,6 +3296,7 @@ public class HomeController {
 									materia.setEvaluacion(asignatura[2]);
 									materia.setSigla(asignatura[3]);
 									materia.setCarpeta(carpetaMateria);
+									materia.setFecha_registro(new Date());
 									// REQUISITOS
 									System.out.println("CARGANDO REQUISITOS..");
 									Set<Requisito> requisitos = new HashSet<>(requisitoService.findAll());

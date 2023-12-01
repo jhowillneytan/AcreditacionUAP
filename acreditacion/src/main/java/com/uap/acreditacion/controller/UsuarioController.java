@@ -2,6 +2,7 @@ package com.uap.acreditacion.controller;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -99,7 +100,7 @@ public class UsuarioController {
 		if (request.getSession().getAttribute("persona") != null) {
 
 			usuario.setEstado("A");
-
+			usuario.setFecha_registro(new Date());
 			iUsuarioService.save(usuario);
 			String mensaje = "\n" +
 					"Tu Usuario es: " + usuario.getUsername() + "\n Contrasena es: " + usuario.getPassword() + "\n " +

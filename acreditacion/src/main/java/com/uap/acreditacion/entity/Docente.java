@@ -2,6 +2,7 @@ package com.uap.acreditacion.entity;
 
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,6 +19,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -37,7 +40,9 @@ public class Docente implements Serializable{
 
     private String rd;
     private String estado;
-
+    @Temporal(TemporalType.DATE)
+    private Date fecha_registro;
+    
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "docente")
     private List<Carpeta> carpetas;
 

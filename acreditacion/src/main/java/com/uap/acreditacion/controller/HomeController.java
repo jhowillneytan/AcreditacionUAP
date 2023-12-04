@@ -3184,7 +3184,7 @@ public class HomeController {
 									materia.setEstado("A");
 									materia.setNombre(asignatura[0]);
 									materia.setPlan(asignatura[1]);
-									materia.setEvaluacion(asignatura[2]);
+									//materia.setEvaluacion(asignatura[2]);
 									materia.setSigla(asignatura[3]);
 									materia.setCarpeta(carpetaMateria);
 									materia.setFecha_registro(new Date());
@@ -3214,7 +3214,7 @@ public class HomeController {
 									materia.setEstado("A");
 									materia.setNombre(asignatura[0]);
 									materia.setPlan(asignatura[1]);
-									materia.setEvaluacion(asignatura[2]);
+									//materia.setEvaluacion(asignatura[2]);
 									materia.setSigla(asignatura[3]);
 									materia.setCarpeta(carpetaMateria);
 									// REQUISITOS
@@ -3293,7 +3293,7 @@ public class HomeController {
 									materia.setEstado("A");
 									materia.setNombre(asignatura[0]);
 									materia.setPlan(asignatura[1]);
-									materia.setEvaluacion(asignatura[2]);
+									//materia.setEvaluacion(asignatura[2]);
 									materia.setSigla(asignatura[3]);
 									materia.setCarpeta(carpetaMateria);
 									materia.setFecha_registro(new Date());
@@ -3324,7 +3324,7 @@ public class HomeController {
 									materia.setEstado("A");
 									materia.setNombre(asignatura[0]);
 									materia.setPlan(asignatura[1]);
-									materia.setEvaluacion(asignatura[2]);
+									//materia.setEvaluacion(asignatura[2]);
 									materia.setSigla(asignatura[3]);
 									materia.setCarpeta(carpetaMateria);
 									// REQUISITOS

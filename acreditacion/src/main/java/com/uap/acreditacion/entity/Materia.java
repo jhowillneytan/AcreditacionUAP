@@ -41,7 +41,7 @@ public class Materia implements Serializable{
     private String sigla;
     private String estado;
     private String plan;
-    private String evaluacion;
+    //private String evaluacion;
 
     @Temporal(TemporalType.DATE)
     private Date fecha_registro;
@@ -65,4 +65,8 @@ public class Materia implements Serializable{
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "asignatura", fetch = FetchType.LAZY)
     private Set<Docente> docentes = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "materia")
+    private List<TipoEvaluacionMateria> evaluacionMaterias;
+
 }

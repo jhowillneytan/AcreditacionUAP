@@ -66,7 +66,11 @@ public class Materia implements Serializable{
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "asignatura", fetch = FetchType.LAZY)
     private Set<Docente> docentes = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "materia")
-    private List<TipoEvaluacionMateria> evaluacionMaterias;
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "tipoEvaluacio_asignatura",
+    joinColumns = @JoinColumn(name = "id_materia"),
+    inverseJoinColumns = @JoinColumn(name = "id_tipoEvaluacionMateria"))
+    private Set<TipoEvaluacionMateria> tipoEvaluacionMaterias;
 
 }

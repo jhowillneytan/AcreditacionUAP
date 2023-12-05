@@ -217,8 +217,15 @@
 												th:href="@{'/RequisitosMateria/'+${anterior.id_carpeta}+'/'+${materia.id_materia}+'/'}">
 												<p th:text="${materia.nombre}+' - '+${materia.plan}" class="mt-0"></p>
 												<span
-													class="position-absolute bottom-0 start-50 translate-middle badge bg-light text-dark"
-													th:text="'('+${materia.evaluacion} + ')'">
+													class="position-absolute bottom-0 start-50 translate-middle badge bg-light text-dark">
+													<th:block th:if="${materia.tipoEvaluacionMaterias.size == 1}">
+														<th:text th:each="tipoEvaluacion: ${materia.tipoEvaluacionMaterias}" th:text="'('+${tipoEvaluacion.nombre} + ')'"></th:text>
+													</th:block>
+													<th:block th:if="${materia.tipoEvaluacionMaterias.size > 1}">
+														<th:text th:text="' ( '"></th:text>
+														<th:text th:each="tipoEvaluacion: ${materia.tipoEvaluacionMaterias}" th:text="${tipoEvaluacion.nombre} + ' - '"></th:text>
+														<th:text th:text="' ) '"></th:text>
+													</th:block>
 												</span>
 											</a>
 										</li>

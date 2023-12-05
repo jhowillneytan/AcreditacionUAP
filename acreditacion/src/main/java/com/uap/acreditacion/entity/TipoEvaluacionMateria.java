@@ -1,6 +1,8 @@
 package com.uap.acreditacion.entity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -9,6 +11,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -30,7 +33,7 @@ public class TipoEvaluacionMateria {
     private String nombre;
     private String estado;   
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_materia")
-    private Materia materia;
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "tipoEvaluacionMaterias", fetch = FetchType.LAZY)
+    private Set<Materia> materias = new HashSet<>();
+
 }

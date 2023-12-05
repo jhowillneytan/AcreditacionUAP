@@ -1782,12 +1782,12 @@
 										enctype="multipart/form-data">
 										<input type="hidden" class="form-control" th:name="auxiliar" th:if="${editMode}"
 											th:value="${anterior.id_carpeta}" placeholder="Untitled folder" />
-										<input type="hidden" class="form-control" name="idParametro" id="idParametro"
+										<!--<input type="hidden" class="form-control" name="idParametro" id="idParametro"
 											value="0" placeholder="Untitled folder" />
 										<input type="hidden" th:value="${opcionMSelect}" th:if="${opcionMSelect !=null}"
 											name="idMateria">
 										<input type="hidden" th:value="${opcionRselect}" th:if="${opcionRselect !=null}"
-											name="idRequisito">
+											name="idRequisito">-->
 										<div class="modal-header">
 											<h5 class="modal-title">Nuevo Archivo</h5>
 											<button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -1807,7 +1807,7 @@
 											</div>
 											<div class="col-md-6">
 												<label class="form-label" for="select-country1">Requisito</label>
-												<select class="form-control select2" name="idParametro" id="selectRequisito"
+												<select class="form-control select2" name="idRequisito" id="selectRequisito"
 												onchange="cargarParametro(this.value)" required>
 													<option value="0">Seleccionar</option>
 													<!--<option th:each="requisito: ${requisitos}"
@@ -1820,7 +1820,7 @@
 										<div class="modal-body row">
 											<div class="col-md-6">
 												<label class="form-label" for="select-country1">Parametro</label>
-											<select class="form-control select2" th:field="${archivo.parametros}" id="selectParametro"
+											<select class="form-control select2"  id="selectParametro"
 												name="idParametro" required>
 												<option value="0">Seleccionar</option>
 												<!--<option th:each="requisito: ${requisitos}"
@@ -2444,6 +2444,7 @@
 						var option = document.createElement('option');
 						option.value = fila[0];
 						option.text = fila[1];
+						//alert(fila[0]);
 						//option.selected = true;
 						selectElement.append(option);
 					});

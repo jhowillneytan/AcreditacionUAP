@@ -892,8 +892,6 @@ public class HomeController {
 			@RequestParam(value = "idMateria", required = false) Long id_materia,
 			@RequestParam(value = "idRequisito", required = false) Long id_requisito) throws IOException {
 
-		Parametro parametro = parametroService.findOne(id_parametro);
-		Set<Parametro> parametros = new HashSet<>();
 		String direccion = "redirect:/home/";
 		for (MultipartFile multipartFile : file) {
 			Archivo archivo2 = new Archivo();
@@ -925,10 +923,14 @@ public class HomeController {
 				archivo2.setDescripcion(archivo.getDescripcion());
 				archivo2.setEstado("A");
 				archivo2.setFecha_registro(new Date());
-
-				parametros.add(parametro);
-				archivo2.setParametros(parametros);
-
+				//System.out.println("id recibido parametro: "+id_parametro);
+				if (parametroService.findOne(id_parametro) != null) {
+					Parametro parametro = parametroService.findOne(id_parametro);
+					Set<Parametro> parametros = new HashSet<>();
+					parametros.add(parametro);
+					archivo2.setParametros(parametros);
+					System.out.println("parametros " + parametro.getNombre());
+				}
 				archivoService.save(archivo2);
 
 			} else {
@@ -2143,112 +2145,112 @@ public class HomeController {
 				// CARGAR MATERIAS CON API
 				// LISTAR MATERIAS DE DOCENTES
 				List<Materia> materias = new ArrayList<>();
-					Carpeta carpetaMateria2 = carpeta2;
-					System.out.println("MATERIAS DE DOCENTES: " + carpetaMateria2.getNom_carpeta());
-					if (carpetaMateria2.getNom_carpeta().equals("MATERIAS")) {
-						System.out.println("VERDADERO 1");
-						// if (carpeta.getCarpetaPadre().getCarpetaPadre() != null) {
-						System.out.println("VERDADERO 2");
-						// if (carpeta.getCarpetaPadre().getCarpetaPadre().getCarpetaPadre() != null) {
-						Carpeta carpetaGestion = carpetaMateria2.getCarpetaPadre().getCarpetaPadre()
-								.getCarpetaPadre();
-						Carpeta carpetaPeriodo = carpetaMateria2.getCarpetaPadre().getCarpetaPadre();
-						Carpeta carpetaDocente = carpetaMateria2.getCarpetaPadre();
+				Carpeta carpetaMateria2 = carpeta2;
+				System.out.println("MATERIAS DE DOCENTES: " + carpetaMateria2.getNom_carpeta());
+				if (carpetaMateria2.getNom_carpeta().equals("MATERIAS")) {
+					System.out.println("VERDADERO 1");
+					// if (carpeta.getCarpetaPadre().getCarpetaPadre() != null) {
+					System.out.println("VERDADERO 2");
+					// if (carpeta.getCarpetaPadre().getCarpetaPadre().getCarpetaPadre() != null) {
+					Carpeta carpetaGestion = carpetaMateria2.getCarpetaPadre().getCarpetaPadre()
+							.getCarpetaPadre();
+					Carpeta carpetaPeriodo = carpetaMateria2.getCarpetaPadre().getCarpetaPadre();
+					Carpeta carpetaDocente = carpetaMateria2.getCarpetaPadre();
 
-						// carreraService.findOne(obtenerIdCarpetaPadreRecursivo(carpeta));
-						Carpeta carpeta3 = carpetaService.findOne(obtenerIdCarpetaPadreRecursivo(carpeta2));
-						String numero = carpetaGestion.getNom_carpeta().replaceAll("[^0-9]", "");
-						int numeroGestion = Integer.parseInt(numero);
-						System.out.println("gestion: " + numeroGestion);
+					// carreraService.findOne(obtenerIdCarpetaPadreRecursivo(carpeta));
+					Carpeta carpeta3 = carpetaService.findOne(obtenerIdCarpetaPadreRecursivo(carpeta2));
+					String numero = carpetaGestion.getNom_carpeta().replaceAll("[^0-9]", "");
+					int numeroGestion = Integer.parseInt(numero);
+					System.out.println("gestion: " + numeroGestion);
 
-						String numero2 = carpetaPeriodo.getNom_carpeta().replaceAll("[^0-9]", "");
-						int numeroPeriodo = Integer.parseInt(numero2);
-						System.out.println("periodo: " + numeroPeriodo);
+					String numero2 = carpetaPeriodo.getNom_carpeta().replaceAll("[^0-9]", "");
+					int numeroPeriodo = Integer.parseInt(numero2);
+					System.out.println("periodo: " + numeroPeriodo);
 
-						Map<String, Object> requests = new HashMap<String, Object>();
-						requests.put("rd", carpetaDocente.getDocente().getRd());
-						requests.put("periodo", numero2);
-						requests.put("gestion", numero);
-						requests.put("code_carrera", carpeta3.getCarrera().getId_carrera());
-						System.out.println("RD: " + carpetaDocente.getDocente().getRd());
-						System.out.println("periodo: " + numero2);
-						System.out.println("gestion: " + numero);
-						System.out.println("code_carrera: " + carpeta3.getCarrera().getId_carrera());
-						String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
-						String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
+					Map<String, Object> requests = new HashMap<String, Object>();
+					requests.put("rd", carpetaDocente.getDocente().getRd());
+					requests.put("periodo", numero2);
+					requests.put("gestion", numero);
+					requests.put("code_carrera", carpeta3.getCarrera().getId_carrera());
+					System.out.println("RD: " + carpetaDocente.getDocente().getRd());
+					System.out.println("periodo: " + numero2);
+					System.out.println("gestion: " + numero);
+					System.out.println("code_carrera: " + carpeta3.getCarrera().getId_carrera());
+					String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+					String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
-						HttpHeaders headers = new HttpHeaders();
+					HttpHeaders headers = new HttpHeaders();
 
-						headers.setContentType(MediaType.APPLICATION_JSON);
-						headers.set("x-api-key", key);
+					headers.setContentType(MediaType.APPLICATION_JSON);
+					headers.set("x-api-key", key);
 
-						HttpEntity<HashMap> req = new HttpEntity(requests, headers);
+					HttpEntity<HashMap> req = new HttpEntity(requests, headers);
 
-						RestTemplate restTemplate = new RestTemplate();
+					RestTemplate restTemplate = new RestTemplate();
 
-						ResponseEntity<Map> resp = restTemplate.exchange(url, HttpMethod.POST, req, Map.class);
+					ResponseEntity<Map> resp = restTemplate.exchange(url, HttpMethod.POST, req, Map.class);
 
-						if (resp.getStatusCode() == HttpStatus.OK) {
-							Map<String, Object> responseBody = resp.getBody();
-							// Aquí puedes procesar los datos de responseBody
-							Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
+					if (resp.getStatusCode() == HttpStatus.OK) {
+						Map<String, Object> responseBody = resp.getBody();
+						// Aquí puedes procesar los datos de responseBody
+						Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
 
-							// Obtener los valores de "paterno", "ci", "fecha_nacimiento", etc., del objeto
-							// "data"
+						// Obtener los valores de "paterno", "ci", "fecha_nacimiento", etc., del objeto
+						// "data"
 
-							if (data != null) {
+						if (data != null) {
 
-								String nombCarrera = (String) data.get("carrera");
-								String paterno = (String) data.get("paterno");
-								String ci = (String) data.get("ci");
-								String nombre = (String) data.get("nombre");
-								String materno = (String) data.get("materno");
-								int rd = (int) data.get("rd");
-								List<String> correos = (List<String>) data.get("correos");
-								/*
-								 * List<String> correos = new ArrayList<>();
-								 * List<Map<String, String>> correosData = (List<Map<String, String>>)
-								 * data.get("correos");
-								 * for (Map<String, String> asignaturaData : correosData) {
-								 * correos.add(asignaturaData.get("asignatura"));
-								 * }
-								 */
-								System.out.println(nombCarrera);
-								System.out.println(paterno);
-								System.out.println(ci);
-								System.out.println(nombre);
-								System.out.println(materno);
-								System.out.println(rd);
-								String celular = (String) data.get("celular");
-								List<String[]> asignaturas = new ArrayList<>();
-								List<Map<String, String>> asignaturasData = (List<Map<String, String>>) data
-										.get("asignaturas");
-								for (Map<String, String> asignaturaData : asignaturasData) {
-									String[] asig = { asignaturaData.get("asignatura"), asignaturaData.get("plan"),
-											asignaturaData.get("tipo_evaluacion"), asignaturaData.get("sigla"),
-											asignaturaData.get("grupo") };
-									asignaturas.add(asig);
-								}
-
-								for (String[] asignatura : asignaturas) {
-									materias.add(materiaService.materiaSigla(asignatura[3]));
-								}
-
+							String nombCarrera = (String) data.get("carrera");
+							String paterno = (String) data.get("paterno");
+							String ci = (String) data.get("ci");
+							String nombre = (String) data.get("nombre");
+							String materno = (String) data.get("materno");
+							int rd = (int) data.get("rd");
+							List<String> correos = (List<String>) data.get("correos");
+							/*
+							 * List<String> correos = new ArrayList<>();
+							 * List<Map<String, String>> correosData = (List<Map<String, String>>)
+							 * data.get("correos");
+							 * for (Map<String, String> asignaturaData : correosData) {
+							 * correos.add(asignaturaData.get("asignatura"));
+							 * }
+							 */
+							System.out.println(nombCarrera);
+							System.out.println(paterno);
+							System.out.println(ci);
+							System.out.println(nombre);
+							System.out.println(materno);
+							System.out.println(rd);
+							String celular = (String) data.get("celular");
+							List<String[]> asignaturas = new ArrayList<>();
+							List<Map<String, String>> asignaturasData = (List<Map<String, String>>) data
+									.get("asignaturas");
+							for (Map<String, String> asignaturaData : asignaturasData) {
+								String[] asig = { asignaturaData.get("asignatura"), asignaturaData.get("plan"),
+										asignaturaData.get("tipo_evaluacion"), asignaturaData.get("sigla"),
+										asignaturaData.get("grupo") };
+								asignaturas.add(asig);
 							}
-							// System.out.println(responseBody);
-						} else {
-							System.out.println(
-									"Error en la solicitud. Código de respuesta: " + resp.getStatusCodeValue());
+
+							for (String[] asignatura : asignaturas) {
+								materias.add(materiaService.materiaSigla(asignatura[3]));
+							}
 
 						}
-						// }
-						// }
+						// System.out.println(responseBody);
 					} else {
 						System.out.println(
-								"No");
+								"Error en la solicitud. Código de respuesta: " + resp.getStatusCodeValue());
+
 					}
-					Set<Materia> materiasUnicasSet = new HashSet<>(materias);
-					List<Materia> materiasUnicasList = new ArrayList<>(materiasUnicasSet);
+					// }
+					// }
+				} else {
+					System.out.println(
+							"No");
+				}
+				Set<Materia> materiasUnicasSet = new HashSet<>(materias);
+				List<Materia> materiasUnicasList = new ArrayList<>(materiasUnicasSet);
 
 				for (Materia materia : materiasUnicasList) {
 					PdfPTable tablaArchivos2 = new PdfPTable(1);
@@ -3566,10 +3568,12 @@ public class HomeController {
 			return carpetaActual.getId_carpeta();
 		}
 	}
-	//CARGAR SELECT ARCHIVO MATERIA
+
+	// CARGAR SELECT ARCHIVO MATERIA
 	@PostMapping("/CargarRequisito/{id_materia}")
 	public ResponseEntity<String[][]> CargarRequisito(@PathVariable(value = "id_materia") Long id_materia) {
-		//List<Carpeta> carpetas = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+		// List<Carpeta> carpetas =
+		// carpetaService.findOne(id_carpeta).getCarpetasHijos();
 		List<Requisito> requisitos = new ArrayList<>(materiaService.findOne(id_materia).getRequisitos());
 
 		String[][] materiaArray = new String[requisitos.size()][2];
@@ -3581,9 +3585,11 @@ public class HomeController {
 		}
 		return ResponseEntity.ok(materiaArray);
 	}
+
 	@PostMapping("/CargarParametro/{id_requisito}")
 	public ResponseEntity<String[][]> CargarParametro(@PathVariable(value = "id_requisito") Long id_requisito) {
-		//List<Carpeta> carpetas = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+		// List<Carpeta> carpetas =
+		// carpetaService.findOne(id_carpeta).getCarpetasHijos();
 		List<Parametro> parametros = requisitoService.findOne(id_requisito).getParametros();
 		String[][] materiaArray = new String[parametros.size()][2];
 		int index = 0;

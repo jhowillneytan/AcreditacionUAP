@@ -3566,4 +3566,32 @@ public class HomeController {
 			return carpetaActual.getId_carpeta();
 		}
 	}
+	//CARGAR SELECT ARCHIVO MATERIA
+	@PostMapping("/CargarRequisito/{id_materia}")
+	public ResponseEntity<String[][]> CargarRequisito(@PathVariable(value = "id_materia") Long id_materia) {
+		//List<Carpeta> carpetas = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+		List<Requisito> requisitos = new ArrayList<>(materiaService.findOne(id_materia).getRequisitos());
+
+		String[][] materiaArray = new String[requisitos.size()][2];
+		int index = 0;
+		for (Requisito requisito : requisitos) {
+			materiaArray[index][0] = String.valueOf(requisito.getId_requisito());
+			materiaArray[index][1] = requisito.getNombre();
+			index++;
+		}
+		return ResponseEntity.ok(materiaArray);
+	}
+	@PostMapping("/CargarParametro/{id_requisito}")
+	public ResponseEntity<String[][]> CargarParametro(@PathVariable(value = "id_requisito") Long id_requisito) {
+		//List<Carpeta> carpetas = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+		List<Parametro> parametros = requisitoService.findOne(id_requisito).getParametros();
+		String[][] materiaArray = new String[parametros.size()][2];
+		int index = 0;
+		for (Parametro parametro : parametros) {
+			materiaArray[index][0] = String.valueOf(parametro.getId_parametro());
+			materiaArray[index][1] = parametro.getNombre();
+			index++;
+		}
+		return ResponseEntity.ok(materiaArray);
+	}
 }

@@ -122,7 +122,7 @@ public class CarreraController {
     @PostMapping("/RegistrarCarrera")
     public String RegistrarCarrera(@Validated Carrera carrera, RedirectAttributes flash,
             @RequestParam(value = "Logo") MultipartFile file) {
-        System.out.println("AAAAAAAAAAAAAAAAAAA METOOD");
+        //System.out.println("AAAAAAAAAAAAAAAAAAA METOOD");
 
         carrera.setEstado("A");
         if (!file.isEmpty()) {
@@ -252,7 +252,7 @@ public class CarreraController {
                             carreraService.save(nuevaCarrera);
                         }
 
-                        System.out.println("  Carrera: " + carrera);
+                        //System.out.println("  Carrera: " + carrera);
                     }
                 } else {
                     System.out.println("No se encontraron datos de facultades.");

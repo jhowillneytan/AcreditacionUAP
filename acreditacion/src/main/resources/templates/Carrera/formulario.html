@@ -58,7 +58,7 @@
 											<div class="mb-1">
 												<label class="form-label" for="basic-addon-name">Logo carrera</label>
 												<input type="file" class="form-control" placeholder="Introdusca un logo"
-													name="Logo" required />
+													name="Logo" accept="image/*" required />
 												<div class="valid-feedback">Datos Validos en el Campo!</div>
 												<div class="invalid-feedback">Porfavor Introduca Datos Validos!</div>
 											</div>
@@ -71,7 +71,7 @@
 										<div class="col-md-6" >
 											<label class="form-label">Logo Actual</label>
 											<div class="mb-1">
-												<img th:src="@{'/acreditacion/uploads/' + ${carrera.file}}" alt=""
+												<img th:src="@{'/acreditacion/uploads/' + ${carrera.file}}" alt="" style="height: 200px;"
 												class="rounded float-start">
 											</div>
 										</div>
@@ -90,7 +90,6 @@
 									<table id="example" class="table" style="width:100%">
 										<thead>
 											<tr>
-												<th>#</th>
 												<th>CODE</th>
 												<th>CARRERA</th>
 												<th>FACULTAD</th>
@@ -98,8 +97,7 @@
 											</tr>
 										</thead>
 										<tbody>
-											<tr th:each="c,cont : ${carreras}" th:if="${c.estado != 'X'}">
-												<td th:text="${cont.index + 1}"></td>
+											<tr th:each="c : ${carreras}" th:if="${c.estado != 'X'}">
 												<td th:text="${c.id_carrera}"></td>
 												<td th:text="${c.nom_carrera}"></td>
 												<td th:text="${c.facultad.nom_facultad}"></td>

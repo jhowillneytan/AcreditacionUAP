@@ -71,7 +71,6 @@
                                     <table id="example" class="table" style="width:100%">
                                         <thead>
                                             <tr>
-                                                <th>#</th>
                                                 <th>CODE</th>
                                                 <th>FACULTAD</th>
                                                 <th>DESCRIPCION</th>
@@ -80,8 +79,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr th:each="f,cont : ${facultads}" th:if="${f.estado != 'X'}">
-                                                <td th:text="${cont.index + 1}"></td>
+                                            <tr th:each="f : ${facultads}" th:if="${f.estado != 'X'}">
                                                 <td th:text="${f.id_facultad}"></td>
                                                 <td th:text="${f.nom_facultad}"></td>
                                                 <td th:text="${f.descripcion}"></td>

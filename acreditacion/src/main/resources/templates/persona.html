@@ -34,28 +34,28 @@
 										th:if="${editMode}">
 									<input class="form-control" type="hidden" th:field="${persona.estado}"
 										th:if="${editMode}">
-									
-									
+
+
 									<div class="row">
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="basic-addon-name">Nombres</label>
 
 											<input type="text" class="form-control" placeholder="Nombre"
-												th:field="${persona.nombre}" required/>
+												th:field="${persona.nombre}" required />
 											<div class="valid-feedback">Correcto!</div>
 											<div class="invalid-feedback">Favor ingresar datos Correctos.</div>
 										</div>
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="basic-addon-name">Ap paterno</label>
 											<input type="text" class="form-control" placeholder="ap paterno"
-												th:field="${persona.ap_paterno}" required/>
+												th:field="${persona.ap_paterno}" required />
 											<div class="valid-feedback">Correcto!</div>
 											<div class="invalid-feedback">Favor ingresar datos Correctos.</div>
 										</div>
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="basic-addon-name">Ap materno</label>
 											<input type="text" class="form-control" placeholder="ap materno"
-												th:field="${persona.ap_materno}" required/>
+												th:field="${persona.ap_materno}" required />
 											<div class="valid-feedback">Correcto!</div>
 											<div class="invalid-feedback">Favor ingresar datos Correctos.</div>
 										</div>
@@ -65,7 +65,7 @@
 											<label class="form-label" for="basic-addon-name">C.I.</label>
 
 											<input type="number" class="form-control" placeholder="Ci"
-												th:field="${persona.ci}" required/>
+												th:field="${persona.ci}" required />
 											<div class="valid-feedback">Correcto!</div>
 											<div class="invalid-feedback">Favor ingresar una Ci.</div>
 										</div>
@@ -73,7 +73,7 @@
 											<label class="form-label" for="basic-addon-name">Email</label>
 
 											<input type="email" class="form-control" placeholder="email@gmail.com"
-												th:field="${persona.email}" required/>
+												th:field="${persona.email}" required />
 											<div class="valid-feedback">Correcto!</div>
 											<div class="invalid-feedback">Favor ingresar una email</div>
 										</div>
@@ -85,9 +85,10 @@
 										</div>-->
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="select-country1">Tipo Persona</label>
-											<select class="form-select" th:field="${persona.tipoPersona}" required>
+											<select class="select2" th:field="${persona.tipoPersona}" required>
 												<option th:value="${editMode}? ${persona.tipoPersona}: ''"
-												th:text="${editMode}? ${persona.tipoPersona.nom_tipo_persona}: 'Seleccionar'"></option>
+													th:text="${editMode}? ${persona.tipoPersona.nom_tipo_persona}: 'Seleccionar'">
+												</option>
 												<option th:each="tp: ${listaTipoPersonas}"
 													th:value="${tp.id_tipo_persona}" th:text="${tp.nom_tipo_persona}">
 												</option>
@@ -95,36 +96,46 @@
 										</div>
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="select-country1">Carrera</label>
-											<select class="form-select" th:field="${persona.carrera}" required>
+											<select class="select2" th:field="${persona.carrera}" required>
 												<option th:value="${editMode}? ${persona.carrera}: ''"
-												th:text="${editMode}? ${persona.carrera.nom_carrera}: 'Seleccionar'"></option>
+													th:text="${editMode}? ${persona.carrera.nom_carrera}: 'Seleccionar'">
+												</option>
 												<option th:each="ca: ${listaCarreras}" th:value="${ca.id_carrera}"
 													th:text="${ca.nom_carrera}"></option>
 											</select>
 										</div>
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="select-country1">Cargo</label>
-											<select class="form-select" th:field="${persona.cargo}" required>
+											<select class="select2" th:field="${persona.cargo}" required>
 												<option th:value="${editMode}? ${persona.cargo}: ''"
-												th:text="${editMode}? ${persona.cargo.nom_cargo}: 'Seleccionar'"></option>
+													th:text="${editMode}? ${persona.cargo.nom_cargo}: 'Seleccionar'">
+												</option>
 												<option th:each="car: ${listaCargos}" th:value="${car.id_cargo}"
 													th:text="${car.nom_cargo}"></option>
 											</select>
 										</div>
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="select-country1">Puesto</label>
-											<select class="form-select" th:field="${persona.puesto}" required>
+											<select class="select2" th:field="${persona.puesto}" required>
 												<option th:value="${editMode}? ${persona.puesto}: ''"
-												th:text="${editMode}? ${persona.puesto.nom_puesto}: 'Seleccionar'"></option>
+													th:text="${editMode}? ${persona.puesto.nom_puesto}: 'Seleccionar'">
+												</option>
 												<option th:each="p: ${listaPuesto}" th:value="${p.id_puesto}"
 													th:text="${p.nom_puesto}"></option>
 											</select>
 										</div>
 									</div>
-									<div class="row">
-										<div class="col-md-8 col-12 mb-1">
+									<div th:class="${editMode}? 'row d-flex justify-content-between' : 'row d-flex justify-content-center'">
+										<div th:class="${editMode}? 'col-md-6':'col-md-8'">
 											<label for="customFile1" class="form-label">Imagen Perfil</label>
-											<input class="form-control" type="file" name="Foto" />
+											<input type="file" class="form-control" name="Foto" id="fotoPersona" accept="image/*" />
+											<div id="alertaImgC"></div>
+										</div>
+										<div th:if="${editMode}" th:class="${editMode}? 'col-md-6':'col-md-4'">
+											<div class="text-center">
+												<label for="" class="form-label" style="width: 100%;">Foto Actual</label>
+												<img th:src="@{'/acreditacion/uploads/' + ${persona.imagen_persona}}" alt="" style="height: 300px; border-radius: 5px;">
+											</div>
 										</div>
 									</div>
 									<a th:class="${editMode}?'btn btn-secondary'"
@@ -169,7 +180,8 @@
 												<td th:text="${persona.ci}"></td>
 												<td th:text="${persona.fecha_registro}"></td>
 												<td th:text="${persona.tipoPersona.nom_tipo_persona}"></td>
-												<td><img class="round" th:src="'/acreditacion/uploads/'+${persona.imagen_persona}"
+												<td><img class="round"
+														th:src="'/acreditacion/uploads/'+${persona.imagen_persona}"
 														alt="avatar" height="40" width="40"></td>
 												<!--<td th:text="${persona.estado}"></td>-->
 												<td>
@@ -213,7 +225,7 @@
 
 	<footer th:replace="layout/layout :: pie"></footer>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	<!-- <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
 	<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
 	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 	<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
@@ -225,11 +237,14 @@
 	<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
 	<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
 	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
-	<script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script> -->
 
 
 	<script>
 		$(document).ready(function () {
+			// $('.select2').select2({
+			// 	placeholder: 'Seleccione una opción'
+			// });
 			var table = $('#example').DataTable({
 				lengthChange: false,
 				buttons: ['copy', 'excel', 'pdf', 'print']
@@ -237,7 +252,32 @@
 
 			table.buttons().container()
 				.appendTo('#example_wrapper .col-md-6:eq(0)');
+
+			
 		});
+		$('#fotoPersona').bs_dropzone({
+				preview: true,
+				accepted: ['jpg', 'jpeg', 'png'],
+				dropzoneTemplate: '<div class="bs-dropzone"><div class="bs-dropzone-area"></div><div class="bs-dropzone-message"></div><div class="bs-dropzone-preview mt-0"></div></div>',
+				parentTemplate: '<div class="row ml-0 justify-content-center align-items-center"></div>',
+				childTemplate: '<div class="col-4 col-md-3 pl-0"></div>',
+				imageClass: 'img-fluid mt-3 rounded'
+			});
+			const inputElement = document.getElementById('fotoPersona');
+
+			inputElement.addEventListener('change', (event) => {
+				const file = event.target.files[0];
+				if (file) {
+					const fileType = file.type;
+					if (!fileType.startsWith('image/')) {
+						inputElement.value = '';
+						$('#alertaImgC').html('<div class="alert alert-danger alert-dismissible">' +
+							'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+							'Solo se Admite Archivos tipo Imagen' +
+							'</div>');
+					}
+				}
+			});
 	</script>
 </body>
 

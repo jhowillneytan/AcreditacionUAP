@@ -194,8 +194,8 @@ public class FacultadController {
                             facultadService.save(facultad2);
                             
                         }
-                        System.out.println("Facultad: " + facultad[1]);
-                        System.out.println("Code: " + facultad[0]);
+                        //System.out.println("Facultad: " + facultad[1]);
+                        //System.out.println("Code: " + facultad[0]);
                     }
                 } else {
                     System.out.println("No se encontraron datos de facultades.");

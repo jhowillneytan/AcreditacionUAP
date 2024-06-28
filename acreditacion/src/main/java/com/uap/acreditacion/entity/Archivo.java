@@ -66,4 +66,5 @@ public class Archivo implements Serializable{
     joinColumns=@JoinColumn(name = "id_archivo"),
     inverseJoinColumns = @JoinColumn(name = "id_parametro"))
     private Set<Parametro> parametros;
+
 }

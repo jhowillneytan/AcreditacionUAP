@@ -44,4 +44,24 @@ public class UsuarioServiceImlp implements IUsuarioService{
        return iUsuarioDao.findByUsername(username);
     }
 
+    @Override
+    public Usuario usuarioPorIdPersona(Long idPersona) {
+        return iUsuarioDao.usuarioPorIdPersona(idPersona);
+    }
+
+    @Override
+    public List<Usuario> listaUsuarioPorIdCarpeta(Long idCarpeta) {
+        return iUsuarioDao.listaUsuarioPorIdCarpeta(idCarpeta);
+    }
+
+    @Override
+    public List<Usuario> listaUsuarios() {
+        return iUsuarioDao.listaUsuarios();
+    }
+
+    @Override
+    public List<Usuario> listaUsuarioPorIdCarrera(Long idCarrera) {
+        return iUsuarioDao.listaUsuarioPorIdCarrera(idCarrera);
+    }
+
 }

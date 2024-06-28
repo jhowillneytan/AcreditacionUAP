@@ -17,4 +17,5 @@ public interface IPersonaService {
 
 	public Persona personaCi(String ci);
 	
+	public Persona personaModCi(String ciActual, String ciNuevo);
 }

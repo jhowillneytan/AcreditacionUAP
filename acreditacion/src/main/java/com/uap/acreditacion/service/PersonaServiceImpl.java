@@ -43,5 +43,10 @@ public class PersonaServiceImpl implements IPersonaService{
     public Persona personaCi(String ci) {
         return personaDao.personaCi(ci);
     }
+
+    @Override
+    public Persona personaModCi(String ciActual, String ciNuevo) {
+        return personaDao.personaModCi(ciActual, ciNuevo);
+    }
 	
 }

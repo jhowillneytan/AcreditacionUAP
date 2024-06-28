@@ -1,0 +1,111 @@
+<div class="app-content file-manager-application">
+    <div class="content-area-wrapper container-xxl p-0">
+        <div class="content-right " style="width: calc(100% - 0px);">
+            <div class="content-wrapper container-xxl ">
+                <div class="content-body">
+                    <div class="file-manager-main-content">
+                        <div class="file-manager-content-header d-flex justify-content-between align-items-center ">
+                            <div class="d-flex align-items-center">
+                                <div class="input-group input-group-merge shadow-none m-0 flex-grow-1">
+                                    <span class="input-group-text border-0"> <i class="fa-solid fa-magnifying-glass"></i>
+                                    </span> <input type="text"
+                                        class="form-control files-filter border-0 bg-transparent"
+                                        placeholder="Buscar carpeta" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="file-manager-content-body ">
+                            <div class="breadcrumb-wrapper">
+                                <div class="view-container">
+                                    <div class="apuntandoCarpeta card file-manager-item folder"
+                                        style="max-width: 200px;" th:each="c, cont: ${carpetas}">
+                                        <div class="card-img-top file-logo-wrapper">
+                                            <!-- file-logo-wrapper-->
+                                            <a th:onclick="mover([[${c.id_carpeta}]])">
+                                                <img th:src="@{'/acreditacion/uploads/' + ${c.ruta_icono}}"
+                                                    style="width: 100%; height: 120%;">
+                                            </a>
+                                            <div class="d-flex align-items-center justify-content-center">
+                                                <!-- <i data-feather="folder" style="font-size: 65px;"></i> -->
+                                                <a th:onclick="mover([[${c.id_carpeta}]])"
+                                                    style="color: #f8d775">
+                                                    <!--<i class="fas fa-folder-open" style="font-size: 80px;"> </i>-->
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="card-body">
+                                            <div class="content-wrapper">
+                                                <a class="card-text file-name mb-0" th:text="${c.nom_carpeta}"
+                                                    th:onclick="mover([[${c.id_carpeta}]])"></a>
+                                                <p class="card-text file-size mb-0">2gb</p>
+                                                <p class="card-text file-date" th:text="${c.fecha_registro}"></p>
+                                            </div>
+                                            <div class="row">
+                                                <a th:onclick="mover([[${c.id_carpeta}]])"
+                                                    style="color: black;"><b class="card-text"
+                                                        th:text="${c.descripcion}"></b></a><br>
+                                            </div>
+                                            <small class="file-accessed text-muted"
+                                                th:text="'Creacion: '+${c.fecha_registro}"></small>
+
+                                        </div>
+                                    </div>
+                                    <div class="d-none flex-grow-1 align-items-center no-result mb-3">
+                                        <i data-feather="alert-circle" class="me-50"></i> No hay resultados de esta búsqueda
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    function mover(carpeta) {
+        $('#carpetaElegida').val(carpeta);
+        Swal.fire({
+            title: 'Mover Archivo',
+            text: "Esta seguro de mover estos archivos a esta carpeta?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, continuar!',
+            cancelButtonText: 'Cancelar'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Swal.fire({
+                    title: 'Cargando...',
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    showConfirmButton: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                });
+                $('#formularioMoverArchivos').submit();
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $('#carpetaElegida').val('0');
+        // Aplicar la clase 'selected' al pasar el mouse sobre '.file-manager-item'
+        $('.apuntandoCarpeta').hover(
+            function () {
+                $(this).addClass('selected');
+            },
+            function () {
+                $(this).removeClass('selected');
+            }
+        );
+    });
+</script>
+<div>
+    <script src="../../../app-assets/js/scripts/pages/app-file-manager.js"></script>
+</div>

@@ -6,7 +6,7 @@
 </head>
 
 <body class="vertical-layout vertical-menu-modern content-left-sidebar navbar-floating footer-static" data-open="click"
-	data-menu="vertical-menu-modern" data-col="content-left-sidebar">
+	data-menu="vertical-menu-modern" data-col="content-left-sidebar" style="overflow-x: hidden;">
 
 	<nav th:replace="layout/layout :: cabecera"></nav>
 
@@ -16,21 +16,29 @@
 
 		<div class="content-body">
 			<!-- Validation -->
-			<div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
-				th:text="${mensaje}" class="alert">
-			</div>
+
 			<section class="bs-validation">
 				<div class="row">
+					<!-- <div th:class="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+						th:text="${mensaje}">
+					</div>
+					<div th:class="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+						th:text="${mensaje}">
+					</div> -->
+					<div th:class="'alert alert-'+ ${clase} +' alert-dismissible fade show'" role="alert" th:if="${mensaje != null}">
+						<strong th:text="${mensaje}"></strong>
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+					</div>
 					<div class="col-md-12 col-12">
 						<div class="card">
 							<div class="card-header">
 								<h4 class="card-title">Formulario</h4>
 							</div>
 							<div class="card-body">
-								<form
+								<form id="formularioRegistrarPersona"
 									th:action="${editMode}? @{/persona/ModificarPersona} :@{/persona/RegistrarPersona}"
 									method="post" enctype="multipart/form-data">
-									<input class="form-control" type="hidden" th:field="${persona.id_persona}"
+									<input class="form-control" type="hidden" th:field="${persona.id_persona}" name="id"
 										th:if="${editMode}">
 									<input class="form-control" type="hidden" th:field="${persona.estado}"
 										th:if="${editMode}">
@@ -64,7 +72,7 @@
 										<div class="col-md-4 col-12 mb-1">
 											<label class="form-label" for="basic-addon-name">C.I.</label>
 
-											<input type="number" class="form-control" placeholder="Ci"
+											<input type="number" class="form-control" placeholder="Ci" name="ci"
 												th:field="${persona.ci}" required />
 											<div class="valid-feedback">Correcto!</div>
 											<div class="invalid-feedback">Favor ingresar una Ci.</div>
@@ -125,24 +133,30 @@
 											</select>
 										</div>
 									</div>
-									<div th:class="${editMode}? 'row d-flex justify-content-between' : 'row d-flex justify-content-center'">
+									<div
+										th:class="${editMode}? 'row d-flex justify-content-between' : 'row d-flex justify-content-center'">
 										<div th:class="${editMode}? 'col-md-6':'col-md-8'">
 											<label for="customFile1" class="form-label">Imagen Perfil</label>
-											<input type="file" class="form-control" name="Foto" id="fotoPersona" accept="image/*" />
+											<input type="file" class="form-control" name="Foto" id="fotoPersona"
+												accept="image/*" />
 											<div id="alertaImgC"></div>
 										</div>
 										<div th:if="${editMode}" th:class="${editMode}? 'col-md-6':'col-md-4'">
 											<div class="text-center">
-												<label for="" class="form-label" style="width: 100%;">Foto Actual</label>
-												<img th:src="@{'/acreditacion/uploads/' + ${persona.imagen_persona}}" alt="" style="height: 300px; border-radius: 5px;">
+												<label for="" class="form-label" style="width: 100%;">Foto
+													Actual</label>
+												<img th:src="@{'/acreditacion/uploads/' + ${persona.imagen_persona}}"
+													alt="" style="height: 300px; border-radius: 5px;">
 											</div>
 										</div>
 									</div>
 									<a th:class="${editMode}?'btn btn-secondary'"
 										th:href="@{'/persona/cancelar-editar-persona'}"
 										th:text="${editMode}?'Cancelar'"></a>
-									<input type="submit" class="btn btn-primary"
-										th:value="${editMode}?'Actualizar':'Agregar'" />
+									<div id="botonesFormulario">
+										<input type="submit" class="btn btn-primary"
+											th:value="${editMode}?'Actualizar':'Agregar'" />
+									</div>
 								</form>
 							</div>
 						</div>
@@ -242,9 +256,73 @@
 
 	<script>
 		$(document).ready(function () {
-			// $('.select2').select2({
-			// 	placeholder: 'Seleccione una opción'
-			// });
+			$('.select2').select2({
+				placeholder: 'Seleccione una opción',
+				language: {
+					noResults: function () {
+						return "No hay resultados de esta búsqueda";
+					}
+				}
+			});
+
+			$('#formularioRegistrarPersona').submit(function (event) {
+				event.preventDefault();
+				//alert("aAAAAAAAAAAA");
+				// var botonCargando = `<button id="submitButton" class="btn btn-primary" disabled>
+				//                                 <span class="spinner-border spinner-border-sm" role="status"
+				//                                     aria-hidden="true"></span>
+				//                                 <span class="visually-hidden">Loading...</span>
+				//                                 Cargando...
+				//                             </button>`;
+				// var botonAgregar = `<input type="submit" class="btn btn-primary"
+				// 							value="Agregar" />`;
+				// var botonModificar = `<input type="submit" class="btn btn-primary"
+				// 							value="Actualizar" />`;
+				Swal.fire({
+					title: 'Cargando...',
+					allowOutsideClick: false,
+					allowEscapeKey: false,
+					allowEnterKey: false,
+					showConfirmButton: false,
+					willOpen: () => {
+						Swal.showLoading();
+					}
+				});
+				//$('#botonesFormulario').html(botonCargando);
+				//$(this).unbind('submit').submit();
+				var form = document.getElementById("formularioRegistrarPersona");
+				var formData = new FormData(form);
+				$.ajax({
+					type: "POST",
+					url: '/persona/validarRegistarPersona',
+					data: formData,
+					contentType: false,
+					processData: false,
+					success: function (response) {
+						var mensaje = response;
+						if (mensaje == "continuar") {
+							form.submit();
+						} else {
+							Swal.fire({
+								icon: 'error',
+								title: 'Imposible Continuar',
+								text: mensaje,
+							});
+						}
+					},
+					error: function (xhr, status, error) {
+						Swal.fire({
+							icon: 'error',
+							title: 'Ha ocurrido un error. Por favor, intenta nuevamente.',
+							text: error,
+						});
+
+						console.error(error);
+					},
+				});
+
+			});
+
 			var table = $('#example').DataTable({
 				lengthChange: false,
 				buttons: ['copy', 'excel', 'pdf', 'print']
@@ -253,31 +331,30 @@
 			table.buttons().container()
 				.appendTo('#example_wrapper .col-md-6:eq(0)');
 
-			
 		});
 		$('#fotoPersona').bs_dropzone({
-				preview: true,
-				accepted: ['jpg', 'jpeg', 'png'],
-				dropzoneTemplate: '<div class="bs-dropzone"><div class="bs-dropzone-area"></div><div class="bs-dropzone-message"></div><div class="bs-dropzone-preview mt-0"></div></div>',
-				parentTemplate: '<div class="row ml-0 justify-content-center align-items-center"></div>',
-				childTemplate: '<div class="col-4 col-md-3 pl-0"></div>',
-				imageClass: 'img-fluid mt-3 rounded'
-			});
-			const inputElement = document.getElementById('fotoPersona');
+			preview: true,
+			accepted: ['jpg', 'jpeg', 'png'],
+			dropzoneTemplate: '<div class="bs-dropzone"><div class="bs-dropzone-area"></div><div class="bs-dropzone-message"></div><div class="bs-dropzone-preview mt-0"></div></div>',
+			parentTemplate: '<div class="row ml-0 justify-content-center align-items-center"></div>',
+			childTemplate: '<div class="col-4 col-md-3 pl-0"></div>',
+			imageClass: 'img-fluid mt-3 rounded'
+		});
+		const inputElement = document.getElementById('fotoPersona');
 
-			inputElement.addEventListener('change', (event) => {
-				const file = event.target.files[0];
-				if (file) {
-					const fileType = file.type;
-					if (!fileType.startsWith('image/')) {
-						inputElement.value = '';
-						$('#alertaImgC').html('<div class="alert alert-danger alert-dismissible">' +
-							'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
-							'Solo se Admite Archivos tipo Imagen' +
-							'</div>');
-					}
+		inputElement.addEventListener('change', (event) => {
+			const file = event.target.files[0];
+			if (file) {
+				const fileType = file.type;
+				if (!fileType.startsWith('image/')) {
+					inputElement.value = '';
+					$('#alertaImgC').html('<div class="alert alert-danger alert-dismissible">' +
+						'<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>' +
+						'Solo se Admite Archivos tipo Imagen' +
+						'</div>');
 				}
-			});
+			}
+		});
 	</script>
 </body>
 

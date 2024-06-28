@@ -47,4 +47,29 @@ public class CarpetaServiceImpl implements ICarpetaService{
         return carpetaDao.getAllCarpetasUsuario(id_usuario);
     }
 
+    @Override
+    public List<Carpeta> listaDireccionesParaMoverArchivo(Long idCarpeta, Long idUsuario) {
+        return carpetaDao.listaDireccionesParaMoverArchivo(idCarpeta, idUsuario);
+    }
+
+    @Override
+    public List<Carpeta> listaDireccionesParaMoverArchivoAdmin(Long idCarpeta) {
+        return carpetaDao.listaDireccionesParaMoverArchivoAdmin(idCarpeta);
+    }
+
+    @Override
+    public List<Carpeta> listaDireccionesParaMoverArchivoDocente(Long idCarpeta, Long idDocente) {
+        return carpetaDao.listaDireccionesParaMoverArchivoDocente(idCarpeta, idDocente);
+    }
+
+    @Override
+    public List<Carpeta> getCarpetasUsuarioYHijos(Long id_usuario, Long id_carpeta) {
+        return carpetaDao.getCarpetasUsuarioYHijos(id_usuario, id_carpeta);
+    }
+
+    @Override
+    public List<Carpeta> getAllCarpetasNullPadreUsuario(Long id_usuario) {
+        return carpetaDao.getAllCarpetasNullPadreUsuario(id_usuario);
+    }
+
 }

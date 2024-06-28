@@ -21,8 +21,6 @@
 			</div>
 
 			<section class="bs-validation">
-
-
 				<div class="row">
 					<div class="col-md-4 col-12">
 						<div class="card">
@@ -56,7 +54,7 @@
 									</div>
 									<div class="mb-1">
 										<label class="form-label" for="select-country1">Persona</label>
-										<select class="form-select select2" th:field="${usuario.persona}" required>
+										<select class="select2" th:field="${usuario.persona}" required>
 											<option th:value="${editMode}? ${usuario.persona.id_persona} : ''"
 												th:text="${editMode}? ${usuario.persona.nombre}+' '+${usuario.persona.ap_paterno} : 'Seleccionar'"
 												selected>
@@ -205,8 +203,8 @@
 
 	<footer th:replace="layout/layout :: pie"></footer>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.js"></script>
-	<!--<script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>-->
+	<!-- <script src="https://code.jquery.com/jquery-3.3.1.js"></script>
+	
 	<script src="../../../app-assets/vendors/js/tables/datatable/datatables1.10.25.js"></script>
 	<script src="https://cdn.datatables.net/1.10.19/js/dataTables.bootstrap4.min.js"></script>
 	<script src="https://cdn.datatables.net/buttons/1.5.2/js/dataTables.buttons.min.js"></script>
@@ -218,13 +216,22 @@
 	<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
 	<script src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.colVis.min.js"></script>
 	<script src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
-	<script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script>
+	<script src="https://cdn.datatables.net/responsive/2.2.3/js/responsive.bootstrap4.min.js"></script> -->
 
 
 	<script>
 		$(document).ready(function () {
 			var table = $('#example').DataTable({
 				lengthChange: false
+			});
+
+			$('.select2').select2({
+				placeholder: 'Seleccione una opción',
+				language: {
+					noResults: function () {
+						return "No hay resultados de esta búsqueda";
+					}
+				}
 			});
 
 			var table2 = $('#example2').DataTable({

@@ -16,6 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.uap.acreditacion.entity.Docente;
 import com.uap.acreditacion.entity.Persona;
@@ -95,21 +96,31 @@ public class UsuarioController {
 	}
 
 	@PostMapping("/RegistrarUsuario")
-	public String RegistrarUsuario(ModelMap model, HttpServletRequest request, @Validated Usuario usuario)
+	public String RegistrarUsuario(ModelMap model, HttpServletRequest request, @Validated Usuario usuario,
+			RedirectAttributes redirectAttrs)
 			throws MessagingException {
 		if (request.getSession().getAttribute("persona") != null) {
-
-			usuario.setEstado("A");
-			usuario.setFecha_registro(new Date());
-			iUsuarioService.save(usuario);
-			String mensaje = "\n" +
-					"Tu Usuario es: " + usuario.getUsername() + "\n Contrasena es: " + usuario.getPassword() + "\n " +
-					"Link: http://virtual.uap.edu.bo:8383/login";
-			emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(),
-					"Bienvenido al Sistema de Acreditacion Señor: " + usuario.getPersona().getNombre() + " "
-							+ usuario.getPersona().getAp_paterno(),
-					mensaje);
-
+			if (iUsuarioService.findByUsername(usuario.getUsername()) == null) {
+				usuario.setEstado("A");
+				usuario.setFecha_registro(new Date());
+				iUsuarioService.save(usuario);
+				String mensaje = "\n" +
+						"Tu Usuario es: " + usuario.getUsername() + "\n Contrasena es: " + usuario.getPassword() + "\n "
+						+
+						"Link: http://virtual.uap.edu.bo:8383/login";
+				emailServiceImpl.enviarEmail(usuario.getPersona().getEmail(),
+						"Bienvenido al Sistema de Acreditacion Señor: " + usuario.getPersona().getNombre() + " "
+								+ usuario.getPersona().getAp_paterno(),
+						mensaje);
+				redirectAttrs
+						.addFlashAttribute("mensaje", "Registro Agregado correctamente")
+						.addFlashAttribute("clase", "success");
+			} else {
+				model.addAttribute("usuario", usuario);
+				redirectAttrs
+						.addFlashAttribute("mensaje", "Ya existe un usuario con este nombre")
+						.addFlashAttribute("clase", "danger");
+			}
 			return "redirect:/form-usuario";
 		} else {
 			return "redirect:/login";

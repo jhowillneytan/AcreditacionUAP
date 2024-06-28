@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.aspectj.weaver.patterns.PerObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.annotation.Validated;
@@ -82,100 +83,138 @@ public class PersonaController {
 			model.addAttribute("subMenuSeleccionado", "true");
 			return "persona";
 		} else {
-			return "redirect:/login"; 
+			return "redirect:/login";
 		}
 	}
 
 	@PostMapping("/RegistrarPersona")
-	public String RegistrarPersona(ModelMap model, RedirectAttributes redirectAttrs, RedirectAttributes flash,
-			@Validated Persona persona,
+	public String RegistrarPersona(RedirectAttributes redirectAttrs, RedirectAttributes flash,
+			@Validated Persona persona, HttpServletRequest request,
 			@RequestParam(value = "Foto", required = false) MultipartFile file) {
-		persona.setEstado("A");
-		if (!file.isEmpty()) {
-			String arch = config.guardarArchivo(file);
-			persona.setImagen_persona(arch);
-			String[] ta = arch.split("\\.");
-			for (String string : ta) {
-				System.out.println(string);
+		if (request.getSession().getAttribute("persona") != null) {
+			persona.setEstado("A");
+			if (!file.isEmpty()) {
+				String arch = config.guardarArchivo(file);
+				persona.setImagen_persona(arch);
+				String[] ta = arch.split("\\.");
+				for (String string : ta) {
+					System.out.println(string);
+				}
+			} else {
+				persona.setImagen_persona("FotoPerfilPrederminada.webp");
 			}
-		} else {
-			persona.setImagen_persona("FotoPerfilPrederminada.webp");
-		}
-		persona.setFecha_registro(new Date());
+			persona.setFecha_registro(new Date());
 
-		personaService.save(persona);
-		flash.addAttribute("success", "Registro Exitoso!");
-		return "redirect:/persona/form-persona";
+			personaService.save(persona);
+
+			// flash.addAttribute("success", "Registro Exitoso!");
+			redirectAttrs.addFlashAttribute("mensaje", "Se Agrego el registro correctamente!");
+			redirectAttrs.addFlashAttribute("clase", "success");
+			return "redirect:/persona/form-persona";
+		} else {
+			return "redirect:/login";
+		}
+	}
+
+	@PostMapping("/validarRegistarPersona")
+	public ResponseEntity<?> validarRegistroPersona(@Validated Persona persona) {
+		try {
+			if (persona.getId_persona() == null) {
+				if (personaService.personaCi(persona.getCi()) == null) {
+					return ResponseEntity.ok("continuar");
+				} else {
+					return ResponseEntity.ok("Ya existe un registro con este C.I.");
+				}
+			} else {
+				Persona persona2 = personaService.findOne(persona.getId_persona());
+				if (personaService.personaModCi(persona2.getCi(), persona.getCi()) == null) {
+					return ResponseEntity.ok("continuar");
+				} else {
+					return ResponseEntity.ok("Ya existe un registro con este C.I.");
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("ERROR: " + e.getMessage());
+			return ResponseEntity.ok(e.getMessage());
+		}
 	}
 
 	@PostMapping("/ModificarPersona")
-	public String ModificarPersona(ModelMap model, RedirectAttributes redirectAttrs, RedirectAttributes flash,
+	public String ModificarPersona(RedirectAttributes redirectAttrs,
 			@Validated Persona persona,
 			@RequestParam(value = "Foto", required = false) MultipartFile file) {
 		Persona persona2 = personaService.findOne(persona.getId_persona());
 		persona.setEstado("A");
-		if (file.isEmpty()) {
-			persona.setImagen_persona(persona2.getImagen_persona());
-		} else {
+		if (!file.isEmpty()) {
 			String arch = config.guardarArchivo(file);
 			persona.setImagen_persona(arch);
-			String[] ta = arch.split("\\.");
-			for (String string : ta) {
-				System.out.println(string);
-			}
+		} else {
+			persona.setImagen_persona(persona2.getImagen_persona());
 		}
 		persona.setFecha_registro(persona2.getFecha_registro());
 
 		personaService.save(persona);
-		flash.addAttribute("success", "Modificacion Exitosa!");
+
+		redirectAttrs.addFlashAttribute("mensaje", "Se guardaron los cambios correctamente!");
+		redirectAttrs.addFlashAttribute("clase", "success");
 		return "redirect:/persona/form-persona";
 	}
 
-	/*@PostMapping("/agregar-persona")
-	public String agregarPersona(ModelMap model, RedirectAttributes redirectAttrs,
-			@RequestParam(value = "nombre") String nombre,
-			@RequestParam(value = "ap_paterno") String ap_paterno,
-			@RequestParam(value = "ap_materno") String ap_materno,
-			@RequestParam(value = "ci") String ci,
-			// @RequestParam(value="fecha_registro")@DateTimeFormat(pattern =
-			// "yyyy-MM-dd")Date fecha_registro,
-			@RequestParam(value = "imagen_persona") MultipartFile file,
-			// @RequestParam(value="estado")String estado,
-			@RequestParam(value = "tipoPersona") TipoPersona tipoPersona,
-
-			@RequestParam(value = "tipoPersona") Set<TipoPersona> tipoPerson,
-			@Validated Persona persona) {
-
-		if (nombre == "" || ap_materno == "" || ap_materno == "" || ci == "") {
-			redirectAttrs
-					.addFlashAttribute("mensaje", "Se requiere llenar los campos")
-					.addFlashAttribute("clase", "danger");
-			return "redirect:/persona/form-persona";
-		}
-		// System.out.println("ar= "+file);
-		if (!file.isEmpty()) {
-			String arch = config.guardarArchivo(file);
-			persona.setImagen_persona(arch);
-			String[] ta = arch.split("\\.");
-			for (String string : ta) {
-				System.out.println(string);
-			}
-		} else {
-			persona.setImagen_persona("FotoPersonDefaul.png");
-		}
-		persona.setNombre(nombre);
-		persona.setAp_paterno(ap_paterno);
-		persona.setAp_materno(ap_materno);
-		persona.setCi(ci);
-		persona.setFecha_registro(new Date());
-		persona.setEstado("A");
-		persona.setTipoPersona(tipoPersona);
-		personaService.save(persona);
-		redirectAttrs
-				.addFlashAttribute("mensaje", "Agregado correctamente")
-				.addFlashAttribute("clase", "success");
-		return "redirect:/persona/form-persona";
-	}*/
+	/*
+	 * @PostMapping("/agregar-persona")
+	 * public String agregarPersona(ModelMap model, RedirectAttributes
+	 * redirectAttrs,
+	 * 
+	 * @RequestParam(value = "nombre") String nombre,
+	 * 
+	 * @RequestParam(value = "ap_paterno") String ap_paterno,
+	 * 
+	 * @RequestParam(value = "ap_materno") String ap_materno,
+	 * 
+	 * @RequestParam(value = "ci") String ci,
+	 * // @RequestParam(value="fecha_registro")@DateTimeFormat(pattern =
+	 * // "yyyy-MM-dd")Date fecha_registro,
+	 * 
+	 * @RequestParam(value = "imagen_persona") MultipartFile file,
+	 * // @RequestParam(value="estado")String estado,
+	 * 
+	 * @RequestParam(value = "tipoPersona") TipoPersona tipoPersona,
+	 * 
+	 * @RequestParam(value = "tipoPersona") Set<TipoPersona> tipoPerson,
+	 * 
+	 * @Validated Persona persona) {
+	 * 
+	 * if (nombre == "" || ap_materno == "" || ap_materno == "" || ci == "") {
+	 * redirectAttrs
+	 * .addFlashAttribute("mensaje", "Se requiere llenar los campos")
+	 * .addFlashAttribute("clase", "danger");
+	 * return "redirect:/persona/form-persona";
+	 * }
+	 * // System.out.println("ar= "+file);
+	 * if (!file.isEmpty()) {
+	 * String arch = config.guardarArchivo(file);
+	 * persona.setImagen_persona(arch);
+	 * String[] ta = arch.split("\\.");
+	 * for (String string : ta) {
+	 * System.out.println(string);
+	 * }
+	 * } else {
+	 * persona.setImagen_persona("FotoPersonDefaul.png");
+	 * }
+	 * persona.setNombre(nombre);
+	 * persona.setAp_paterno(ap_paterno);
+	 * persona.setAp_materno(ap_materno);
+	 * persona.setCi(ci);
+	 * persona.setFecha_registro(new Date());
+	 * persona.setEstado("A");
+	 * persona.setTipoPersona(tipoPersona);
+	 * personaService.save(persona);
+	 * redirectAttrs
+	 * .addFlashAttribute("mensaje", "Agregado correctamente")
+	 * .addFlashAttribute("clase", "success");
+	 * return "redirect:/persona/form-persona";
+	 * }
+	 */
 
 	@GetMapping("/editar-persona/{id_persona}")
 	public String getIdPersona(@PathVariable(value = "id_persona") Long id_persona, ModelMap model,
@@ -185,7 +224,8 @@ public class PersonaController {
 			Persona p2 = (Persona) request.getSession().getAttribute("persona");
 			Persona p = personaService.findOne(p2.getId_persona());
 			model.addAttribute("personasession", p);
-			model.addAttribute("tipoPersonasession", tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
+			model.addAttribute("tipoPersonasession",
+					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 			Persona persona = personaService.findOne(id_persona);
 			model.addAttribute("persona", persona);
 			model.addAttribute("editMode", "true");
@@ -258,7 +298,7 @@ public class PersonaController {
 	@GetMapping("/eliminar-persona/{id_persona}")
 	public String eliminarPersona(@PathVariable(value = "id_persona") Long id_persona,
 			RedirectAttributes redirectAttrs) {
-		//personaService.delete(id_persona);
+		// personaService.delete(id_persona);
 		Persona persona = personaService.findOne(id_persona);
 		if (persona.getUsuario() != null) {
 			Usuario usuario = persona.getUsuario();

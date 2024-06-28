@@ -16,4 +16,12 @@ public interface IUsuarioService {
     public Usuario findByUsernamePassword(String username, String password);
 
 	public Usuario findByUsername(String username);
+
+	public Usuario usuarioPorIdPersona(Long idPersona);
+
+	List<Usuario> listaUsuarioPorIdCarpeta(Long idCarpeta);
+
+	List<Usuario> listaUsuarios();
+
+	List<Usuario> listaUsuarioPorIdCarrera(Long idCarrera);
 }

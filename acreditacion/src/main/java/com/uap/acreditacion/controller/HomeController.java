@@ -167,7 +167,7 @@ public class HomeController {
 		if (request.getSession().getAttribute("persona") != null) {
 			Persona p2 = (Persona) request.getSession().getAttribute("persona");
 			Persona p = personaService.findOne(p2.getId_persona());
-
+			Usuario user = usuarioService.usuarioPorIdPersona(p.getId_persona());
 			Calendar cal = Calendar.getInstance();
 			int year = cal.get(Calendar.YEAR);
 
@@ -191,13 +191,22 @@ public class HomeController {
 				model.addAttribute("usuarios", usuarioService.findAll());
 			}
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Evaluador")) {
-				List<Carpeta> Listcarpetas = new ArrayList<>();
-				List<Carpeta> listFill = carpetaService.findAll();
-				for (int i = 0; i < listFill.size(); i++) {
-					if (listFill.get(i).getCarpetaPadre() == null) {
-						Listcarpetas.add(listFill.get(i));
-					}
+				// List<Carpeta> Listcarpetas = new ArrayList<>();
+				// List<Carpeta> listFill = carpetaService.findAll();
+				// for (int i = 0; i < listFill.size(); i++) {
+				// 	if (listFill.get(i).getCarpetaPadre() == null) {
+				// 		Listcarpetas.add(listFill.get(i));
+				// 	}
+				// }
+				List<Carpeta> Listcarpetas = carpetaService.getAllCarpetasUsuario(user.getId_usuario());
+				List<Carpeta> listcarpetasNullPadre = carpetaService.getAllCarpetasNullPadreUsuario(user.getId_usuario());
+				for (Carpeta cPadre : listcarpetasNullPadre) {
+					Listcarpetas.removeAll(carpetaService.getCarpetasUsuarioYHijos(user.getId_usuario(), cPadre.getId_carpeta()));
 				}
+				for (Carpeta cPadre : listcarpetasNullPadre) {
+					Listcarpetas.add(cPadre);
+				}
+
 				model.addAttribute("carpetas", Listcarpetas);
 				model.addAttribute("menus", Listcarpetas);
 				System.out.println("***********METODOD HOME");
@@ -332,7 +341,7 @@ public class HomeController {
 		if (request.getSession().getAttribute("persona") != null) {
 			Persona p2 = (Persona) request.getSession().getAttribute("persona");
 			Persona p = personaService.findOne(p2.getId_persona());
-
+			Usuario user = usuarioService.usuarioPorIdPersona(p.getId_persona());
 			Calendar cal = Calendar.getInstance();
 			int year = cal.get(Calendar.YEAR);
 			Carpeta carpeta = carpetaService.findOne(id_carpeta);
@@ -340,19 +349,6 @@ public class HomeController {
 			model.addAttribute("tipoPersonasession",
 					tipoPersonaService.findOne(p.getTipoPersona().getId_tipo_persona()));
 			List<Carpeta> carpetas = carpeta.getCarpetasHijos();
-			/*
-			 * for (int i = 0; i < carpetas.size(); i++) {
-			 * for (int j = 0; j < carpetas.get(i).getArchivos().size(); j++) {
-			 * String nombA = carpetas.get(i).getArchivos().get(j).getFile();
-			 * String[] ta2 = nombA.split("\\.");
-			 * System.out.println("el NOMBRE DE ES: "+ta2[1]);
-			 * carpetas.get(i).getArchivos().get(j).setTipoArchivo(ta2[1]);
-			 * }
-			 * }
-			 */
-
-			model.addAttribute("carpetas", carpetas);
-			model.addAttribute("menus", carpetas);
 
 			Archivo archivo = new Archivo();
 			model.addAttribute("carpeta", new Carpeta());
@@ -377,7 +373,7 @@ public class HomeController {
 				Collections.reverse(list);
 			}
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Evaluador")) {
-
+				carpetas = carpetaService.getCarpetasUsuarioYHijos(user.getId_usuario(), id_carpeta);
 				list.add(carpeta);
 				while (carpeta.getCarpetaPadre() != null) {
 					list.add(carpeta.getCarpetaPadre());
@@ -388,19 +384,6 @@ public class HomeController {
 			if (p.getTipoPersona().getNom_tipo_persona().equals("Docente")) {
 
 				list.add(carpeta);
-				// List<Usuario> usuarios = new
-				// ArrayList<>(carpeta.getCarpetaPadre().getUsuarios());
-
-				/*
-				 * while (carpeta.getCarpetaPadre() != null) {
-				 * for (int i = 0; i < usuarios.size(); i++) {
-				 * if (usuarios.get(i) == p.getUsuario()) {
-				 * list.add(carpeta.getCarpetaPadre());
-				 * carpeta = carpeta.getCarpetaPadre();
-				 * }
-				 * }
-				 * }
-				 */
 				while (carpeta.getCarpetaPadre() != null) {
 					list.add(carpeta.getCarpetaPadre());
 					carpeta = carpeta.getCarpetaPadre();
@@ -535,6 +518,8 @@ public class HomeController {
 			List<Materia> materiasUnicasList = new ArrayList<>(materiasUnicasSet);
 
 			model.addAttribute("usuarios", usuarioService.findAll());
+			model.addAttribute("carpetas", carpetas);
+			model.addAttribute("menus", carpetas);
 			model.addAttribute("list", list);
 			model.addAttribute("requisitosList", requisitoService.findAll());
 			model.addAttribute("materia", new Materia());
@@ -817,324 +802,37 @@ public class HomeController {
 
 	// ----------- FIN DEL METODO
 
-	/*
-	 * @PostMapping("/guardar-archivo")
-	 * public String guardarArchivo(@Validated Archivo archivo, RedirectAttributes
-	 * redirectAttrs,
-	 * 
-	 * @RequestParam(name = "archivo", required = false) List<MultipartFile> file,
-	 * 
-	 * @RequestParam(value = "auxiliar") Long id_carpeta_anterior,
-	 * 
-	 * @RequestParam(value = "idParametro", required = false) Long id_parametro)
-	 * throws IOException {
-	 * List<Archivo> archivoS = new ArrayList<>();
-	 * 
-	 * String NombValidos[] = { "FOTOCOPIA DE TITULO DE BACHILLER",
-	 * "FOTOCOPIA DE C.I.",
-	 * "FOTOCOPIA DE CERTIFICADO DE NACIMIENTO",
-	 * "MODALIDAD DE INGRESO", "MATRICULA", "PROGRAMACIÓN", "FOTO"
-	 * };
-	 * for (MultipartFile multipartFile : file) {
-	 * Archivo archivo2 = new Archivo();
-	 * if (id_carpeta_anterior != null) {
-	 * archivo2.setCarpeta(carpetaService.findOne(id_carpeta_anterior));
-	 * }
-	 * String nombA = multipartFile.getOriginalFilename();
-	 * String[] ta2 = nombA.split("\\.");
-	 * String nombreSinExtension = obtenerNombreSinExtension(nombA);
-	 * 
-	 * System.out.println("anterior " + id_carpeta_anterior);
-	 * if (!multipartFile.isEmpty()) {
-	 * String arch = config.guardarArchivo(multipartFile);
-	 * // archivo.setContenido(file.getBytes());
-	 * String[] ta = arch.split("\\.");
-	 * archivo2.setFile(arch);
-	 * archivo2.setNom_archivo(nombreSinExtension);
-	 * archivo2.setTipoArchivo(ta2[ta2.length - 1]);
-	 * archivo2.setDescripcion(archivo.getDescripcion());
-	 * archivo2.setEstado("A");
-	 * archivo2.setFecha_registro(new Date());
-	 * 
-	 * for (String nombres : NombValidos) {
-	 * // System.out.println("***************EL NOMBRE DEL ARCHIVO ES****"
-	 * // +(archivo2.getNom_archivo()));
-	 * if (archivo2.getNom_archivo().equals(nombres)) {
-	 * archivoService.save(archivo2);
-	 * 
-	 * }
-	 * }
-	 * // archivoService.save(archivo2);
-	 * System.out.println("***************EL NOMBRE DEL ARCHIVO ES****" +
-	 * archivo2.getNom_archivo());
-	 * 
-	 * 
-	 * } else {
-	 * redirectAttrs
-	 * .addFlashAttribute("mensaje", "Es necesario cargar un archivo")
-	 * .addFlashAttribute("clase", "danger");
-	 * return "redirect:/home/" + id_carpeta_anterior;
-	 * }
-	 * 
-	 * }
-	 * 
-	 * redirectAttrs
-	 * .addFlashAttribute("mensaje", "Agregado correctamente")
-	 * .addFlashAttribute("clase", "success");
-	 * return "redirect:/home/" + id_carpeta_anterior;
-	 * }
-	 */
-	@PostMapping("/guardar-archivo")
-	public String guardarArchivo(@Validated Archivo archivo, RedirectAttributes redirectAttrs,
-			@RequestParam(name = "archivo", required = false) List<MultipartFile> file,
-			@RequestParam(value = "auxiliar") Long id_carpeta_anterior,
-			@RequestParam(value = "idParametro", required = false) Long id_parametro,
-			@RequestParam(value = "idMateria", required = false) Long id_materia,
-			@RequestParam(value = "idRequisito", required = false) Long id_requisito) throws IOException {
-
-		String direccion = "redirect:/home/";
-		for (MultipartFile multipartFile : file) {
-			Archivo archivo2 = new Archivo();
-			if (id_carpeta_anterior != null) {
-				archivo2.setCarpeta(carpetaService.findOne(id_carpeta_anterior));
-				direccion = "redirect:/home/" + id_carpeta_anterior;
-			}
-			if (id_materia != null) {
-				archivo2.setMateria(materiaService.findOne(id_materia));
-				direccion = "redirect:/RequisitosMateria/" + id_carpeta_anterior + "/" + id_materia + "/";
-			}
-			if (id_requisito != null) {
-				// archivo2.setMateria(materiaService.findOne(id_materia));
-				direccion = "redirect:/ParametroRequisitosMateria/" + id_carpeta_anterior + "/" + id_materia + "/"
-						+ id_requisito;
-			}
-			String nombA = multipartFile.getOriginalFilename();
-			String[] ta2 = nombA.split("\\.");
-			String nombreSinExtension = obtenerNombreSinExtension(nombA);
-
-			System.out.println("anterior " + id_carpeta_anterior);
-			if (!multipartFile.isEmpty()) {
-				String arch = config.guardarArchivo(multipartFile);
-
-				archivo2.setFile(arch);
-
-				archivo2.setNom_archivo(nombreSinExtension);
-				archivo2.setTipoArchivo(ta2[ta2.length - 1]);
-				archivo2.setDescripcion(archivo.getDescripcion());
-				archivo2.setEstado("A");
-				archivo2.setFecha_registro(new Date());
-				//System.out.println("id recibido parametro: "+id_parametro);
-				if (parametroService.findOne(id_parametro) != null) {
-					Parametro parametro = parametroService.findOne(id_parametro);
-					Set<Parametro> parametros = new HashSet<>();
-					parametros.add(parametro);
-					archivo2.setParametros(parametros);
-					System.out.println("parametros " + parametro.getNombre());
-				}
-				archivoService.save(archivo2);
-
-			} else {
-				redirectAttrs
-						.addFlashAttribute("mensaje", "Es necesario cargar un archivo")
-						.addFlashAttribute("clase", "danger");
-				return direccion;
-			}
-
-		}
-
-		redirectAttrs
-				.addFlashAttribute("mensaje", "Agregado correctamente")
-				.addFlashAttribute("clase", "success");
-		return direccion;
-	}
-
-	private String obtenerNombreSinExtension(String nombreArchivo) {
-		// Utilizar una expresión regular para dividir el nombre del archivo en función
-		// del último punto
-		int ultimoPuntoIndex = nombreArchivo.lastIndexOf(".");
-		if (ultimoPuntoIndex != -1) {
-			return nombreArchivo.substring(0, ultimoPuntoIndex);
-		} else {
-			// Si no se encuentra ningún punto, devolver el nombre completo
-			return nombreArchivo;
-		}
-	}
-
-	@GetMapping("/verIcoPdf/{id}")
-	public ResponseEntity<byte[]> verIcoPdf(@PathVariable Long id) {
-		Path projectPath = Paths.get("").toAbsolutePath();
-
-		Archivo archivo = archivoService.findOne(id);
-		String rutaArchivo = projectPath + "/acreditacion/uploads/" + archivo.getFile();
-
-		try {
-			byte[] fileBytes;
-			try (InputStream inputStream = new FileInputStream(rutaArchivo)) {
-				ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-				int nRead;
-				byte[] data = new byte[16384]; // Tamaño del búfer, puedes ajustarlo según tus necesidades
-				while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
-					buffer.write(data, 0, nRead);
-				}
-				buffer.flush();
-				fileBytes = buffer.toByteArray();
-			}
-
-			// Cargar el documento PDF
-			PDDocument document = PDDocument.load(fileBytes);
-
-			// Obtener el renderizador PDF
-			PDFRenderer renderer = new PDFRenderer(document);
-
-			// Convertir la primera página a imagen
-			BufferedImage image = renderer.renderImageWithDPI(0, 300); // Ajusta la resolución según tus necesidades
-
-			// Obtener la mitad superior de la imagen
-			int height = image.getHeight();
-			int width = image.getWidth();
-			BufferedImage topHalfImage = image.getSubimage(0, 0, width, height / 3);
-
-			// Crear un flujo de bytes para la imagen
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-			// Guardar la imagen en formato JPG
-			ImageIO.write(topHalfImage, "jpg", baos);
-
-			baos.flush();
-			byte[] imageBytes = baos.toByteArray();
-			baos.close();
-			document.close();
-
-			// Configurar los encabezados para evitar el caché
-			HttpHeaders headers = new HttpHeaders();
-			headers.setCacheControl("no-cache, no-store, must-revalidate");
-			headers.setPragma("no-cache");
-			headers.setExpires(0);
-
-			return ResponseEntity.ok()
-					.headers(headers)
-					.contentType(MediaType.IMAGE_JPEG)
-					.contentLength(imageBytes.length)
-					.body(imageBytes);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-		}
-	}
-
-	/* aaaaaaaaaaaaaaaaa */
-
-	@PostMapping("/renombrar-archivo")
-	public String guardarRenombradoArchivo(RedirectAttributes redirectAttrs,
-			@RequestParam(value = "id_archivo") Long id_archivo,
-			@RequestParam(value = "nom_archivo") String nom_archivo,
-			@RequestParam(value = "descripcion") String descripcion) {
-
-		Archivo archivo = archivoService.findOne(id_archivo);
-		Carpeta carpeta = carpetaService.findOne(archivo.getCarpeta().getId_carpeta());
-
-		System.out.println("id carpeta= " + carpeta.getId_carpeta());
-		System.out.println("id= " + id_archivo);
-		System.out.println("nom= " + nom_archivo);
-		System.out.println("desc= " + descripcion);
-
-		archivo.setNom_archivo(nom_archivo);
-		archivo.setDescripcion(descripcion);
-		archivoService.save(archivo);
-
-		redirectAttrs
-				.addFlashAttribute("mensaje", "Renombrado correctamente")
-				.addFlashAttribute("clase", "success");
-
-		return "redirect:/home/" + carpeta.getId_carpeta();
-	}
-
-	@GetMapping("/eliminar-archivo/{id_archivo}")
-	public String eliminarArchivo(@PathVariable(value = "id_archivo") Long id_archivo,
-			RedirectAttributes redirectAttrs) {
-
-		Archivo archivo = archivoService.findOne(id_archivo);
-		archivo.setEstado("X");
-		archivoService.save(archivo);
-
-		Carpeta carpeta = carpetaService.findOne(archivo.getCarpeta().getId_carpeta());
-
-		redirectAttrs
-				.addFlashAttribute("mensaje", "Archivo Eliminado correctamente")
-				.addFlashAttribute("clase", "success");
-
-		return "redirect:/home/" + carpeta.getId_carpeta();
-	}
-
-	@PostMapping("/eliminar-archivo2/{id_archivo}")
-	@ResponseBody
-	public void eliminarArchivo2(@PathVariable(value = "id_archivo") Long id_archivo) {
-
-		Archivo archivo = archivoService.findOne(id_archivo);
-		archivo.setEstado("X");
-		archivoService.save(archivo);
-	}
-
-	@GetMapping("home/archivo/{texto}")
-	public String buscarArchivos(@PathVariable(value = "texto", required = false) String descripcion, ModelMap model,
-			HttpServletRequest request) {
-		System.out.println("des=" + descripcion);
-
-		Persona p2 = (Persona) request.getSession().getAttribute("persona");
-		Persona p = personaService.findOne(p2.getId_persona());
-		if (p.getTipoPersona().getNom_tipo_persona().equals("Personal")) {
-			model.addAttribute("archivos", archivoService.listaArchivosPorDescripcion(descripcion.toUpperCase(),
-					p.getUsuario().getId_usuario()));
-		}
-		if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
-			model.addAttribute("archivos", archivoService.listaArchivosPorDescripcionAdmin(descripcion.toUpperCase()));
-		}
-
-		return "content :: content1";
-	}
-
 	@GetMapping("/vista")
 	public String vista() {
 		return "vista";
 	}
 
+
 	@PostMapping("/usuariosCarpeta/{id_carpeta}")
 	public ResponseEntity<String[][]> obtenerUsuariosDeCarpeta(@PathVariable Long id_carpeta,
 			HttpServletRequest request) {
-		Carpeta carpeta = carpetaService.findOne(id_carpeta);
-		if (carpeta == null) {
-			return ResponseEntity.notFound().build();
+
+		Persona p = (Persona) request.getSession().getAttribute("persona");
+		Persona persona = personaService.findOne(p.getId_persona());
+
+		List<Usuario> listaUsuariosCarpeta = usuarioService.listaUsuarioPorIdCarpeta(id_carpeta);
+		List<Usuario> listaUsuario;
+		if (persona.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+			listaUsuario = usuarioService.listaUsuarios();
+		} else {
+			listaUsuario = usuarioService.listaUsuarioPorIdCarrera(persona.getCarrera().getId_carrera());
 		}
 
-		Persona p2 = (Persona) request.getSession().getAttribute("persona");
-		Persona p = personaService.findOne(p2.getId_persona());
+		List<Usuario> listaUsuariosDisponibles = new ArrayList<>(listaUsuario); // Copia de todos los usuarios
 
-		List<Persona> listpers = new ArrayList<>();
-		if (p.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
-			listpers = personaService.findAll();
-		}
-		if (p.getTipoPersona().getNom_tipo_persona().equals("Director")) {
-			listpers = p.getCarrera().getPersonas();
-		}
-		List<Usuario> listUse = new ArrayList<>();
-		for (Persona persona : listpers) {
-			listUse.add(persona.getUsuario());
-		}
+		// Eliminar de listaUsuariosDisponibles los usuarios que están en
+		// listaUsuariosCarpeta
+		listaUsuariosDisponibles.removeAll(listaUsuariosCarpeta);
 
-		Set<Usuario> listaUsuarios = carpeta.getUsuarios();
-
-		for (int i = 0; i < listUse.size(); i++) {
-			for (Usuario usuario : listaUsuarios) {
-				if (listUse.get(i) == usuario) {
-					listUse.remove(i);
-				}
-			}
-		}
-
-		String[][] usuariosArray = new String[listUse.size()][3];
+		String[][] usuariosArray = new String[listaUsuariosDisponibles.size()][3];
 
 		int index = 0;
-		for (Usuario usuario : listUse) {
+		for (Usuario usuario : listaUsuariosDisponibles) {
 			usuariosArray[index][0] = usuario.getUsername();
 			usuariosArray[index][1] = String.valueOf(usuario.getId_usuario());
 			usuariosArray[index][2] = String.valueOf(usuario.getEstado());
@@ -3599,5 +3297,42 @@ public class HomeController {
 			index++;
 		}
 		return ResponseEntity.ok(materiaArray);
+	}
+
+	// @PostMapping("/cargarCarpetasDisponibles/{id_carpeta}/{id_archivo}")
+	// public String cargarCarpetasDisponibles(@PathVariable(value = "id_carpeta")
+	// Long id_carpeta,
+	// @PathVariable(value = "id_archivo") Long id_archivo, Model model,
+	// HttpServletRequest request) {
+	// Persona p2 = (Persona) request.getSession().getAttribute("persona");
+	// Persona persona = personaService.findOne(p2.getId_persona());
+	// Usuario usuario = usuarioService.usuarioPorIdPersona(p2.getId_persona());
+	// model.addAttribute("archivo", id_archivo);
+	// if (persona.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+	// model.addAttribute("carpetas",
+	// carpetaService.listaDireccionesParaMoverArchivoAdmin(id_carpeta));
+	// } else {
+	// model.addAttribute("carpetas",
+	// carpetaService.listaDireccionesParaMoverArchivo(id_carpeta,
+	// usuario.getId_usuario()));
+	// }
+
+	// return "Carpeta/carpetasDisponibles";
+	// }
+
+	@PostMapping("/cargarCarpetasDisponibles/{id_carpeta}")
+	public String cargarCarpetasDisponibles(@PathVariable(value = "id_carpeta") Long id_carpeta,
+			Model model, HttpServletRequest request) {
+		Persona p2 = (Persona) request.getSession().getAttribute("persona");
+		Persona persona = personaService.findOne(p2.getId_persona());
+		Usuario usuario = usuarioService.usuarioPorIdPersona(p2.getId_persona());
+		if (persona.getTipoPersona().getNom_tipo_persona().equals("Administrador")) {
+			model.addAttribute("carpetas", carpetaService.listaDireccionesParaMoverArchivoAdmin(id_carpeta));
+		} else {
+			model.addAttribute("carpetas",
+					carpetaService.listaDireccionesParaMoverArchivo(id_carpeta, usuario.getId_usuario()));
+		}
+
+		return "Carpeta/carpetasDisponibles";
 	}
 }

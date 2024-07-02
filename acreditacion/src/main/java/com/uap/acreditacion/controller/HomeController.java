@@ -2910,7 +2910,7 @@ public class HomeController {
 					int contador = 0;
 					Carpeta carpetaPadre = carpetaService.findOne(id_carpeta_anterior);
 					for (Carpeta carpeta2 : carpetaPadre.getCarpetasHijos()) {
-						if (carpeta2.getNom_carpeta().equals(nombreCompleto)) {
+						if (carpeta2.getNom_carpeta().equals(nombreCompleto) && !carpeta2.getEstado().equals("X")) {
 							contador = 1;
 						}
 					}

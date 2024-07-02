@@ -13,6 +13,8 @@ public interface ICarpetaService {
 	public Carpeta findOne(Long id);
 
 	public void delete(Long id);
+
+	List<Carpeta> listaCarpetasHijosPorIdCarpeta(Long idCarpeta);
 	
 	public List<Carpeta> getAllCarpetasCarrera(Long id_carrera);
 	

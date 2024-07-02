@@ -194,14 +194,16 @@ public class HomeController {
 				// List<Carpeta> Listcarpetas = new ArrayList<>();
 				// List<Carpeta> listFill = carpetaService.findAll();
 				// for (int i = 0; i < listFill.size(); i++) {
-				// 	if (listFill.get(i).getCarpetaPadre() == null) {
-				// 		Listcarpetas.add(listFill.get(i));
-				// 	}
+				// if (listFill.get(i).getCarpetaPadre() == null) {
+				// Listcarpetas.add(listFill.get(i));
+				// }
 				// }
 				List<Carpeta> Listcarpetas = carpetaService.getAllCarpetasUsuario(user.getId_usuario());
-				List<Carpeta> listcarpetasNullPadre = carpetaService.getAllCarpetasNullPadreUsuario(user.getId_usuario());
+				List<Carpeta> listcarpetasNullPadre = carpetaService
+						.getAllCarpetasNullPadreUsuario(user.getId_usuario());
 				for (Carpeta cPadre : listcarpetasNullPadre) {
-					Listcarpetas.removeAll(carpetaService.getCarpetasUsuarioYHijos(user.getId_usuario(), cPadre.getId_carpeta()));
+					Listcarpetas.removeAll(
+							carpetaService.getCarpetasUsuarioYHijos(user.getId_usuario(), cPadre.getId_carpeta()));
 				}
 				for (Carpeta cPadre : listcarpetasNullPadre) {
 					Listcarpetas.add(cPadre);
@@ -807,7 +809,6 @@ public class HomeController {
 		return "vista";
 	}
 
-
 	@PostMapping("/usuariosCarpeta/{id_carpeta}")
 	public ResponseEntity<String[][]> obtenerUsuariosDeCarpeta(@PathVariable Long id_carpeta,
 			HttpServletRequest request) {
@@ -1352,7 +1353,8 @@ public class HomeController {
 
 	@PostMapping("/CargarDocentePeriodo/{id_carpeta}")
 	public ResponseEntity<String[][]> CargarDocentePeriodo(@PathVariable(value = "id_carpeta") Long id_carpeta) {
-		List<Carpeta> carpetas = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+		// List<Carpeta> carpetas = carpetaService.findOne(id_carpeta).getCarpetasHijos();
+		List<Carpeta> carpetas = carpetaService.listaCarpetasHijosPorIdCarpeta(id_carpeta);
 		String[][] materiaArray = new String[carpetas.size()][2];
 		int index = 0;
 		for (Carpeta carpeta : carpetas) {
@@ -3131,12 +3133,12 @@ public class HomeController {
 									System.out.println("MATERIA:" + asignatura);
 									TipoEvaluacionMateria evaluacionMateria = evaluacionMateriaService
 											.evaluacionMateriaPorNombre(asignatura[2]);
-											if (evaluacionMateria == null) {
-												evaluacionMateria = new TipoEvaluacionMateria();
-												evaluacionMateria.setEstado("A");
-												evaluacionMateria.setNombre(asignatura[2]);
-												evaluacionMateriaService.save(evaluacionMateria);
-											} 
+									if (evaluacionMateria == null) {
+										evaluacionMateria = new TipoEvaluacionMateria();
+										evaluacionMateria.setEstado("A");
+										evaluacionMateria.setNombre(asignatura[2]);
+										evaluacionMateriaService.save(evaluacionMateria);
+									}
 									System.out.println("MATERIA:" + asignatura);
 									Materia materia = new Materia();
 									materia.setEstado("A");

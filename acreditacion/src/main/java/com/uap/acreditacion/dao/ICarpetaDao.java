@@ -19,6 +19,9 @@ public interface ICarpetaDao extends JpaRepository<Carpeta, Long> {
 	// "WHERE u.id_usuario = ?1", nativeQuery = true)
 	// public List<Carpeta> getAllCarpetasUsuario(Long id_usuario);
 
+	@Query(value = "select c from Carpeta c where c.estado != 'X' and c.carpetaPadre.id_carpeta = ?1")
+	List<Carpeta> listaCarpetasHijosPorIdCarpeta(Long idCarpeta);
+
 	@Query(value = "SELECT * FROM acre_carpeta ca " +
 			"LEFT JOIN usuario_carpeta uc ON uc.id_carpeta = ca.id_carpeta " +
 			"LEFT JOIN usuario u ON u.id_usuario = uc.id_usuario " +

@@ -72,4 +72,9 @@ public class CarpetaServiceImpl implements ICarpetaService{
         return carpetaDao.getAllCarpetasNullPadreUsuario(id_usuario);
     }
 
+    @Override
+    public List<Carpeta> listaCarpetasHijosPorIdCarpeta(Long idCarpeta) {
+        return carpetaDao.listaCarpetasHijosPorIdCarpeta(idCarpeta);
+    }
+
 }

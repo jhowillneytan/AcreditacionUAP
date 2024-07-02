@@ -3131,6 +3131,12 @@ public class HomeController {
 									System.out.println("MATERIA:" + asignatura);
 									TipoEvaluacionMateria evaluacionMateria = evaluacionMateriaService
 											.evaluacionMateriaPorNombre(asignatura[2]);
+											if (evaluacionMateria == null) {
+												evaluacionMateria = new TipoEvaluacionMateria();
+												evaluacionMateria.setEstado("A");
+												evaluacionMateria.setNombre(asignatura[2]);
+												evaluacionMateriaService.save(evaluacionMateria);
+											} 
 									System.out.println("MATERIA:" + asignatura);
 									Materia materia = new Materia();
 									materia.setEstado("A");

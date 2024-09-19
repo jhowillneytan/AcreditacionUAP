@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.5.6</version>
+		<version>3.3.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.uap</groupId>
@@ -14,7 +14,7 @@
 	<name>acreditacion</name>
 	<description>Demo project for Spring Boot</description>
 	<properties>
-		<java.version>1.8</java.version>
+		<java.version>21</java.version>
 	</properties>
 	<dependencies>
 
@@ -34,7 +34,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>2.0.0.RELEASE</version>
 		</dependency>
 
 		<dependency>
@@ -84,16 +83,17 @@
     <artifactId>spring-boot-starter-mail</artifactId>
 </dependency>
 
-<dependency>
-			<groupId>com.itextpdf</groupId>
-			<artifactId>itextpdf</artifactId>
-			<version>5.5.13</version>
-		</dependency>
-		<dependency>
-    <groupId>org.json</groupId>
-    <artifactId>json</artifactId>
-    <version>20210307</version> <!-- Asegúrate de usar la versión más reciente disponible -->
-</dependency>
+<!-- iText PDF -->
+    <dependency>
+            <groupId>com.itextpdf</groupId>
+            <artifactId>itextpdf</artifactId>
+            <version>5.5.13.4</version> <!-- iText 5 -->
+    </dependency>
+	<dependency>
+    	<groupId>org.json</groupId>
+    	<artifactId>org.json</artifactId>
+	    <version>chargebee-1.0</version>
+	</dependency>
 
 
 	</dependencies>

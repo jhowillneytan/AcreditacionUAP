@@ -3,8 +3,6 @@ package com.uap.acreditacion.controller;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Controller;
@@ -21,6 +19,8 @@ import com.uap.acreditacion.entity.Puesto;
 import com.uap.acreditacion.service.IPersonaService;
 import com.uap.acreditacion.service.IPuestoService;
 import com.uap.acreditacion.service.ITipoPersonaService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value ="/puesto")

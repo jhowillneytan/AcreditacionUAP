@@ -1,0 +1,162 @@
+<div class="modal-content">
+    <div class="modal-header">
+        <th:block
+            th:text="'Detalles de los Estudiantes Titulados de la Gestión '+${gestion}+' del periodo '+${periodo}">
+        </th:block>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    </div>
+    <input type="hidden" th:value="${gestion}" id="gestionDetalle">
+    <input type="hidden" th:value="${periodo}" id="periodoDetalle">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-12" style="max-height: 500px; max-width: 100%;">
+                                <label for="">Grafico de Estudiantes Titulados por Modalidad de Graduación</label>
+                                <canvas id="detallesGraficoEstadistico"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <label for="">Lista de Estudiantes Titulados</label>
+        <div class="table-responsive">
+            <table id="tableDetalles" class="table" style="width:100%">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>R.U.</th>
+                        <th>C.I.</th>
+                        <th>Nombre Completo</th>
+                        <th>Tipo de Admisión</th>
+                        <th>Modalidad</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="estudiante, nroFile: ${listaEstudiante}">
+                        <td th:text="${nroFile.count}"></td>
+                        <td th:text="${estudiante.ru}"></td>
+                        <td th:text="${estudiante.ci}"></td>
+                        <td th:text="${estudiante.nombreCompleto}"></td>
+                        <td th:text="${estudiante.tipoAdminision}"></td>
+                        <td th:text="${estudiante.modalidad}"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        detallesGraficoEstadisticoPorGestionYPeriodo();
+        $('#tableDetalles').DataTable({
+            language: {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sInfoPostFix": "",
+                "sSearch": "Buscar:",
+                "sUrl": "",
+                "sInfoThousands": ",",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            }
+        });
+
+    });
+
+
+
+    function detallesGraficoEstadisticoPorGestionYPeriodo() {
+        let chartDetalle; // Variable global para el gráfico
+        // Si el gráfico ya existe, destrúyelo
+        if (chartDetalle) {
+            chartDetalle.destroy();
+        }
+
+        $('#detallesGraficoEstadistico').html('<div class="text-center">' +
+            '<div class="spinner-border" role="status" id="loadingSpinner">' +
+            '<span class="sr-only">Loading...</span>' +
+            '</div>' +
+            '</div>');
+        var gestion = $('#gestionDetalle').val();
+        var periodo = $('#periodoDetalle').val();
+
+        const modalidad = [];
+        const cantEstudiantes = [];
+        const cantEstudiantesText = [];
+
+        $.ajax({
+            type: 'POST',
+            url: '/estadisticas/tituladosPorModalidad/' + gestion + '/' + periodo,
+            success: function (data) {
+                data.forEach(function (fila) {
+                    modalidad.push(fila[1]);
+                    cantEstudiantes.push(fila[0]);
+                    cantEstudiantesText.push(fila[0] + ' Matriculados');
+                });
+
+                const ctx = document.getElementById('detallesGraficoEstadistico').getContext('2d');
+
+
+                // Dibuja el gráfico después de recibir los datos
+                chartDetalle = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: modalidad,
+                        datasets: [{
+                            label: 'Estudiantes Titulados',
+                            data: cantEstudiantes,
+                            extraText: cantEstudiantesText,
+                            backgroundColor: 'rgba(0, 0, 255, 0.2)', // Color de fondo azul
+                            borderColor: 'rgba(0, 0, 255, 1)', // Color del borde azul
+                            borderWidth: 1.5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return value; // Asegúrate de que los números son visibles
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        datalabels: {
+                            anchor: 'end',
+                            align: 'end',
+                            formatter: (value, context) => {
+                                // Puedes mostrar el valor y el texto adicional
+                                return context.dataset.extraText[context.dataIndex] + ': ' + cantEstudiantesText;
+                            },
+                            color: 'black'
+                        }
+                    }, plugins: [ChartDataLabels]
+                });
+            },
+            error: function () {
+                console.log("Error al obtener la lista de estudiantes");
+            }
+        });
+    }
+</script>

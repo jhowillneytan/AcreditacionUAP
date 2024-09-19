@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/layout :: head">
+</head>
+
+<body class="vertical-layout vertical-menu-modern content-left-sidebar navbar-floating footer-static" data-open="click"
+    data-menu="vertical-menu-modern" data-col="content-left-sidebar">
+
+    <nav th:replace="layout/layout :: cabecera"></nav>
+
+    <div th:replace="layout/layout :: ladera"></div>
+
+
+    <div class="app-content content file-manager-application">
+        <div class="content-wrapper container-xxl p-0">
+
+            <div class="content-body">
+                <!-- Validation -->
+                <!-- Validation -->
+                <div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+                    th:text="${mensaje}" class="alert">
+                </div>
+
+                <section>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Información Académicas</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-6">
+                                                        <label for="">De Gestion a Gestion</label>
+                                                        <div class="row"> 
+                                                            <span class="input-group-text col-md-2">Desde</span>
+                                                            <div class="col-md-2">
+                                                                <Select id="gestion1" onchange="estadisticaMatriculadosPorGestionYPeriodo()" class="select2 "></Select>
+                                                            </div>
+                                                            <span class="input-group-text col-md-2">Hasta</span>
+                                                            <div class="col-md-2">
+                                                                <Select id="gestion2" onchange="estadisticaMatriculadosPorGestionYPeriodo()" class="select2"></Select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                        <label for="">Periodo</label>
+                                                        <Select id="periodo" class="select2" onchange="estadisticaMatriculadosPorGestionYPeriodo()"  >
+                                                            <option value="1" th:selected="${periodoActual == '1'}">1
+                                                            </option>
+                                                            <option value="2" th:selected="${periodoActual == '2'}">2
+                                                            </option>
+                                                        </Select>
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                        <label for="">Datos de:</label>
+                                                        <Select class="select2" id="tipoDatoSelect" onchange="cambiarTipoDato()">
+                                                            <option value="matriculado" selected>Matriculados</option>
+                                                            <option value="titulado">Titulados</option>
+                                                        </Select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12" style="max-height: 500px; max-width: 100%;">
+                                            <label for="" id="tituloGrafico"></label>
+                                            <canvas id="estadisticaMatriculados"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="detallesModal" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div id="contenidoDetalles"></div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+
+    <div class="sidenav-overlay"></div>
+    <div class="drag-target"></div>
+
+    <footer th:replace="layout/layout :: pie"></footer>
+
+    <script>
+        $(document).ready(function () {
+
+            var startYear = 1900;
+            var endYear = new Date().getFullYear();
+            //var endYear = 2100;
+            // Obtén una referencia al elemento select
+            var select = document.getElementById("gestion1");
+            // Agrega el nuevo elemento option al select
+            for (var year = endYear; year >= startYear; year--) {
+                // Crea un nuevo elemento option
+                var option = document.createElement("option");
+                option.text = year;
+                option.value = year;
+                select.add(option);
+            }
+
+            //var endYear = 2100;
+            // Obtén una referencia al elemento select
+            var select2 = document.getElementById("gestion2");
+            // Agrega el nuevo elemento option al select
+            for (var year = endYear; year >= startYear; year--) {
+                // Crea un nuevo elemento option
+                var option = document.createElement("option");
+                option.text = year;
+                option.value = year;
+                select2.add(option);
+            }
+
+            estadisticaMatriculadosPorGestionYPeriodo();
+            cambiarTipoDato();
+        });
+
+        function cambiarTipoDato() {
+            const tipo = $('#tipoDatoSelect').val();
+            if (tipo == 'matriculado') {
+                $('#gestion1').attr({
+                    'onchange': 'estadisticaMatriculadosPorGestionYPeriodo()'
+                });
+
+                $('#gestion2').attr({
+                    'onchange': 'estadisticaMatriculadosPorGestionYPeriodo()'
+                });
+
+                $('#periodo').attr({
+                    'onchange': 'estadisticaMatriculadosPorGestionYPeriodo()'
+                });
+                estadisticaMatriculadosPorGestionYPeriodo();
+            }
+            if (tipo == 'titulado') {
+                $('#gestion1').attr({
+                    'onchange': 'estadisticaTituladosPorGestionYPeriodo()'
+                });
+
+                $('#gestion2').attr({
+                    'onchange': 'estadisticaTituladosPorGestionYPeriodo()'
+                });
+
+                $('#periodo').attr({
+                    'onchange': 'estadisticaTituladosPorGestionYPeriodo()'
+                });
+                estadisticaTituladosPorGestionYPeriodo();
+            }
+        }
+
+        let chart; // Variable global para el gráfico
+
+        function estadisticaMatriculadosPorGestionYPeriodo() {
+            $('#estadisticaMatriculados').html('<div class="text-center">' +
+                '<div class="spinner-border" role="status" id="loadingSpinner">' +
+                '<span class="sr-only">Loading...</span>' +
+                '</div>' +
+                '</div>');
+            $('#tituloGrafico').html('Grafico de Matriculados por Gestión y Periodo');
+            var gestion1 = $('#gestion1').val();
+            var gestion2 = $('#gestion2').val();
+            var periodo = $('#periodo').val();
+
+            const gestiones = [];
+            const cantMatriculados = [];
+            const cantMatriculadosText = [];
+
+            $.ajax({
+                type: 'POST',
+                url: '/estadisticas/matriculados/' + gestion1 + '/' + gestion2 + '/' + periodo,
+                success: function (data) {
+                    data.forEach(function (fila) {
+                        gestiones.push(fila[1]);
+                        cantMatriculados.push(fila[0]);
+                        cantMatriculadosText.push(fila[0] + ' Matriculados');
+                    });
+
+                    const ctx = document.getElementById('estadisticaMatriculados').getContext('2d');
+
+                    // Si el gráfico ya existe, destrúyelo
+                    if (chart) {
+                        chart.destroy();
+                    }
+
+                    // Dibuja el gráfico después de recibir los datos
+                    chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: gestiones,
+                            datasets: [{
+                                label: 'Estudiantes Matriculados',
+                                data: cantMatriculados,
+                                extraText: cantMatriculadosText,
+                                backgroundColor: 'rgba(255, 0, 0, 0.2)',
+                                borderColor: 'rgba(255, 0, 0, 1)',
+                                borderWidth: 1.5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            onClick: function (event) {
+                                const activePoints = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+                                if (activePoints.length) {
+                                    const firstPoint = activePoints[0];
+                                    const label = chart.data.labels[firstPoint.index];
+                                    const value = chart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                                    //const extraText = chart.data.datasets[firstPoint.datasetIndex].extraText[firstPoint.index];
+                                    //alert(`Detalles:\n${label}\n${extraText}\nCantidad: ${value}`);
+                                    cargarDetallesMatriculados(label);
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return value; // Asegúrate de que los números son visibles
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'end',
+                                formatter: (value, context) => {
+                                    // Puedes mostrar el valor y el texto adicional
+                                    return context.dataset.extraText[context.dataIndex] + ': ' + cantMatriculadosText;
+                                },
+                                color: 'black'
+                            }
+                        }, plugins: [ChartDataLabels]
+                    });
+                },
+                error: function () {
+                    console.log("Error al obtener la lista de estudiantes");
+                }
+            });
+        }
+
+        function estadisticaTituladosPorGestionYPeriodo() {
+            $('#estadisticaMatriculados').html('<div class="text-center">' +
+                '<div class="spinner-border" role="status" id="loadingSpinner">' +
+                '<span class="sr-only">Loading...</span>' +
+                '</div>' +
+                '</div>');
+            $('#tituloGrafico').html('Grafico de Titulados por Gestión y Periodo');
+            var gestion1 = $('#gestion1').val();
+            var gestion2 = $('#gestion2').val();
+            var periodo = $('#periodo').val();
+
+            const gestiones = [];
+            const cantTitulados = [];
+            const cantTituladosText = [];
+
+            $.ajax({
+                type: 'POST',
+                url: '/estadisticas/titulados/' + gestion1 + '/' + gestion2 + '/' + periodo,
+                success: function (data) {
+                    data.forEach(function (fila) {
+                        gestiones.push(fila[1]);
+                        cantTitulados.push(fila[0]);
+                        cantTituladosText.push(fila[0] + ' Titulados');
+                    });
+
+                    const ctx = document.getElementById('estadisticaMatriculados').getContext('2d');
+
+                    // Si el gráfico ya existe, destrúyelo
+                    if (chart) {
+                        chart.destroy();
+                    }
+
+                    // Dibuja el gráfico después de recibir los datos
+                    chart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: gestiones,
+                            datasets: [{
+                                label: 'Estudiantes Titulados',
+                                data: cantTitulados,
+                                extraText: cantTituladosText,
+                                backgroundColor: 'rgba(0, 0, 255, 0.2)', // Color de fondo azul
+                                borderColor: 'rgba(0, 0, 255, 1)', // Color del borde azul
+                                borderWidth: 1.5
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            onClick: function (event) {
+                                const activePoints = chart.getElementsAtEventForMode(event, 'nearest', { intersect: true }, false);
+                                if (activePoints.length) {
+                                    const firstPoint = activePoints[0];
+                                    const label = chart.data.labels[firstPoint.index];
+                                    const value = chart.data.datasets[firstPoint.datasetIndex].data[firstPoint.index];
+                                    //const extraText = chart.data.datasets[firstPoint.datasetIndex].extraText[firstPoint.index];
+                                    //alert(`Detalles:\n${label}\n${extraText}\nCantidad: ${value}`);
+                                    cargarDetallesTitulados(label);
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return value; // Asegúrate de que los números son visibles
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'end',
+                                formatter: (value, context) => {
+                                    // Puedes mostrar el valor y el texto adicional
+                                    return context.dataset.extraText[context.dataIndex] + ': ' + cantMatriculadosText;
+                                },
+                                color: 'black'
+                            }
+                        }, plugins: [ChartDataLabels]
+                    });
+                },
+                error: function () {
+                    console.log("Error al obtener la lista estudiantes");
+                }
+            });
+        }
+
+        function cargarDetallesMatriculados(gestion) {
+            $("#contenidoDetalles").html('');
+            $('#detallesModal').modal('show');
+            $('#contenidoDetalles').html('<div class="text-center" style="background-color: white;">' +
+                '<div class="spinner-border" role="status">' +
+                '<span class="sr-only">Loading...</span>' +
+                '</div>' +
+                '</div>');
+
+            var periodo = $('#periodo').val();
+            $.ajax({
+                type: 'POST',
+                url: "/estadisticas/detallesMatriculados/" + gestion + '/' + periodo,  // Ruta del metodo del controlador en Spring Boot
+                success: function (response) {
+
+                    $("#contenidoDetalles").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                }
+            });
+        }
+
+        function cargarDetallesTitulados(gestion) {
+            $("#contenidoDetalles").html('');
+            $('#detallesModal').modal('show');
+            $('#contenidoDetalles').html('<div class="text-center" style="background-color: white;">' +
+                '<div class="spinner-border" role="status">' +
+                '<span class="sr-only">Loading...</span>' +
+                '</div>' +
+                '</div>');
+            var periodo = $('#periodo').val();
+            $.ajax({
+                type: 'POST',
+                url: "/estadisticas/detallesTitulados/" + gestion + '/' + periodo,  // Ruta del metodo del controlador en Spring Boot
+                success: function (response) {
+
+                    $("#contenidoDetalles").html(response);  // Actualiza el contenido del div con la respuesta del servidor
+                }
+            });
+        }
+
+
+    </script>
+</body>
+
+</html>

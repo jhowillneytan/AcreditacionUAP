@@ -3,8 +3,6 @@ package com.uap.acreditacion.controller;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -24,6 +22,8 @@ import com.uap.acreditacion.entity.Persona;
 import com.uap.acreditacion.entity.TipoPersona;
 import com.uap.acreditacion.service.IPersonaService;
 import com.uap.acreditacion.service.ITipoPersonaService;
+
+import jakarta.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/tipo-persona")

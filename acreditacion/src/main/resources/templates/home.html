@@ -406,10 +406,15 @@
 																															</div>
 																														</div>
 																														<embed
-																															th:src="'/acreditacion/uploads/'+${archivo.file}"
+																															th:src="'/uploads/'+${archivo.file}"
 																															type="application/pdf"
 																															width="100%"
 																															height="500px">
+																														<!-- <embed
+																															th:src="'/acreditacion/uploads/'+${archivo.file}"
+																															type="application/pdf"
+																															width="100%"
+																															height="500px"> -->
 																													</div>
 																												</div>
 																											</div>
@@ -477,7 +482,9 @@
 											<div class="card-img-top file-logo-wrapper">
 												<!-- file-logo-wrapper-->
 												<a th:href="@{'/home/' + ${c.id_carpeta}}">
-													<img th:src="@{'/acreditacion/uploads/' + ${c.ruta_icono}}"
+													<!-- <img th:src="@{'/acreditacion/uploads/' + ${c.ruta_icono}}"
+														style="width: 100%; height: 120%;"> -->
+														<img th:src="@{'/uploads/' + ${c.ruta_icono}}"
 														style="width: 100%; height: 120%;">
 												</a>
 												<div class="dropdown float-end"
@@ -524,7 +531,9 @@
 												<div class="content-wrapper">
 													<a class="card-text file-name mb-0" th:text="${c.nom_carpeta}"
 														th:href="@{'/home/' + ${c.id_carpeta}}"></a>
-													<p class="card-text file-size mb-0">2gb</p>
+														<p class="card-text file-size mb-0" th:if="${c.archivos.size > 0 and c.archivos.?[estado == 'A'].size() > 0}" 
+															th:text="'Cant: '+${c.archivos.?[estado == 'A'].size()}"></p>
+														 
 													<p class="card-text file-date" th:text="${c.fecha_registro}"></p>
 												</div>
 												<div class="row">
@@ -558,7 +567,7 @@
 												</small>
 
 												<small class="file-accessed text-muted"
-													th:text="'Creacion: '+${c.fecha_registro}"></small>
+												th:text="'Fecha creada '+${#dates.format(c.fecha_registro, 'dd/MM/yyyy')}"></small>
 
 											</div>
 										</div>
@@ -609,19 +618,36 @@
 													<div class="d-flex align-items-center justify-content-center">
 														<!--  w-100 -->
 														<div th:if="${a.tipoArchivo == 'pdf'}">
-															<a type="button" data-bs-toggle="modal"
+															<!-- <a type="button" data-bs-toggle="modal"
 																th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
 																th:href="@{'/acreditacion/uploads/' + ${a.file}}">
 
 																<img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}"
 																	alt="file-icon" height="85"
-																	style="object-fit: cover; width: 100%; height: 110%;" />
+																	style="object-fit: cover; width: 110%; height: 110%;" />
+															</a> -->
+															<a type="button" data-bs-toggle="modal"
+																th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+																th:href="@{'/uploads/' + ${a.file}}">
+																<img th:src="@{'/uploads/' + ${a.icono_file}}"
+																	alt="file-icon" height="85"
+																	style="object-fit: cover; width: 110%; height: 110%;" />
+
+																<!-- <img th:src="@{'/verIcoPdf/' + ${a.id_archivo}}"
+																	alt="file-icon" height="85"
+																	style="object-fit: cover; width: 110%; height: 110%;" /> -->
 															</a>
 														</div>
 														<div th:if="${a.tipoArchivo != 'pdf'}">
-															<a type="button" data-bs-toggle="modal"
+															<!-- <a type="button" data-bs-toggle="modal"
 																th:attr="onclick='verArchivoImg(\'' + ${a.file} + '\', \'' + ${a.nom_archivo} + '\', \'' + ${a.descripcion} + '\')'">
 																<img th:src="@{'/acreditacion/uploads/' + ${a.file}}"
+																	alt="file-icon" height="85"
+																	style="object-fit: cover; width: 110%; height: 110%;" />
+															</a> -->
+															<a type="button" data-bs-toggle="modal"
+																th:attr="onclick='verArchivoImg(\'' + ${a.file} + '\', \'' + ${a.nom_archivo} + '\', \'' + ${a.descripcion} + '\')'">
+																<img th:src="@{'/uploads/' + ${a.file}}"
 																	alt="file-icon" height="85"
 																	style="object-fit: cover; width: 110%; height: 110%;" />
 															</a>
@@ -630,25 +656,32 @@
 												</div>
 												<div class="card-body bg-white">
 													<div class="content-wrapper">
-														<a class="card-text file-name mb-0" th:text="${a.nom_archivo}"
+														<!-- <a class="card-text file-name mb-0" th:text="${a.nom_archivo}"
 															data-bs-toggle="modal"
 															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
-															th:href="@{'/acreditacion/uploads/' + ${a.file}}"></a>
+															th:href="@{'/acreditacion/uploads/' + ${a.file}}"></a> -->
+															<a class="card-text file-name mb-0" th:text="${a.nom_archivo}"
+															data-bs-toggle="modal"
+															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+															th:href="@{'/uploads/' + ${a.file}}"></a>
 
-														<p class="card-text file-size mb-0">2gb</p>
+														<p class="card-text file-size mb-0" th:text="${a.tipoArchivo }">2gb</p>
 														<p class="card-text file-date"></p>
 													</div>
 													<div class="row">
-														<a th:href="@{'/acreditacion/uploads/' + ${a.file}}"
+														<!-- <a th:href="@{'/acreditacion/uploads/' + ${a.file}}"
 															data-bs-toggle="modal"
 															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
-															style="color: black;"><b class="card-text"
+															style="color: black;"> -->
+															<a th:href="@{'/uploads/' + ${a.file}}"
+															data-bs-toggle="modal"
+															th:attr="data-bs-target='#visualizar_archivo'+${a.id_archivo}"
+															style="color: black;">
+															<b class="card-text"
 																th:text="${a.descripcion}"></b></a><br>
-														<!-- th:onclick="visualizar([[${a.file}]])" -->
 													</div>
 													<small class="file-accessed text-muted"
-														th:text="'Fecha creada '+${a.fecha_registro}"></small>
-
+														th:text="'Fecha creada '+${#dates.format(a.fecha_registro, 'dd/MM/yyyy')}"></small>
 												</div>
 											</div>
 										</th:block>
@@ -969,8 +1002,11 @@
 										</div>
 
 										<div class=" modal-body">
-											<embed style="width: 100%; " height="800" frameborder="1" scrolling="auto"
+											<!-- <embed style="width: 100%; " height="800" frameborder="1" scrolling="auto"
 												th:src="@{'/acreditacion/uploads/' + ${a.file}}"
+												type="application/pdf" /> -->
+												<embed style="width: 100%; " height="800" frameborder="1" scrolling="auto"
+												th:src="@{'/uploads/' + ${a.file}}"
 												type="application/pdf" />
 										</div>
 									</div>
@@ -2039,7 +2075,7 @@
 			Swal.fire({
 				title: nombre,
 				text: descripcion,
-				imageUrl: '/acreditacion/uploads/' + id,
+				imageUrl: '/uploads/' + id,
 				imageWidth: 500,
 				imageHeight: 400,
 				imageAlt: 'Custom image',
@@ -2285,7 +2321,7 @@
 	<script>
 		function VerArchivoParametro(file) {
 			var embedElement = $("#ventanaVerArchivoParametro");
-			embedElement.attr("src", "/acreditacion/uploads/" + file);
+			embedElement.attr("src", "/uploads/" + file);
 
 			// Elimina la clase 'active' de todos los elementos con la clase 'boton-activo'
 			$('.boton-activoParametro').removeClass('active');

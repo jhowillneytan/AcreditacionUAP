@@ -19,7 +19,7 @@
     <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/css/vendors.min.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/fonts/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/css/extensions/jstree.min.css">
-    <link rel="stylesheet" type="text/css" href="../../../app-assets/css/bootstrap.min.css">
+    <!-- <link rel="stylesheet" type="text/css" href="../../../app-assets/css/bootstrap.min.css"> -->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/bootstrap-extended.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/colors.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/components.css">
@@ -124,7 +124,7 @@
                         </div>
 
                         <span class="avatar"><img class="round"
-                                th:src="'/acreditacion/uploads/'+${personasession.imagen_persona}" alt="avatar"
+                                th:src="'/uploads/'+${personasession.imagen_persona}" alt="avatar"
                                 height="40"
                                 width="40"><!-- ../../../app-assets/images/portrait/small/3445f56f-437e-4db0-b649-6bfa2b924fa7_logo-indus.png -->
                             <span class="avatar-status-online"></span></span>
@@ -208,8 +208,8 @@
             <!--<img th:src="'/acreditacion/uploads/'+${personasession.carrera.file}" alt="" height="300px" width="300px">-->
             <div class="d-flex align-items-center"
                 style=" top: 5%; width: 100%; height: 35%; background-repeat: no-repeat; overflow: hidden; justify-content: center; text-align: center; ">
-                <img th:src="@{'/acreditacion/uploads/' + ${personasession.carrera.file}}" alt=""
-                    style="max-width: 70%; height: 96%;">
+                <img th:src="@{'/uploads/' + ${personasession.carrera.file}}" alt=""
+                    style="max-width: 90%; height: 96%;">
             </div>
 
 
@@ -312,6 +312,11 @@
 
                     </ul>
                 </li>
+                <li th:class="${opcionEstadistica}? 'nav-item active':'nav-item'">
+                    <a class="d-flex align-items-center" th:href="@{/estadisticas/inicio}" style="color: aliceblue; ">
+                        <i data-feather="bar-chart-2"></i><span class="menu-title text-truncate" data-i18n="File Manager"
+                            style="color: aliceblue;">Estadisticas</span></a>
+                </li>
                 <th:block th:if="${opcionHome}">
                     <li class="nav-item" th:if="${anterior.nom_carpeta =='EVALUACION DOCENTE'}">
                         <a class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#reporteModal"
@@ -380,6 +385,9 @@
         <script src="../../../../js/swallAlert2.js"></script>
         <script src="../../../../js/select 2 4.1.js"></script>
         <script src="../../../../fontawesome-free-6.5.2-web/js/all.min.js"></script>
+        <script src="../../../../js/chart.js"></script>
+        <script src="../../../../js/chartjs-plugin-datalabels.js"></script>
+        <!-- <script src="../../../../js/chart.min.js"></script> -->
         <script>
             function botonSubMenu(event) {
                 var boton = event.target;

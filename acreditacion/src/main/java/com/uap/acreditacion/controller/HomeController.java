@@ -441,7 +441,7 @@ public class HomeController {
 				System.out.println("periodo: " + numero2);
 				System.out.println("gestion: " + numero);
 				System.out.println("code_carrera: " + carpeta2.getCarrera().getId_carrera());
-				String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+				String url = "http://190.129.216.246:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
 				String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
 				HttpHeaders headers = new HttpHeaders();
@@ -1004,7 +1004,7 @@ public class HomeController {
 				System.out.println("periodo: " + numero2);
 				System.out.println("gestion: " + numero);
 				System.out.println("code_carrera: " + carpeta2.getCarrera().getId_carrera());
-				String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+				String url = "http://190.129.216.246:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
 				String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
 				HttpHeaders headers = new HttpHeaders();
@@ -1206,7 +1206,7 @@ public class HomeController {
 				System.out.println("periodo: " + numero2);
 				System.out.println("gestion: " + numero);
 				System.out.println("code_carrera: " + carpeta2.getCarrera().getId_carrera());
-				String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+				String url = "http://190.129.216.246:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
 				String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
 				HttpHeaders headers = new HttpHeaders();
@@ -1874,7 +1874,7 @@ public class HomeController {
 					System.out.println("periodo: " + numero2);
 					System.out.println("gestion: " + numero);
 					System.out.println("code_carrera: " + carpeta3.getCarrera().getId_carrera());
-					String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+					String url = "http://190.129.216.246:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
 					String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
 					HttpHeaders headers = new HttpHeaders();
@@ -2275,7 +2275,7 @@ public class HomeController {
 						System.out.println("periodo: " + numero2);
 						System.out.println("gestion: " + numero);
 						System.out.println("code_carrera: " + carpeta3.getCarrera().getId_carrera());
-						String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+						String url = "http://190.129.216.246:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
 						String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
 						HttpHeaders headers = new HttpHeaders();
@@ -2653,7 +2653,7 @@ public class HomeController {
 							System.out.println("periodo: " + numero2);
 							System.out.println("gestion: " + numero);
 							System.out.println("code_carrera: " + carpeta3.getCarrera().getId_carrera());
-							String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+							String url = "http://190.129.216.246:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
 							String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
 							HttpHeaders headers = new HttpHeaders();
@@ -2855,7 +2855,7 @@ public class HomeController {
 		requests.put("gestion", numeroGestion);
 		requests.put("code_carrera", carrera.getId_carrera());
 
-		String url = "http://181.115.188.250:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
+		String url = "http://190.129.216.246:9993/v1/service/api/f4adc106a6bf4902aa0e0e053e753962";
 		String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
 		HttpHeaders headers = new HttpHeaders();

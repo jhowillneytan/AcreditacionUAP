@@ -199,7 +199,7 @@ public class CarreraController {
     public String cargarCarreras(HttpServletRequest request) {
         Map<String, Object> requests = new HashMap<String, Object>();
 
-        String url = "http://181.115.188.250:9993/v1/service/api/89b5b361047f40edb5d75dce872e8bf1";
+        String url = "http://190.129.216.246:9993/v1/service/api/89b5b361047f40edb5d75dce872e8bf1";
         String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
 
         HttpHeaders headers = new HttpHeaders();

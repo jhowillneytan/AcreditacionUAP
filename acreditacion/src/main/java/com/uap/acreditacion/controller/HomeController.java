@@ -653,7 +653,7 @@ public class HomeController {
 			redirectAttrs
 					.addFlashAttribute("mensaje", "Carpeta agregado correctamente")
 					.addFlashAttribute("clase", "success");
-			return "redirect:/home/";
+			return "redirect:/home";
 		}
 
 	}
@@ -714,7 +714,7 @@ public class HomeController {
 				redirectAttrs
 						.addFlashAttribute("mensaje", "Renombrado correctamente sin cambio de icono")
 						.addFlashAttribute("clase", "success");
-				return "redirect:/home/";
+				return "redirect:/home";
 
 			} else {
 				String arch = config.guardarArchivo(ruta_ico);
@@ -742,7 +742,7 @@ public class HomeController {
 				redirectAttrs
 						.addFlashAttribute("mensaje", "Renombrado correctamente con cambio de icono")
 						.addFlashAttribute("clase", "success");
-				return "redirect:/home/";
+				return "redirect:/home";
 			}
 
 		}
@@ -764,7 +764,7 @@ public class HomeController {
 		if (carpeta.getCarpetaPadre() != null) {
 			return "redirect:/home/" + carpeta.getCarpetaPadre().getId_carpeta();
 		} else {
-			return "redirect:/home/";
+			return "redirect:/home";
 		}
 
 	}
@@ -782,7 +782,7 @@ public class HomeController {
 		}
 
 		carpetaService.save(carpeta);
-		return "redirect:/home/";
+		return "redirect:/home";
 	}
 
 	// ------------ASIGNAR PERMISO A USUARIOS A CARPETAS
@@ -797,7 +797,7 @@ public class HomeController {
 		}
 
 		carpetaService.save(carpeta);
-		return "redirect:/home/";
+		return "redirect:/home";
 	}
 
 	// ----------- FIN DEL METODO

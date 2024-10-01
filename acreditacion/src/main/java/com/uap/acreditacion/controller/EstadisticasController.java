@@ -1,6 +1,7 @@
 package com.uap.acreditacion.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,6 +17,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -33,8 +39,11 @@ import com.uap.acreditacion.entity.dto.TituladosDto;
 import com.uap.acreditacion.service.IPersonaService;
 import com.uap.acreditacion.service.ITipoPersonaService;
 import com.uap.acreditacion.service.IUsuarioService;
+import com.uap.acreditacion.service.JarperService;
 
 import jakarta.servlet.http.HttpServletRequest;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Controller
 @RequestMapping(value = "/estadisticas")
@@ -50,6 +59,9 @@ public class EstadisticasController {
 
 	@Autowired
 	private IUsuarioService usuarioService;
+
+	@Autowired
+	private JarperService jarperService;
 
 	@GetMapping("/inicio")
 	public String inicio(Model model, HttpServletRequest request) {
@@ -131,54 +143,8 @@ public class EstadisticasController {
 	public String detallesMatriculados(Model model,
 			@PathVariable("gestion") int gestion, @PathVariable("periodo") int periodo) {
 
-		List<EstudianteDto> estudiantes = new ArrayList<>();
+		List<EstudianteDto> estudiantes = listaEstudianteDtos(periodo, gestion, "8");
 
-		String url = "http://190.129.216.246:9993/v1/service/api/603cfb26571749a5aceb05506ee9a786";
-		String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
-
-		Map<String, Object> requests = new HashMap<String, Object>();
-		// EL idCarrera 8 es la carrera de ing. industrial
-		requests.put("idCarrera", "8");
-		requests.put("periodo", periodo);
-		requests.put("gestion", gestion);
-
-		HttpHeaders headers = new HttpHeaders();
-
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("x-api-key", key);
-
-		HttpEntity<HashMap> req = new HttpEntity(requests, headers);
-
-		RestTemplate restTemplate = new RestTemplate();
-
-		ResponseEntity<Map> resp = restTemplate.exchange(url, HttpMethod.POST, req, Map.class);
-
-		if (resp.getStatusCode() == HttpStatus.OK) {
-			Map<String, Object> responseBody = resp.getBody();
-			// Aquí puedes procesar los datos de responseBody
-			Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
-
-			// Obtener los valores de "paterno", "ci", "fecha_nacimiento", etc., del objeto
-			// "data"
-
-			if (data != null) {
-
-				List<Map<String, String>> estudiantesData = (List<Map<String, String>>) data
-						.get("estudiantes");
-				for (Map<String, String> estudianteData : estudiantesData) {
-					EstudianteDto estudiante = new EstudianteDto();
-					estudiante.setRu(String.valueOf(estudianteData.get("ru")));
-					estudiante.setCi(estudianteData.get("ci"));
-					estudiante.setNombreCompleto(estudianteData.get("nombres") + " " + estudianteData.get("paterno")
-							+ " " + estudianteData.get("materno"));
-					estudiante.setTipoAdminision(estudianteData.get("tipo_admision"));
-					estudiantes.add(estudiante);
-				}
-			}
-
-		} else {
-			System.out.println("Error en la solicitud. Código de respuesta: " + resp.getStatusCodeValue());
-		}
 		model.addAttribute("listaEstudiante", estudiantes);
 
 		return "estadistica/detallesMatriculados";
@@ -396,16 +362,16 @@ public class EstadisticasController {
 			if (data != null) {
 
 				List<Map<String, String>> tituladoTipoData = (List<Map<String, String>>) data
-							.get("titulados");
+						.get("titulados");
 
-					Integer cantidadNoPogragramdos = (Integer) data.get("matriculados") - (Integer) data.get("programados");
-					String cantidadNoProgramados = String.valueOf(cantidadNoPogragramdos);
-					String[] noProgramados = { cantidadNoProgramados, "No programados" };
-					tituladosGestion.add(noProgramados);
+				Integer cantidadNoPogragramdos = (Integer) data.get("matriculados") - (Integer) data.get("programados");
+				String cantidadNoProgramados = String.valueOf(cantidadNoPogragramdos);
+				String[] noProgramados = { cantidadNoProgramados, "No programados" };
+				tituladosGestion.add(noProgramados);
 
-					String cantidadProgramados = String.valueOf((Integer) data.get("programados"));
-					String[] programados = { cantidadProgramados, "Programados" };
-					tituladosGestion.add(programados);
+				String cantidadProgramados = String.valueOf((Integer) data.get("programados"));
+				String[] programados = { cantidadProgramados, "Programados" };
+				tituladosGestion.add(programados);
 			}
 
 		} else {
@@ -421,6 +387,104 @@ public class EstadisticasController {
 		} else {
 			return "2";
 		}
+	}
+
+	@GetMapping("/generarListaMatriculadosApi/{gestion}/{periodo}")
+	public ResponseEntity<ByteArrayResource> GenerarReportePdfSolicitudesBecasFacultad(Model model,
+			@PathVariable("gestion") int gestion, @PathVariable("periodo") int periodo,
+			HttpServletRequest request)
+			throws SQLException {
+
+		// Usuario usuarioSession = (Usuario) request.getSession().getAttribute("usuario");
+		// Usuario userLog = usuarioService.findOne(usuarioSession.getId_usuario());
+
+		// Path jasperPath = Paths.get("acreditacion", "reportes", "reporteListaMatriculadosApi.jrxml");
+		// String rutaJasper = jasperPath.toString();
+
+		List<EstudianteDto> estudiantes = listaEstudianteDtos(periodo, gestion, "8");
+
+		Map<String, Object> parametros = new HashMap<>();
+		parametros.put("gestion", gestion);
+		parametros.put("periodo", periodo);
+
+		ByteArrayOutputStream stream;
+		try {
+			// Usar JRBeanCollectionDataSource para la lista
+			JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(estudiantes);
+
+			// Compilar y llenar el reporte
+			stream = jarperService.compilarAndExportarReporteExcel("reporteListaMatriculadosApi.jrxml", parametros, dataSource);
+			byte[] bytes = stream.toByteArray();
+			ByteArrayResource resource = new ByteArrayResource(bytes);
+
+			HttpHeaders headersRespuesta = new HttpHeaders();
+			headersRespuesta.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=lista_matriculados.xlsx");
+
+			return ResponseEntity.ok()
+					.headers(headersRespuesta)
+					.contentType(MediaType
+							.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+					.body(resource);
+		} catch (IOException | JRException e) {
+			System.out.println("ERROR: " + e.getMessage());
+			e.printStackTrace();
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+		}
+	}
+
+	private List<EstudianteDto> listaEstudianteDtos(int periodo, int gestion, String idCarrera) {
+
+		List<EstudianteDto> estudiantes = new ArrayList<>();
+
+		String url = "http://190.129.216.246:9993/v1/service/api/603cfb26571749a5aceb05506ee9a786";
+		String key = "key 46bc2f9cface91d161e6bf4f6e27c1aeb67d40d157b082d7a7135a677f5df1fb";
+
+		Map<String, Object> requests = new HashMap<String, Object>();
+		// EL idCarrera 8 es la carrera de ing. industrial
+		requests.put("idCarrera", idCarrera);
+		requests.put("periodo", periodo);
+		requests.put("gestion", gestion);
+
+		HttpHeaders headers = new HttpHeaders();
+
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.set("x-api-key", key);
+
+		HttpEntity<HashMap> req = new HttpEntity(requests, headers);
+
+		RestTemplate restTemplate = new RestTemplate();
+
+		ResponseEntity<Map> resp = restTemplate.exchange(url, HttpMethod.POST, req, Map.class);
+
+		if (resp.getStatusCode() == HttpStatus.OK) {
+			Map<String, Object> responseBody = resp.getBody();
+			// Aquí puedes procesar los datos de responseBody
+			Map<String, Object> data = (Map<String, Object>) responseBody.get("data");
+
+			// Obtener los valores de "paterno", "ci", "fecha_nacimiento", etc., del objeto
+			// "data"
+
+			if (data != null) {
+
+				List<Map<String, String>> estudiantesData = (List<Map<String, String>>) data
+						.get("estudiantes");
+				for (Map<String, String> estudianteData : estudiantesData) {
+					EstudianteDto estudiante = new EstudianteDto();
+					estudiante.setRu(String.valueOf(estudianteData.get("ru")));
+					estudiante.setCi(estudianteData.get("ci"));
+					estudiante.setNombreCompleto(estudianteData.get("nombres") + " " + estudianteData.get("paterno")
+							+ " " + estudianteData.get("materno"));
+					estudiante.setTipoAdminision(estudianteData.get("tipo_admision"));
+					estudiantes.add(estudiante);
+				}
+			}
+
+		} else {
+			System.out.println("Error en la solicitud. Código de respuesta: " + resp.getStatusCodeValue());
+		}
+
+		return estudiantes;
+
 	}
 
 }

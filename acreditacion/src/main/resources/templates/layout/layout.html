@@ -43,6 +43,7 @@
         rel="stylesheet">
     <link rel="stylesheet" type="text/css"
         href="../../../app-assets/vendors/css/tables/datatable/dataTables.bootstrap5.min.css">
+
     <link rel="stylesheet" type="text/css"
         href="../../../app-assets/vendors/css/tables/datatable/responsive.bootstrap5.min.css">
 
@@ -89,7 +90,8 @@
 
                             <div class="search-input-icon"><i data-feather="search"></i></div>
 
-                            <input type="text" placeholder="Buscar Archivos" id="texto" onkeyup="buscarDescripcionArchivo()">
+                            <input type="text" placeholder="Buscar Archivos" id="texto"
+                                onkeyup="buscarDescripcionArchivo()">
 
                             <div class="search-input-close"><i data-feather="x"></i></div>
 
@@ -123,9 +125,8 @@
                                 th:text="${personasession.cargo.nom_cargo}"></span><!-- sec:authentication="principal.authorities" -->
                         </div>
 
-                        <span class="avatar"><img class="round"
-                                th:src="'/uploads/'+${personasession.imagen_persona}" alt="avatar"
-                                height="40"
+                        <span class="avatar"><img class="round" th:src="'/uploads/'+${personasession.imagen_persona}"
+                                alt="avatar" height="40"
                                 width="40"><!-- ../../../app-assets/images/portrait/small/3445f56f-437e-4db0-b649-6bfa2b924fa7_logo-indus.png -->
                             <span class="avatar-status-online"></span></span>
                     </a>
@@ -314,8 +315,8 @@
                 </li>
                 <li th:class="${opcionEstadistica}? 'nav-item active':'nav-item'">
                     <a class="d-flex align-items-center" th:href="@{/estadisticas/inicio}" style="color: aliceblue; ">
-                        <i data-feather="bar-chart-2"></i><span class="menu-title text-truncate" data-i18n="File Manager"
-                            style="color: aliceblue;">Estadisticas</span></a>
+                        <i data-feather="bar-chart-2"></i><span class="menu-title text-truncate"
+                            data-i18n="File Manager" style="color: aliceblue;">Estadisticas</span></a>
                 </li>
                 <th:block th:if="${opcionHome}">
                     <li class="nav-item" th:if="${anterior.nom_carpeta =='EVALUACION DOCENTE'}">
@@ -377,6 +378,8 @@
         <script src="../../../app-assets/vendors/js/tables/datatable/dataTables.rowGroup.min.js"></script>
         <script src="../../../app-assets/js/scripts/tables/table-datatables-basic.js"></script>
         <script src="../../../app-assets/vendors/js/tables/datatable/datatables1.10.25.js"></script>
+        <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+	<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
         <script src="../../../../js/dataTables.bootstrap4.min.js"></script>
         <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.9/js/bootstrap-select.min.js"></script>-->
         <script src="../../static/js/bootstrap.bundle.min.js"></script>
@@ -415,7 +418,7 @@
 
         </script>
         <style>
-            .select2-selection__arrow{
+            .select2-selection__arrow {
                 visibility: hidden;
             }
         </style>
@@ -424,7 +427,7 @@
     <!-- <div>
         <script src="../../../app-assets/js/scripts/pages/app-file-manager.js"></script>
     </div> -->
-    
+
 </body>
 <!-- END: Body-->
 

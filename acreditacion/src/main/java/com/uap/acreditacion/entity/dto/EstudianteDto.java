@@ -6,6 +6,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class EstudianteDto {
+//    private int nroFila;
     private String ru;
     private String ci;
     private String nombres;
@@ -14,4 +15,5 @@ public class EstudianteDto {
     private String nombreCompleto;
     private String tipoAdminision;
     private String modalidad;
+    private String duracion;
 }

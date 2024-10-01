@@ -20,27 +20,37 @@
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
-            <table id="tableDetalles" class="table" style="width:100%">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>R.U.</th>
-                        <th>C.I.</th>
-                        <th>Nombre Completo</th>
-                        <th>Tipo de Admisión</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr th:each="estudiante, nroFile: ${listaEstudiante}">
-                        <td th:text="${nroFile.count}"></td>
-                        <td th:text="${estudiante.ru}"></td>
-                        <td th:text="${estudiante.ci}"></td>
-                        <td th:text="${estudiante.nombreCompleto}"></td>
-                        <td th:text="${estudiante.tipoAdminision}"></td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="card">
+            <div class="card-header">
+                <h5>Lista de estudiantes</h5>
+                <button class="btn btn-success" th:onclick="exportarExcel([[${gestion}]], [[${periodo}]])">
+                    <i class="fa fa-file-excel"></i>  Exportar en excel
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="tableDetalles" class="table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>R.U.</th>
+                                <th>C.I.</th>
+                                <th>Nombre Completo</th>
+                                <th>Tipo de Admisión</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="estudiante, nroFile: ${listaEstudiante}">
+                                <td th:text="${nroFile.count}"></td>
+                                <td th:text="${estudiante.ru}"></td>
+                                <td th:text="${estudiante.ci}"></td>
+                                <td th:text="${estudiante.nombreCompleto}"></td>
+                                <td th:text="${estudiante.tipoAdminision}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -71,7 +81,27 @@
                     "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
                     "sSortDescending": ": Activar para ordenar la columna de manera descendente"
                 }
-            }
+            },
+            buttons: [
+						{
+							extend: 'excelHtml5',
+							text: '<i class="fa fa-file-excel"></i> Excel',
+							titleAttr: 'Exportar a Excel',
+							className: 'btn btn-success btn-lg', // Cambiar a btn-lg para hacer los botones más grandes
+							exportOptions: {
+								columns: [0, 1, 2] // Índices de las columnas que deseas exportar
+							}
+						},
+						{
+							extend: 'pdfHtml5',
+							text: '<i class="fa fa-file-pdf"></i> PDF',
+							titleAttr: 'Exportar a PDF',
+							className: 'btn btn-danger btn-lg', // Cambiar a btn-lg para hacer los botones más grandes
+							exportOptions: {
+								columns: [0, 1, 2] // Índices de las columnas que deseas exportar
+							}
+						}
+					]
         });
 
     });
@@ -150,4 +180,10 @@
             }
         });
     }
+
+    function exportarExcel(gestion, periodo){
+        var url = '/estadisticas/generarListaMatriculadosApi/'+gestion+'/'+periodo;
+        window.location.href = url; // Redirigir a la URL
+    }
+
 </script>

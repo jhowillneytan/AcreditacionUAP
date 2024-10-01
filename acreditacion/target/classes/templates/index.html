@@ -19,6 +19,19 @@
 			font-size: 70px;
 			color: #ffffff;
 		}
+
+		@font-face {
+			font-family: 'Strawberry Cupcakes';
+			src: url('../../fuenteLetra/StrawberryCupcakes.ttf') format('truetype');
+		}
+
+		.texto-uap {
+			font-family: 'Strawberry Cupcakes', sans-serif;
+			color: white;
+			font-size: 30px !important;
+			position: absolute;
+			/* Uso de !important solo si es necesario */
+		}
 	</style>
 
 </head>
@@ -31,16 +44,16 @@
 		<div class="date-text">Sunday, November 03</div>
 		<script src="../../../login/scripts/timedisplay.js"></script>
 	</div>
-	<div>
-		<h1>INGENIERIA INDUSTRIAL</h1>
+	<div class="row col-md-12 d-flex justify-content-center">
+		<h1>Sistema de Acreditación Académica</h1>
 	</div>
-	<div style="text-align: center; background-color: #ffffff00;" th:class="'alert alert-' + (${clase != null} ? ${clase} : info)" role="alert" 
-		th:if="${mensaje != null}">
+	<div style="text-align: center; background-color: #ffffff00;"
+		th:class="'alert alert-' + (${clase != null} ? ${clase} : info)" role="alert" th:if="${mensaje != null}">
 		<h2 th:style="'color: '+${sty}+';  background-color: '+${col}+'; width: 38%; margin: 0 auto;'"
 			class="alert-heading" th:text="${mensaje}"></h2>
 	</div>
 	<!--Form-->
-	<div class="login-form">
+	<div class="login-form row ">
 		<ul class="nav nav-tabs " style="top: 0; position: absolute;">
 			<li class="nav-item">
 				<a class="nav-link active" data-toggle="tab" href="#menu1">Usuario</a>
@@ -49,10 +62,9 @@
 				<a class="nav-link" data-toggle="tab" href="#menu2">Docente</a>
 			</li>
 		</ul>
-		<div class="tab-content">
+		<div class="tab-content col-md-12">
 			<div id="menu1" class="tab-pane fade in active show">
 				<form th:action="@{/login}" method="post" style="text-align: center;" class="tab-pane active">
-					<!--<div class="profile-pic"></div>-->
 					<div class="text-body">
 						<i class="fa fa-user icon" style="color: #ffffff;"></i>
 						<input type="text" name="username"> <span data-placeholder="Nombre"></span>
@@ -62,18 +74,15 @@
 						<input type="password" name="password"> <span data-placeholder="Password"></span>
 					</div>
 					<div class="bottom-subtmit" style="margin-top: 15px;">
-						<button class="login-btn" type="submit"> <i class="fas fa-sign-in-alt"></i>Login </button>
+						<button class="login-btn" type="submit"> <i class="fas fa-sign-in-alt"></i>Iniciar</button>
 					</div>
-					<div class="bottom-text"
-						style="font-family:courier,arial,helvética;font-style: oblique; font-size: 12px; color: white">
-						Escribiendo una nueva historia con vos<!-- <a href="#">Sign Up</a> -->
+					<div class="">
+						<span class="bottom-text texto-uap">Escribiendo una nueva Historia con vos</span>
 					</div>
-					<!-- Load in the script for the form -->
 				</form>
 			</div>
 			<div id="menu2" class="tab-pane fade">
 				<form th:action="@{/login2}" method="post" style="text-align: center;" class="tab-pane">
-					<!--<div class="profile-pic"></div>-->
 					<div class="text-body">
 						<i class="fa fa-user icon" style="color: #ffffff;"></i>
 						<input type="text" name="rd"> <span data-placeholder="Codigo Docente(RD)"></span>
@@ -83,16 +92,15 @@
 						<input type="text" name="ci"> <span data-placeholder="C.I."></span>
 					</div>
 					<div class="bottom-subtmit" style="margin-top: 15px;">
-						<button class="login-btn" type="submit"> <i class="fas fa-sign-in-alt"></i>Login </button>
+						<button class="login-btn" type="submit"> <i class="fas fa-sign-in-alt"></i>Iniciar</button>
 					</div>
-					<div class="bottom-text"
-						style="font-family:courier,arial,helvética;font-style: oblique; font-size: 12px; color: white">
-						Escribiendo una nueva historia con vos<!-- <a href="#">Sign Up</a> -->
+					<div class="">
+						<span class="bottom-text texto-uap">Escribiendo una nueva Historia con vos</span>
 					</div>
-					<!-- Load in the script for the form -->
 				</form>
 			</div>
 		</div>
+
 	</div>
 	<script src="../../../login/scripts/form.js"></script>
 	<script src="../../../dist/js/bootstrap.min.js"></script>

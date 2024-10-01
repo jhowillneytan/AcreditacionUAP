@@ -2987,9 +2987,12 @@ public class HomeController {
 									TipoEvaluacionMateria evaluacionMateria = evaluacionMateriaService
 											.evaluacionMateriaPorNombre(asignatura[2]);
 									System.out.println("MATERIA:" + asignatura);
-									Materia materia = new Materia();
-									materia.setEstado("A");
-									materia.setNombre(asignatura[0]);
+									Materia materia = materiaService.materiaNombre(asignatura[0]);
+									if (materia == null) {
+										materia = new Materia();
+										materia.setEstado("A");
+										materia.setNombre(asignatura[0]);
+									}
 									materia.setPlan(asignatura[1]);
 									if (materia.getTipoEvaluacionMaterias() == null) {
 										materia.setTipoEvaluacionMaterias(new HashSet<>());
@@ -3138,9 +3141,12 @@ public class HomeController {
 										evaluacionMateriaService.save(evaluacionMateria);
 									}
 									System.out.println("MATERIA:" + asignatura);
-									Materia materia = new Materia();
-									materia.setEstado("A");
-									materia.setNombre(asignatura[0]);
+									Materia materia = materiaService.materiaNombre(asignatura[0]);
+									if (materia == null) {
+										materia = new Materia();
+										materia.setEstado("A");
+										materia.setNombre(asignatura[0]);
+									}
 									materia.setPlan(asignatura[1]);
 									if (materia.getTipoEvaluacionMaterias() == null) {
 										materia.setTipoEvaluacionMaterias(new HashSet<>());

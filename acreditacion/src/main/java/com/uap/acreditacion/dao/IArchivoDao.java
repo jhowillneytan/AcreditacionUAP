@@ -29,4 +29,5 @@ public interface IArchivoDao extends CrudRepository<Archivo,Long>{
         "and p.id_parametro = ?1 and ac.id_carpeta = ?2 and m.id_materia = ?3", nativeQuery = true)
 public List<Archivo> archivoParametro(Long id_parametro, Long id_carpeta, Long id_materia);
 
+
 }

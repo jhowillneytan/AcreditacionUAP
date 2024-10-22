@@ -54,19 +54,8 @@ public class Usuario implements Serializable{
     @Temporal(TemporalType.DATE)
     private Date fecha_registro;
 
-   // @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "usuario")
-   // private List<Carpeta> carpetas = new HashSet<>();
- 
+
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "usuarios", fetch = FetchType.LAZY)
     private Set<Carpeta> carpetas = new HashSet<>();
-   /*  @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name="usuario_carpeta",
-    joinColumns=@JoinColumn(name = "id_usuario"),
-    inverseJoinColumns = @JoinColumn(name = "id_carpeta"))
-    private Set<Carpeta> carpetas;*/
-
-    /* @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "usuarios2", fetch = FetchType.LAZY)
-	private List<Carpeta> carpetas2;*/
+ 
 }

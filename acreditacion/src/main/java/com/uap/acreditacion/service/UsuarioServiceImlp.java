@@ -64,4 +64,9 @@ public class UsuarioServiceImlp implements IUsuarioService{
         return iUsuarioDao.listaUsuarioPorIdCarrera(idCarrera);
     }
 
+    @Override
+    public List<Usuario> listaUsuarioPorIdCarpetaExceptoUsuarioActual(Long idCarpeta, Long idUsuario) {
+        return iUsuarioDao.listaUsuarioPorIdCarpetaExceptoUsuarioActual(idCarpeta, idUsuario);
+    }
+
 }

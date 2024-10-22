@@ -174,10 +174,10 @@
 									<table id="example" class="table" style="width:100%">
 										<thead>
 											<tr>
-												<th>Nombre</th>
-												<th>Paterno</th>
-												<th>Materno</th>
 												<th>Ci</th>
+												<th>Nombre Completo</th>
+												<th>Carrera</th>
+												<th>Cargo</th>
 												<th>Fecha registro</th>
 												<th>Tipo persona</th>
 												<th>Imagen</th>
@@ -188,10 +188,10 @@
 										<tbody>
 
 											<tr th:each="persona: ${listaPersonas}" th:if="${persona.estado != 'X'}">
-												<td th:text="${persona.nombre}"></td>
-												<td th:text="${persona.ap_paterno}"></td>
-												<td th:text="${persona.ap_materno}"></td>
 												<td th:text="${persona.ci}"></td>
+												<td th:text="${persona.nombreCompleto}"></td>
+												<td th:text="${persona.carrera.nom_carrera}"></td>
+												<td th:text="${persona.cargo.nom_cargo}"></td>
 												<td th:text="${persona.fecha_registro}"></td>
 												<td th:text="${persona.tipoPersona.nom_tipo_persona}"></td>
 												<td><img class="round"
@@ -211,10 +211,10 @@
 										</tbody>
 										<tfoot>
 											<tr>
-												<th>Nombre</th>
-												<th>Paterno</th>
-												<th>Materno</th>
 												<th>Ci</th>
+												<th>Nombre Completo</th>
+												<th>Carrera</th>
+												<th>Cargo</th>
 												<th>Fecha registro</th>
 												<th>Tipo persona</th>
 												<th>Imagen</th>

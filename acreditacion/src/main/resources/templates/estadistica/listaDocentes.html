@@ -1,0 +1,278 @@
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Listado de Docentes</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="data-table" class="table" style="width:100%">
+                        <thead>
+                            <tr>
+                                <!--<th></th>  Columna para el control del acordeón -->
+                                <th>#</th>
+                                <th>RD</th>
+                                <th>CI</th>
+                                <th>Nombre Completo</th>
+                                <th>Grado Académico</th>
+                                <th>Dirección</th>
+                                <th>Celular</th>
+                                <th>Correos</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="docente, cont: ${docentes}">
+                                <!-- <td class="dt-control" style="cursor: pointer;"></td> -->
+                                <td th:text="${cont.index + 1}"></td>
+                                <td th:text="${docente.rd}"></td>
+                                <td th:text="${docente.ci}"></td>
+                                <td th:text="${docente.nombreCompleto}"></td>
+                                <td th:text="${docente.gradoAcademico}"></td>
+                                <td th:text="${docente.direccion}"></td>
+                                <td th:text="${docente.celular}"></td>
+                                <td>
+                                    <ul>
+                                        <li th:each="correo: ${docente.correos}" th:text="${correo}"></li>
+                                    </ul>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-info" data-toggle="modal"
+                                        data-target="#detallesModal" th:onclick="crearCharts([[${docente.rd}]])">
+                                        <i class="fas fa-chart-line"></i>
+                                        Ver</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="detallesModal" aria-hidden="true"
+    data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl" style="max-width: 95%;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Estadísticas de Evaluación Docente</h4>
+                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+                <div id="tituloCard-1"></div>
+                <div class="row" id="cantidadCards-1"></div>
+                <div id="tituloCard-2"></div>
+                <div class="row" id="cantidadCards-2"></div>
+            </div>
+        </div>
+    </div>
+    <!-- /.modal-content -->
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Function to format the row details
+        // function format(d) {
+        //     //console.log(d); // Agregar para ver la estructura del objeto
+        //     return (
+        //         '<dl>' +
+        //         '<dt>Grafico Estadistico de Evaluacion Docente de la Gestion ' + $('#gestion1').val() + '</dt>' +
+        //         '<dd><div id="cantidadCards-' + d[2] + '" class="row" ></div></dd>' +
+        //         '</dl>'
+        //     );
+        //     crearCharts(d[2]);
+        // }
+
+        // Initialize DataTable
+        let table = $('#data-table').DataTable({
+            //pageLength: -1,
+            language: {
+                "sProcessing": "Procesando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "No se encontraron resultados",
+                "sInfo": "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando registros del 0 al 0 de un total de 0 registros",
+                "sInfoFiltered": "(filtrado de un total de _MAX_ registros)",
+                "sSearch": "Buscar:",
+                "sLoadingRecords": "Cargando...",
+                "oPaginate": {
+                    "sFirst": "Primero",
+                    "sLast": "Último",
+                    "sNext": "Siguiente",
+                    "sPrevious": "Anterior"
+                },
+                "oAria": {
+                    "sSortAscending": ": Activar para ordenar la columna de manera ascendente",
+                    "sSortDescending": ": Activar para ordenar la columna de manera descendente"
+                }
+            },
+            //Show details on initialization
+            // drawCallback: function (settings) {
+            //     var api = this.api();
+            //     api.rows().every(function () {
+            //         var row = this.node();
+            //         if (!this.child.isShown()) {
+            //             // Muestra los detalles
+            //             this.child(format(this.data())).show();
+            //             $(row).addClass('shown');
+
+            //             // Obtén el RD del docente
+            //             var rd = this.data()[2]; // Suponiendo que el RD está en el índice 2
+            //             // Llama a la función crearCharts con el RD correspondiente
+            //             crearCharts(rd);
+            //         }
+            //     });
+            // }
+
+        });
+
+    });
+
+
+    function crearCharts(rd) {
+        //console.log('DOCENTE: ' + rd);
+        //$('#cantidadCards').html('');
+
+
+        var gestion1 = $('#gestion1').val();
+        var gestion2 = $('#gestion2').val();
+
+        for (let periodo = 1; periodo <= 2; periodo++) {
+            $('#cantidadCards-' + periodo).html('<div class="text-center">' +
+                '<div class="spinner-border" role="status" id="loadingSpinner">' +
+                '<span class="sr-only">Loading...</span>' +
+                '</div>' +
+                '</div>');
+            $('#tituloCard-' + periodo).html();
+            $.ajax({
+                type: 'POST',
+                url: '/estadisticas/crearChartsCarreraYRD/' + gestion1 + '/' + gestion2 + '/' + periodo + '/' + 8 + '/' + rd,
+                success: function (data) {
+                    //console.log("Datos recibidos:", data); // Ver datos recibidos
+                    $('#cantidadCards-' + periodo).html(`<label for="">Informacion de Evaluacion Docente de la gestion ${gestion1} hasta la ${gestion2} del periodo ${periodo}</label>`);
+                    data.forEach(function (asignatura) {
+                        $('#cantidadCards-' + periodo).append(` 
+                                    <div class="col-md-3">
+                                        <div class="card col-md-12">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-12" style="max-height: 500px; ">
+                                                        <label for="">Gráfico de la Asignatura ${asignatura.nombre} - ${asignatura.sigla}</label>
+                                                        <ul> 
+                                                            <li >Evaluacion: ${asignatura.tipoEvaluacion}</li>
+                                                            <li >Periodo: ${periodo}</li>
+                                                        </ul>
+                                                        <canvas class="col-md-12" id="grafico_materia_${asignatura.sigla}_${asignatura.tipoEvaluacion}_${periodo}"></canvas>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            `);
+                        estadisticaAsignaturaEvaluacionDocente(gestion1, gestion2, periodo, asignatura.sigla, asignatura.tipoEvaluacion, 8, rd, asignatura.nombre + ' - ' + asignatura.sigla);
+                    });
+                },
+                error: function () {
+                    console.log("Error al optener la base de los graficos");
+                }
+            });
+        }
+    }
+
+    function estadisticaAsignaturaEvaluacionDocente(gestion1, gestion2, periodo, sigla, tipo, carrera, rd, materia) {
+        let chart;
+        const gestiones = [];
+        const calificacion = [];
+
+        $.ajax({
+            type: 'POST',
+            url: '/estadisticas/evolucionDocenteDetalladaCarreraRD/' + gestion1 + '/' + gestion2 + '/' + periodo + '/' + sigla + '/' + tipo + '/' + carrera + '/' + rd,
+            success: function (data) {
+                data.forEach(function (asignatura) {
+                    gestiones.push(asignatura.gestion);
+                    calificacion.push(asignatura.calificacion);
+                });
+
+                const ctx = document.getElementById('grafico_materia_' + sigla + '_' + tipo + '_' + periodo).getContext('2d');
+
+                // Si el gráfico ya existe, destrúyelo
+                if (chart) {
+                    chart.destroy();
+                }
+
+                // Dibuja el gráfico después de recibir los datos
+                chart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: gestiones,
+                        datasets: [{
+                            label: materia,
+                            data: calificacion,
+                            backgroundColor: 'rgba(40, 40, 187, 1)', // Color de fondo azul
+                            borderColor: 'rgba(40, 40, 187, 1)', // Color del borde azul
+                            //borderWidth: 1.5,
+                            fill: true,
+                            // Aquí puedes agregar datalabels específicos para el dataset
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'end',
+                                formatter: (value) => value, // Muestra solo el valor
+                                color: 'black',
+                                offset: 5 // Ajusta la posición vertical
+                            }
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                intersect: false, // Permitir hover en cualquier parte del gráfico
+                                mode: 'nearest', // Modo de tooltip más cercano
+                                callbacks: {
+                                    title: function (tooltipItems) {
+                                        const index = tooltipItems[0].dataIndex;
+                                        return `Gestión: ${gestiones[index]}`;
+                                    },
+                                    label: function (tooltipItem) {
+                                        return `Calificación: ${tooltipItem.raw}`;
+                                    }
+                                }
+                            },
+                            // Asegúrate de incluir datalabels aquí
+                            datalabels: {
+                                anchor: 'end',
+                                align: 'end',
+                                formatter: (value) => value, // Muestra solo el valor
+                                color: 'black',
+                                offset: 5 // Ajusta la posición vertical
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return value; // Asegúrate de que los números son visibles
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    plugins: [ChartDataLabels] // Asegúrate de que el plugin está incluido aquí
+                });
+            },
+            error: function () {
+                console.log("Error al obtener los datos estadisticos");
+            }
+        });
+    }
+</script>
+
+<style>
+    .accordion-content {
+        background-color: #f9f9f9;
+        /* Color de fondo para la fila de contenido */
+    }
+</style>

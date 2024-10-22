@@ -76,4 +76,16 @@ public class Persona implements Serializable{
     @JoinColumn(name = "id_carrera")
     private Carrera carrera;
 
+    public String getNombreCompleto(){
+        if(this.getAp_materno() == null){
+            return this.getNombre()+" "+this.getAp_paterno();
+        }
+
+        if(this.getAp_paterno() == null){
+            return this.getNombre()+" "+this.getAp_materno();
+        }
+
+        return this.getNombre()+" "+this.getAp_paterno()+" "+this.getAp_materno();
+    }
+
 }

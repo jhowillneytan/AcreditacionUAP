@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr" xmlns:th="http://www.thymeleaf.org"
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head th:replace="layout/layout :: head">
+</head>
+
+<body class="vertical-layout vertical-menu-modern content-left-sidebar navbar-floating footer-static" data-open="click"
+    data-menu="vertical-menu-modern" data-col="content-left-sidebar">
+
+    <nav th:replace="layout/layout :: cabecera"></nav>
+
+    <div th:replace="layout/layout :: ladera"></div>
+
+
+    <div class="app-content content file-manager-application">
+        <div class="content-wrapper container-xxl p-0">
+
+            <div class="content-body">
+                <!-- Validation -->
+                <!-- Validation -->
+                <div th:classappend="'alert-' + (${clase != null} ? ${clase} : info)" th:if="${mensaje != null}"
+                    th:text="${mensaje}" class="alert">
+                </div>
+
+                <section>
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Evaluacion Docente</h4>
+                                </div>
+                                <div class="card-body">
+                                    <form class="col-md-12">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="row">
+                                                    <div class="col-md-9">
+                                                        <label for="">De Gestion a Gestion</label>
+                                                        <div class="row">
+                                                            <span class="input-group-text col-md-2">Desde</span>
+                                                            <div class="col-md-4">
+                                                                <Select id="gestion1" onchange="crearCharts()"
+                                                                    class="select2 col-md-6"></Select>
+                                                            </div>
+                                                            <span class="input-group-text col-md-2">Hasta</span>
+                                                            <div class="col-md-4">
+                                                                <Select id="gestion2" onchange="crearCharts()"
+                                                                    class="select2 col-md-6"></Select>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-3">
+                                                        <label for="">Periodo</label>
+                                                        <Select id="periodo" class="select2" onchange="crearCharts()">
+                                                            <option value="1" th:selected="${periodoActual == '1'}">1
+                                                            </option>
+                                                            <option value="2" th:selected="${periodoActual == '2'}">2
+                                                            </option>
+                                                        </Select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" id="cantidadCards">
+                    </div>
+
+                    <!-- <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-12" style="max-height: 500px; max-width: 100%;">
+                                            <label for="" id="tituloGrafico"></label>
+                                            <canvas id="estadisticaEvolucionDocente"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div> -->
+                </section>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="detallesModal" aria-hidden="true"
+        data-bs-backdrop="static">
+        <div class="modal-dialog modal-xl">
+            <div class="row">
+                <div id="contenidoDetalles">
+
+                </div>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+
+    <div class="sidenav-overlay"></div>
+    <div class="drag-target"></div>
+
+    <footer th:replace="layout/layout :: pie"></footer>
+
+    <script>
+        $(document).ready(function () {
+
+            var startYear = 1900;
+            var endYear = new Date().getFullYear();
+            //var endYear = 2100;
+            // Obtén una referencia al elemento select
+            var select = document.getElementById("gestion1");
+            // Agrega el nuevo elemento option al select
+            for (var year = endYear; year >= startYear; year--) {
+                // Crea un nuevo elemento option
+                var option = document.createElement("option");
+                option.text = year;
+                option.value = year;
+                select.add(option);
+            }
+
+            //var endYear = 2100;
+            // Obtén una referencia al elemento select
+            var select2 = document.getElementById("gestion2");
+            // Agrega el nuevo elemento option al select
+            for (var year = endYear; year >= startYear; year--) {
+                // Crea un nuevo elemento option
+                var option = document.createElement("option");
+                option.text = year;
+                option.value = year;
+                select2.add(option);
+            }
+            crearCharts();
+
+        });
+
+        function crearCharts() {
+            $('#cantidadCards').html('<div class="text-center">' +
+                '<div class="spinner-border" role="status" id="loadingSpinner">' +
+                '<span class="sr-only">Loading...</span>' +
+                '</div>' +
+                '</div>');
+
+            var gestion1 = $('#gestion1').val();
+            var gestion2 = $('#gestion2').val();
+            var periodo = $('#periodo').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/estadisticas/crearCharts/' + gestion1 + '/' + gestion2 + '/' + periodo,
+                success: function (data) {
+                    //console.log("Datos recibidos:", data); // Ver datos recibidos
+                    $('#cantidadCards').html('');
+                    data.forEach(function (asignatura) {
+                        $('#cantidadCards').append(` 
+                                    <div class="col-md-6">
+                                        <div class="card col-md-12">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-md-12" style="max-height: 500px; max-width: 100%;">
+                                                        <label for="">Gráfico de Evaluacion Docente de la Gestión ${gestion1} hasta la gestion ${gestion2} y Periodo ${periodo} de la Asignatura ${asignatura.nombre} - ${asignatura.sigla} Evaluacion ${asignatura.tipoEvaluacion}</label>
+                                                        <input type="hidden" id="asignatura_${asignatura.sigla}" value="${asignatura.sigla}">
+                                                        <input type="hidden" id="tipo_${asignatura.tipoEvaluacion}" value="${asignatura.tipoEvaluacion}">
+                                                        <canvas class="col-md-12" id="grafico_materia_${asignatura.sigla}_${asignatura.tipoEvaluacion}"></canvas>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            `);
+                        estadisticaAsignaturaEvaluacionDocente(gestion1, gestion2, periodo, asignatura.sigla, asignatura.tipoEvaluacion, asignatura.nombre + ' - ' + asignatura.sigla);
+                    });
+                },
+                error: function () {
+                    console.log("Error al obtener la lista de docentes");
+                }
+            });
+        }
+
+        function estadisticaAsignaturaEvaluacionDocente(gestion1, gestion2, periodo, sigla, tipo, materia) {
+            let chart;
+            const gestiones = [];
+            const calificacion = [];
+
+            $.ajax({
+                type: 'POST',
+                url: '/estadisticas/evolucionDocenteDetallada/' + gestion1 + '/' + gestion2 + '/' + periodo + '/' + sigla + '/' + tipo,
+                success: function (data) {
+                    data.forEach(function (asignatura) {
+                        gestiones.push(asignatura.gestion);
+                        calificacion.push(asignatura.calificacion);
+                    });
+
+                    const ctx = document.getElementById('grafico_materia_' + sigla + '_' + tipo).getContext('2d');
+
+                    // Si el gráfico ya existe, destrúyelo
+                    if (chart) {
+                        chart.destroy();
+                    }
+
+                    // Dibuja el gráfico después de recibir los datos
+                    chart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: gestiones,
+                            datasets: [{
+                                label: materia,
+                                data: calificacion,
+                                backgroundColor: 'rgba(0, 0, 255, 0.2)', // Color de fondo azul
+                                borderColor: 'rgba(0, 0, 255, 1)', // Color del borde azul
+                                borderWidth: 1.5,
+                                fill: true,
+                                // Aquí puedes agregar datalabels específicos para el dataset
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'end',
+                                    formatter: (value) => value, // Muestra solo el valor
+                                    color: 'black',
+                                    offset: 5 // Ajusta la posición vertical
+                                }
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                tooltip: {
+                                    intersect: false, // Permitir hover en cualquier parte del gráfico
+                                    mode: 'nearest', // Modo de tooltip más cercano
+                                    callbacks: {
+                                        title: function (tooltipItems) {
+                                            const index = tooltipItems[0].dataIndex;
+                                            return `Gestión: ${gestiones[index]}`;
+                                        },
+                                        label: function (tooltipItem) {
+                                            return `Calificación: ${tooltipItem.raw}`;
+                                        }
+                                    }
+                                },
+                                // Asegúrate de incluir datalabels aquí
+                                datalabels: {
+                                    anchor: 'end',
+                                    align: 'end',
+                                    formatter: (value) => value, // Muestra solo el valor
+                                    color: 'black',
+                                    offset: 5 // Ajusta la posición vertical
+                                }
+                            },
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        callback: function (value) {
+                                            return value; // Asegúrate de que los números son visibles
+                                        }
+                                    }
+                                }
+                            }
+                        },
+                        plugins: [ChartDataLabels] // Asegúrate de que el plugin está incluido aquí
+                    });
+                },
+                error: function () {
+                    console.log("Error al obtener la lista estudiantes");
+                }
+            });
+        }
+
+    </script>
+</body>
+
+</html>

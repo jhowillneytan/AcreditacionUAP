@@ -844,9 +844,14 @@ public class HomeController {
 	@PostMapping("/usuariosCarpetaActuales/{id_carpeta}")
 	public ResponseEntity<String[][]> usuariosCarpetaActuales(@PathVariable Long id_carpeta,
 			HttpServletRequest request) {
-		Carpeta carpeta = carpetaService.findOne(id_carpeta);
+		//Carpeta carpeta = carpetaService.findOne(id_carpeta);
 
-		Set<Usuario> listaUsuarios = carpeta.getUsuarios();
+		Persona p = (Persona) request.getSession().getAttribute("persona");
+		Usuario user = usuarioService.usuarioPorIdPersona(p.getId_persona());
+
+
+		//Set<Usuario> listaUsuarios = carpeta.getUsuarios();
+		List<Usuario> listaUsuarios = usuarioService.listaUsuarioPorIdCarpetaExceptoUsuarioActual(id_carpeta, user.getId_usuario());
 
 		String[][] usuariosArray = new String[listaUsuarios.size()][3];
 

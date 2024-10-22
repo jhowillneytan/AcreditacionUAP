@@ -58,10 +58,6 @@ public class Carpeta implements Serializable{
     @JoinColumn(name = "id_docente")
     private Docente docente;
 
-	/*@ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_usuario")
-    private Usuario usuario;
-*/
     @ManyToOne
     @JoinColumn(name="c_padre", referencedColumnName = "id_carpeta")
     private Carpeta carpetaPadre;
@@ -72,11 +68,6 @@ public class Carpeta implements Serializable{
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "carpeta")
     private List<Archivo> archivos;
 
-    /*@JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "carpetas", fetch = FetchType.LAZY)
-	private List<Usuario> usuarios;*/
-    /*@ManyToMany(cascade = CascadeType.ALL, mappedBy = "carpetas", fetch = FetchType.LAZY)
-    private Set<Usuario> usuarios = new HashSet<>();*/
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name="usuario_carpeta",

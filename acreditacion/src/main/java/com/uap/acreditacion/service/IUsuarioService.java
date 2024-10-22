@@ -24,4 +24,6 @@ public interface IUsuarioService {
 	List<Usuario> listaUsuarios();
 
 	List<Usuario> listaUsuarioPorIdCarrera(Long idCarrera);
+
+	public List<Usuario> listaUsuarioPorIdCarpetaExceptoUsuarioActual(Long idCarpeta, Long idUsuario);
 }

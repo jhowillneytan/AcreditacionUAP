@@ -32,8 +32,8 @@
     <link rel="stylesheet" type="text/css" href="../../../assets/css/style.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/decoracion.css">
     <!-- formulario /app-assets/vendors/css/forms/select/select2.min.css-->
-    <!-- <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/css/forms/select/select2.min.css"> -->
-    <link rel="stylesheet" href="../../../../css/select 2 4.1.css">
+    <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/css/forms/select/select2.min.css">
+    <!-- <link rel="stylesheet" href="../../../../css/select 2 4.1.css"> -->
     <link rel="stylesheet" type="text/css" href="../../../app-assets/vendors/css/pickers/flatpickr/flatpickr.min.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/plugins/forms/form-validation.css">
     <link rel="stylesheet" type="text/css" href="../../../app-assets/css/plugins/forms/pickers/form-flat-pickr.css">
@@ -318,6 +318,13 @@
                         <i data-feather="bar-chart-2"></i><span class="menu-title text-truncate"
                             data-i18n="File Manager" style="color: aliceblue;">Estadisticas</span></a>
                 </li>
+                <li th:class="${opcionEstadisticaDocente}? 'nav-item active':'nav-item'"
+                    th:if="${tipoPersonasession.nom_tipo_persona=='Docente'} or ${tipoPersonasession.nom_tipo_persona=='Administrador'}">
+                    <a class="d-flex align-items-center" th:href="@{/estadisticas/inicioDocente}"
+                        style="color: aliceblue; ">
+                        <i data-feather="bar-chart-2"></i><span class="menu-title text-truncate"
+                            data-i18n="File Manager" style="color: aliceblue;">Evaluacion Docente</span></a>
+                </li>
                 <th:block th:if="${opcionHome}">
                     <li class="nav-item" th:if="${anterior.nom_carpeta =='EVALUACION DOCENTE'}">
                         <a class="d-flex align-items-center" data-bs-toggle="modal" data-bs-target="#reporteModal"
@@ -348,23 +355,26 @@
 
         <!--<button class="btn btn-primary btn-icon scroll-top" type="button"><i data-feather="arrow-up"></i></button>-->
         <script src="../../../js/jquery-3.7.0.min.js"></script>
+        <script src="../../../../dist/js/bootstrap.min.js"></script>
+        <script src="../../../../static/js/bootstrap.bundle.min.js"></script>
+        <script src="../../../../js/swallAlert2.js"></script>
 
-        <!-- END: Footer-->
+        <script src="../../../../fontawesome-free-6.5.2-web/js/all.min.js"></script>
+        <script src="../../../../js/chart.js"></script>
+        <script src="../../../../js/chartjs-plugin-datalabels.js"></script>
+
+        <!-- END: Footer -->
         <script src="../../../app-assets/vendors/js/vendors.min.js"></script>
+        <script src="../../../app-assets/vendors/js/forms/validation/jquery.validate.min.js"></script>
         <script src="../../../app-assets/vendors/js/extensions/jstree.min.js"></script>
+        <script src="../../../app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js"></script>
         <script src="../../../app-assets/js/core/app-menu.js"></script>
         <script src="../../../app-assets/js/core/app.js"></script>
-        <script src="../../../app-assets/js/scripts/pages/app-file-manager.js"></script>
-
-        <!-- form validate -->
-        <!-- <script src="../../../../app-assets/vendors/js/forms/select/select2.full.min.js"></script> -->
-        <script src="../../../app-assets/vendors/js/forms/validation/jquery.validate.min.js"></script>
-        <script src="../../../app-assets/vendors/js/pickers/flatpickr/flatpickr.min.js"></script>
         <script src="../../../app-assets/js/scripts/forms/form-validation.js"></script>
 
-
-        <!--<script src="../../../app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
-        <script src="../../../app-assets/vendors/js/tables/datatable/datatables1.10.25.js"></script>-->
+        <!-- Datatables scripts -->
+        <script src="../../../app-assets/vendors/js/tables/datatable/jquery.dataTables.min.js"></script>
+        <script src="../../../app-assets/vendors/js/tables/datatable/datatables1.10.25.js"></script>
         <script src="../../../app-assets/vendors/js/tables/datatable/dataTables.bootstrap5.min.js"></script>
         <script src="../../../app-assets/vendors/js/tables/datatable/dataTables.responsive.min.js"></script>
         <script src="../../../app-assets/vendors/js/tables/datatable/responsive.bootstrap5.min.js"></script>
@@ -377,19 +387,15 @@
         <script src="../../../app-assets/vendors/js/tables/datatable/buttons.print.min.js"></script>
         <script src="../../../app-assets/vendors/js/tables/datatable/dataTables.rowGroup.min.js"></script>
         <script src="../../../app-assets/js/scripts/tables/table-datatables-basic.js"></script>
-        <script src="../../../app-assets/vendors/js/tables/datatable/datatables1.10.25.js"></script>
-        <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
-	<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script>
-        <script src="../../../../js/dataTables.bootstrap4.min.js"></script>
-        <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.9/js/bootstrap-select.min.js"></script>-->
-        <script src="../../static/js/bootstrap.bundle.min.js"></script>
-        <script src="../../../../dist/js/bootstrap.min.js"></script>
-        <script src="../../../../js/bs-dropzone.js"></script>
-        <script src="../../../../js/swallAlert2.js"></script>
-        <script src="../../../../js/select 2 4.1.js"></script>
-        <script src="../../../../fontawesome-free-6.5.2-web/js/all.min.js"></script>
-        <script src="../../../../js/chart.js"></script>
-        <script src="../../../../js/chartjs-plugin-datalabels.js"></script>
+
+        <!-- DataTables button scripts from CDN -->
+        <!-- <script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.html5.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/1.7.1/js/buttons.print.min.js"></script> -->
+        <script src="../../../app-assets/js/scripts/pages/app-file-manager.js"></script>
+        <!-- <script src="../../../../js/select 2 4.1.js"></script> -->
+        <script src="../../../app-assets/vendors/js/forms/select/select2.full.min.js"></script>
+        <script src="../../../js/bs-dropzone.js"></script>
+
         <!-- <script src="../../../../js/chart.min.js"></script> -->
         <script>
             function botonSubMenu(event) {
